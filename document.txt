@@ -1,0 +1,61 @@
+﻿1) Git is the distributed version control system; Git is responsible for keeping track of changes to content, and it provides mechanisms for sharing that content with others;
+
+
+I've chosen Github because of its popularity among the community, but Github costs money for private repos on the other hand gitlab is free;
+
+2) Atom: Free, Cross-platform, Built-in package manager,Smart autocompletion
+Brackets: Free, Cross-platform, autocompletion
+Bootstrap studio: Paid, Cross-platform, Design GUI
+visual studio code: Free, Cross-platform
+...
+
+I've chosen Brackets because of its Live Preview Abilities and its extensions; I've been using it for years and I think what makes Brackets  different than other IDEs is its user friendly and easy to use UI;
+
+3) Basically a package manager is the software responsible for installing, upgrading, configuring, and removing computer programs; some of the  popular package managers are apt(Linux-debian/Ubuntu), npm(js), cpan(perl), ruby gems(ruby), pip(python);
+
+4) The main use of Scaffolding tools is for creating starter templates;
+Slush: Slush is a scaffolding tool, i.e. a tool to help you generate new project structures to get you up and running with your new project in a matter of seconds;
+Yeoman: Yeoman is an open source client-side development stack, consisting of tools and frameworks intended to help developers build web applications. Yeoman runs as a command-line interface written for Node.js and combines several functions into one place, such as generating a starter template, managing dependencies, running unit tests, providing a local development server, and optimizing production code for deployment.
+
+5) Grunt js: GruntJS is a JavaScript based command line build tool that helps developers automate repetitive tasks; It perform tasks like minification, compilation, unit testing, linting, etc;
+
+Gulp: Gulp is an alternative to grunt; It is a bit more recent and has a reputation as being more flexible than grunt; 
+
+Grunt focuses on configuration, while Gulp focuses on code
+Grunt was built around a set of built-in, and commonly used tasks, while Gulp came around with the idea of enforcing nothing, but how community-developed micro-tasks should connect to each other
+
+6) jQuery: jQuery makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers;
+Umbrella js: Tiny library for DOM manipulation, events and AJAX
+some other DOM manipulation libraries: Dojo Toolkit, midori, MooTools
+
+7) Bootstrap: Designed for front-end development specifically, it helps to build web design concepts, mobile first projects, grid systems, typography, buttons, etc;
+Foundation: It is well-known for being incredibly smooth and responsive and can be used for many purposes such as building websites, creating email templates, building mobile and web apps;
+Bulma: Bulma is known for its incredibly modular architecture;
+some other css frameworks are: Ulkit, Semantic UI
+
+I've chosen bootstrap because its lightweight, most popular among the community and its good documentation;
+
+8) In manufacturing and design, a mock-up is a scale or full-size model of a design or device, used for teaching, demonstration, design evaluation and etc;
+
+mock-up tools can be separated in 3 different groups like design, Wireframing and Developing
+some of the most popular mock-up tools are Invision studio, Sketch, MockFlow, Balsamiq, RapidUI, Hype 3, Adobe XD
+
+9) Bounce.js: a lightweight animation library mostly used for creating bouncy effects;
+AnimeJS: AnimeJS is described as a lightweight JavaScript animation library that ‘works with any CSS Properties, individual CSS transforms, SVG or any DOM attributes, and JavaScript Objects’;
+Magic Animations: Magic Animations is known for its signature animations, such as the magic effects, foolish effects, and bomb effects;
+I choose Velocity.js because of its friendly syntax and its speed in rendering animations; velocity uses pure js to view animations unlike some other libraries like jquery;
+
+10) most used js libraries: jquery, modernizr(used to detect client side technologies), angular, react, backbone
+
+11) Javascript MV* Frameworks, which are used to develop single-page applications (SPAs):
+MV*: Model-View-Wildcard architecture; Though all the frameworks out there somewhat tries to be MVC but they do not necessarily follow the pattern strictly; 
+MVC: Model: refers to application data and business rules; (entities) View: what user sees! (HTML page) Controller: mediator between the two; Manipulates the model based on the user interaction; It handles all the logic;
+
+MVP: Similar to traditional MVC but Controller is replaced by Presenter; But the Presenter, unlike Controller is responsible for changing the view as well. The view usually does not call the presenter;
+
+MVVM: The difference here is the presence of View Model; It is kind of an implementation of Observer Design Pattern, where changes in the model are represented in the view as well, by the VM; Eg: If a slider is changed, not only the model is updated but the data which may be a text, that is displayed in the view is updated as well; So there is a two-way data binding;
+
+12) Angular has better docs but the complex syntax can confuse you sometimes; Vue.js is a more flexible, less opinionated solution ( than Angular ); That allows you to structure your app the way you want it to be, instead of being forced to do everything the Angular way; It’s only an interface layer so you can use it as a light feature in pages instead of a full SPA; In React, everything is just JavaScript; Not only are HTML structures expressed via JSX, the recent trends also tend to put CSS management inside JavaScript as well; This approach has its own benefits, but also comes with various trade-offs that may not seem worthwhile for every developer; on the other hand vue js uses templates for web pages, it also includes JSX features but templates are there as an simpler alternative;
+
+
+
