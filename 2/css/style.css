@@ -1,0 +1,181 @@
+iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video {	margin: 0;	padding: 0;	border: 0;	font-size: 100%;	font: inherit;	vertical-align: baseline;}/* HTML5 display-role reset for older browsers */article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {	display: block;}body {	line-height: 1;}ol, ul, li {	list-style: none;}blockquote, q {	quotes: none;}blockquote:before, blockquote:after,q:before, q:after {	content: '';	content: none;}table {	border-collapse: collapse;	border-spacing: 0;}
+
+ol, ul {
+	margin-top: 0;
+	margin-bottom: 0px !important;
+}
+
+body {
+	margin: 0;
+	/*	font-family: 'Open Sans', sans-serif; */
+	font-family: 'Raleway', sans-serif !important;
+	cursor: default;
+	transition: background-color 0.2s ease;
+	overflow: hidden;
+    height: 100vh;
+    background-color: #eaecee !important;
+    color: #555 !important;
+}
+
+a:hover {
+	color: #e96443 !important;
+	text-decoration: none !important;
+	transition: color 0.1s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+	outline: none;
+}
+
+input * {
+	outline: none;
+}
+
+.header-section {
+    height: 85px;
+    width: 100%;
+    background-color: rgb(0, 188, 212);
+    box-shadow: 0px 6px 4px 0px rgba(0,0,0,0.3);
+}
+
+.inp-cont {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 80%;
+    margin: auto;
+}
+
+.inp-cont .inp-btn::after {
+    content: "\f196";
+	font-family: FontAwesome;
+	font-size: 25px;
+    position: absolute;
+    left: 0px;
+    top: 2px;
+    padding: 3px 10px;
+    transition: all 0.2s ease;
+}
+
+.inp-btn {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: none;
+    background: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.inp-btn:hover::after {
+    color: #e74c3c;
+}
+
+.new-inp {
+    width: 100%;
+    background: #f0f3f4;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 20px;
+    padding-left: 50px;
+}
+
+.new-inp::after {
+    content: "yo";
+}
+
+.main-container {
+    margin-top: 50px;
+}
+
+.main-container > div > div {
+    box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.2);
+}
+
+.main-container .title {
+    position: absolute;
+    top:  -25px;
+}
+
+.elem {
+    height: 40px;
+    background-color: #f0f3f4;
+    line-height: 40px;
+    text-align: left;
+    position: relative
+}
+
+.elem::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 90%;
+    margin: auto;
+    background-color: #ddd;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.done-btn::after {
+    content: "\f096";
+	font-family: FontAwesome;
+	font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.done-btn.true::after {
+    content: "\f046";
+	font-family: FontAwesome;
+	font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.delete-btn::after {
+    content: "\f014";
+	font-family: FontAwesome;
+	font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.edit-btn::after {
+    content: "\f044";
+	font-family: FontAwesome;
+	font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.elem .edit-btn:hover, .elem .delete-btn:hover, .elem .done-btn:hover {
+    color: #e74c3c;
+    transition: all 0.2s ease;
+}
+
+.elem input {
+    height: 25px;
+    border: none;
+    background: none;
+    border-bottom: 2px solid #555;
+    position: relative;
+    top: 8px;
+    padding-bottom: 2px;
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+<html lang="en">
+
+<head>
+    <title>todo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--styles-->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+
+</head>
+
+<body class="">
+    <div id="app1">
+        <div class="header-section">
+            <div class="container" style="height: 85px; text-align: center;">
+                <div class="inp-cont">
+                    <input type="text" class="new-inp" placeholder="Add new">
+                    <button type="button" v-on:click="pushNew" class="inp-btn"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="container">
+                <div style="position: relative;width: 80%;margin: auto;">
+                    <div class="title">Your to do list:</div>
+                    <div class="elem" v-for="todo in todos">
+                        <div class="col-sm-2 done-btn" v-bind:class="{ true: todo.done }" v-on:click="doElem"></div>
+                        <div class="col-sm-8 desc">
+                            <input v-if="todo.editable" v-model="todo.text" type="text">
+                            <div v-else v-on:click="editElem">{{ todo.text }}</div>
+                        </div>
+                        <div class="col-sm-1 edit-btn" v-on:click="editElem"></div>
+                        <div class="col-sm-1 delete-btn" v-on:click="deleteElem"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app1',
+            data: {
+                todos: [{
+                        text: 'Learn JavaScript',
+                        editable: false,
+                        done: false
+                    },
+                    {
+                        text: 'Learn Vue',
+                        editable: false,
+                        done: false
+                    },
+                    {
+                        text: 'Build something awesome',
+                        editable: false,
+                        done: false
+                    }
+                ]
+            },
+            methods: {
+                pushNew: function() {
+                    var desc = $("#app1 input").val();
+                    if (desc != '') {
+                        app.todos.push({
+                            text: desc,
+                            editable: false,
+                            done: false
+                        });
+                    } else {
+                        alert("text field cant be empty");
+                    }
+
+                },
+                deleteElem: function(event) {
+                    if (event) {
+                        var parentIndex = $(".main-container .elem").index(event.target.closest(".elem"));
+                        this.todos.splice(parentIndex, 1);
+                    }
+                },
+                editElem: function(event) {
+                    if (event) {
+                        var parentIndex = $(".main-container .elem").index(event.target.closest(".elem"));
+                        //console.log(parentIndex);
+                        if (this.todos[parentIndex].editable) {
+                            this.todos[parentIndex].editable = false;
+                        } else {
+                            this.todos[parentIndex].editable = true;
+                        }
+                    }
+                },
+                doElem: function(event) {
+                    if (event) {
+                        var parentIndex = $(".main-container .elem").index(event.target.closest(".elem"));
+                        if (this.todos[parentIndex].done) {
+                            this.todos[parentIndex].done = false;
+                        } else {
+                            this.todos[parentIndex].done = true;
+                        }
+                    }
+                }
+            }
+        })
+
+    </script>
+</body>
+
+</html>
