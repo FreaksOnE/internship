@@ -4,6 +4,6 @@
 - [x] 3) login/register (MD)
 - [x] 4) gsap stagger
 - [x] 5) ScrollMagic
-- [ ] 6) draggable gsap
+- [x] 6) draggable gsap
 
 
