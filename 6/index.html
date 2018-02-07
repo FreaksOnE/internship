@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+    <title>Draggable</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenLite.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/plugins/CSSPlugin.min.js"></script>
+	<script src="https://www.greensock.com/js/src/utils/Draggable.min.js"></script>
+	<script src="https://www.greensock.com/js/src/plugins/ThrowPropsPlugin.min.js"></script>
+
+</head>
+
+<body class="">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Raleway', sans-serif !important;
+            height: 100vh;
+            background-color: #eaecee !important;
+            color: #555 !important;
+        }
+
+        .box {
+            height: 150px;
+            width: 220px;
+            background-color: #fff;
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.2);
+			position: relative;
+        }
+		
+		.box::after {
+			content: "Drag me!";
+			position: absolute;
+			top: -20px;
+			left: 0px;
+		}
+        
+        #main-cont {
+            margin: 10vh 0px;
+            text-align: center;
+			height: 80vh;
+        }
+
+    </style>
+
+    <div id="main-cont">
+        <div class="box"></div>
+    </div>
+
+    <script type="text/javascript">
+
+        Draggable.create(".box", {type:"x,y", edgeResistance:0.5, bounds:"#main-cont", throwProps:true});
+					   
+    </script>
+</body>
+
+</html>
