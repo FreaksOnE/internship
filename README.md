@@ -6,5 +6,5 @@
 - [x] 5) ScrollMagic
 - [x] 6) draggable gsap
 - [x] 7) svg
-- [ ] 8) 
+- [ ] 8) three.js
 
