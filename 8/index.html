@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>three.js</title>
+
+	<style>
+		body {
+			margin: 0;
+			font-family: 'Raleway', sans-serif !important;
+			height: 100vh;
+			/*background-color: #eaecee !important;*/
+			color: #555 !important;
+			overflow: hidden;
+		}
+
+	</style>
+</head>
+
+<body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r76/three.min.js"></script>
+	<script>
+		// All three.js stuff goes in here...
+
+		// Start by defining the variables we need:
+		var camera, scene, renderer;
+		var geometry, material, mesh;
+
+		// Initialize the scene
+		var init = function() {
+
+			// Init stuff here...
+
+			// Create a new Renderer element (this will be our canvas)
+			renderer = new THREE.WebGLRenderer();
+
+			// Then we'll set it so that it takes up the entire viewport
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.setClearColor(0xeaecee);
+
+			// Now let's add our renderer to our document
+			document.body.appendChild(renderer.domElement);
+
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+
+			camera.position.set(0, 0, 800);
+
+			geometry = new THREE.SphereGeometry(300, 15, 10);
+			material = new THREE.MeshBasicMaterial({
+				color: 0xff5733,
+				wireframe: true,
+				wireframeLinewidth: 1
+			});
+			mesh = new THREE.Mesh(geometry, material);
+
+			scene.add(mesh);
+
+		}
+
+		var animate = function() {
+
+			requestAnimationFrame(animate);
+
+			//mesh.rotation.x = Date.now() * 0.0002;
+			mesh.rotation.y = Date.now() * 0.001;
+			
+			renderer.render(scene, camera);
+
+		}
+
+		var renderOnPage = function() {
+			// Render stuff here...
+			renderer.render(scene, camera);
+		}
+
+
+		init();
+		animate();
+		renderOnPage();
+
+	</script>
+</body>
+
+</html>
