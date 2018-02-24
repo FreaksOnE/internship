@@ -1,0 +1,71 @@
+{
+	message : {
+		id : {
+			type : "int"	
+		},
+		text : {
+			type : "string"
+		},
+		mine : {
+			type : "bool"	
+		},
+		conversationID : {
+			type : "int"
+		},
+		queue : {
+			type : "int"
+		},
+		spam : {
+			type : "bool"
+		},
+		sent : {
+			type : "bool"
+		},
+		seen : {
+			type : "bool"
+		},
+		reportCount : {
+			type : "int"
+		},
+		time : {
+			type : "int"
+		},
+		date : {
+			type : "date"
+		},
+		deleted : {
+			type : "bool"
+		},
+		
+	}
+}
+
+{
+	user : {
+		id : {
+			type : "int"
+		},
+		name : {
+			type : "string"
+		},
+		conversations : {
+			type : "int"
+		},
+		banned : {
+			type : "bool"
+		},
+		
+	}
+}
+
+{
+	conversation : {
+		id : {
+			type : "int"
+		},
+		members : {
+			type : "int"
+		},
+		
+	}
+}

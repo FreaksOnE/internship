@@ -1,0 +1,191 @@
+<html lang="en">
+
+<head>
+	<title>todo</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!--styles-->
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+
+</head>
+
+<body class="">
+	<div id="app1">
+		<div id="sidebar">
+			<div class="logo-cont"></div>
+			<div class="server"></div>
+			<div class="server"></div>
+			<div class="addNew-btn"></div>
+		</div>
+		<div id="main-container">
+			<div class="cu-footer">
+				<div class="profile-ico-container">
+					<div class="profile-ico"></div>
+				</div>
+				<div class="inp-section">
+					<div class="msg-input">
+						<input type="text" placeholder="Write a message...">
+						<button type="button" class="send-btn">send</button>
+					</div>
+				</div>
+			</div>
+			<div class="chat-section">
+				<div class="chat">
+					<!--<div class="msg-cont">
+						<div class="user-name">user1</div>
+						<div class="user-msg">
+							<div class="time">12:10</div>
+							<div class="text"></div>
+						</div>
+					</div>
+					<div class="msg-cont mine">
+						<div class="user-name">user2</div>
+						<div class="user-msg">
+							<div class="time">12:12</div>
+							<div class="text"></div>
+						</div>
+					</div>
+					<div class="msg-cont">
+						<div class="user-name">user1</div>
+						<div class="user-msg">
+							<div class="time">12:13</div>
+							<div class="text"></div>
+						</div>
+						<div class="user-msg">
+							<div class="time">12:13</div>
+							<div class="text"></div>
+						</div>
+					</div>
+					<div class="msg-cont mine">
+						<div class="user-name">user2</div>
+						<div class="user-msg">
+							<div class="time">12:14</div>
+							<div class="text"></div>
+						</div>
+					</div>
+					<div v-for="(message, index) in chats" v-bind:class="{ msg-cont:  }" v-bind:class="{ mine: message.mine }">
+						<div class="user-msg">
+							<div class="time">{{ message.time }}</div>
+							<div class="text">{{ message.text }}</div>
+						</div>
+					</div>-->
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		/*Vue.component('msg', {
+									props: ['time'],
+									props: ['text'],
+									template: '<div class="user-msg"><div class="time">{{ time }}</div><div class="text">{{ text }}</div></div>'
+								})*/
+
+		var app = new Vue({
+			el: '#app1',
+			data: {
+				chats: [{
+					conversationID: {
+						value: 1,
+						queue: {
+							value: 1,
+							data: {
+								id: 1,
+								text: "string",
+								mine: false,
+								time: "12:10",
+								date: "date",
+							}
+						},
+						queue: {
+							value: 2,
+							data: {
+								id: 2,
+								text: "string",
+								mine: true,
+								time: "12:10",
+								date: "date",
+							}
+						},
+						queue: {
+							value: 3,
+							data: {
+								id: 3,
+								text: "string",
+								mine: false,
+								time: "12:10",
+								date: "date",
+							}
+						},
+						queue: {
+							value: 4,
+							data: {
+								id: 4,
+								text: "string",
+								mine: false,
+								time: "12:10",
+								date: "date",
+							}
+						},
+						queue: {
+							value: 5,
+							data: {
+								id: 5,
+								text: "string",
+								mine: true,
+								time: "12:10",
+								date: "date",
+							}
+						},
+
+					},
+				}, ],
+				msgs: [],
+
+			},
+			methods: {
+				getConv: function(num) {
+					return this.chats.find(function(elem) {
+						return elem.conversationID.value == num;
+					});
+				},
+				getMsg: function(conv, offset, count) {
+					var temp = this.getConv(conv);
+					this.msgs = [];
+					this.msgs.push(temp.queue.every(function(elem) {
+						if (offset == -1) {
+							return elem.value == getLastMsg(temp) - count;
+						} else {
+							return elem.value == offset - count;
+						}
+
+					}));
+				},
+				getLastMsg: function(conv) {
+					var temp = [];
+					temp.push(conv.queue.every(function(elem) {
+						return elem.value;
+					}));
+					return Math.max(temp);
+				},
+
+			}
+		})
+
+		console.log(app.chats.find(function(elem) {
+			return elem.conversationID.value == 1;
+		}));
+
+	</script>
+</body>
+
+</html>
