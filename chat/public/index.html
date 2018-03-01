@@ -1,0 +1,327 @@
+<html lang="en">
+
+<head>
+    <title>chat</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--styles-->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+
+</head>
+
+<body class="">
+    <div id="app1">
+        <div id="sidebar">
+            <div class="logo-cont"></div>
+            <div class="server"></div>
+            <div class="server"></div>
+            <div class="addNew-btn">
+                <!--<i class="material-icons">add</i>--></div>
+        </div>
+        <div id="main-container">
+            <div class="cu-footer">
+                <div class="profile-ico-container">
+                    <div class="profile-ico"><i class="fa fa-user-circle-o"></i></div>
+                </div>
+                <div class="inp-section">
+                    <div class="msg-input">
+                        <div class="status"></div>
+                        <input type="text" placeholder="Write a message...">
+                        <button type="button" class="send-btn" v-on:click="sendMessage"><i class="material-icons">send</i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-section">
+                <div class="chat">
+                    <div class="msg-cont" v-for="(message, index) in chats" v-bind:class="{ mine: !message.from}">
+                        <div class="user-change" v-if="message.userChange">{{ getUsername(message.from) }}</div>
+                        <div class="notification" v-if="message.notification">{{ message.desc }}</div>
+                        <div class="user-msg" v-if="!message.notification">
+                            <div class="time">{{ message.time }}</div>
+                            <div class="text">{{ message.text }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var username;
+        var connected = false;
+        var typing = false;
+        var lastTypingTime;
+
+        var socket = io();
+
+        var app = new Vue({
+            el: '#app1',
+            data: {
+                chats: [{
+                        conversationID: 1,
+                        queue: 1,
+                        id: 1,
+                        text: "Lorem ipsum dolor sit amet, consectetur ",
+                        from: 1,
+                        time: "12:10",
+                        date: "date",
+                        userChange: true,
+                    },
+                    {
+                        conversationID: 1,
+                        queue: 2,
+                        time: "12:10",
+                        date: "date",
+                        notification: true,
+                        desc: "you joined",
+                    },
+                    {
+                        conversationID: 1,
+                        queue: 3,
+                        id: 2,
+                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus, nulla ut commodo sagittis, sapien dui mattis dui",
+                        from: 0,
+                        time: "12:10",
+                        date: "date",
+                        userChange: true,
+                    },
+                    {
+                        conversationID: 1,
+                        queue: 4,
+                        id: 3,
+                        text: "Lorem ipsum dolor sit amet, consectetur ",
+                        from: 1,
+                        time: "12:10",
+                        date: "date",
+                        userChange: true,
+                    },
+                    {
+                        conversationID: 1,
+                        queue: 5,
+                        id: 4,
+                        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus, nulla ut commodo sagittis, sapien dui mattis dui",
+                        from: 1,
+                        time: "12:10",
+                        date: "date",
+                        userChange: false,
+                    },
+                    {
+                        conversationID: 1,
+                        queue: 6,
+                        id: 5,
+                        text: "Lorem ipsum dolor sit amet, consectetur ",
+                        from: 0,
+                        time: "12:10",
+                        date: "date",
+                        userChange: true,
+                    },
+
+                ],
+                users: [],
+                
+            },
+            methods: {
+                getMsg: function(conv, offset, count) {
+                    var temp = this.getConv(conv);
+                    var tempMsgs = [];
+                    if (offset == -1) {
+
+                    } else {
+                        temp.forEach(function(elem) {
+                            if (elem.queue >= (offset - count) && elem.queue < offset && tempMsgs.length <= count) {
+                                tempMsgs.push(elem);
+                            }
+                        });
+                    }
+                    return tempMsgs;
+                },
+                getLastMsg: function(num) {
+                    var temp = [];
+                    this.chats.forEach(function(elem) {
+                        if (elem.conversationID == num) {
+                            temp.push(elem.queue);
+                        }
+                    });
+                    //console.log(Math.max(...temp));
+                    return Math.max(...temp);
+                },
+                getUsername: function(num) {
+                    var temp;
+                    this.users.forEach(function(elem) {
+                        if (elem.id == num) {
+                            //console.log(elem.name);
+                            temp = elem.name;
+                        }
+                    });
+                    if (temp == undefined) {
+                        return "error";
+                    } else {
+                        return temp;
+                    }
+                },
+                sendMsg: function() {
+                    //console.log("msg");
+                    var cu_queue = this.getLastMsg(1) + 1;
+                    var msgText = $(".msg-input input").val();
+                    if (msgText != "") {
+                        //$(".msg-input input").val("");
+                        $(".msg-input input").focus();
+                        this.chats.push({
+                            conversationID: 1,
+                            queue: cu_queue,
+                            id: cu_queue,
+                            text: msgText,
+                            from: 0,
+                            time: "12:10",
+                            date: "date",
+                        });
+                        //console.log('chat: '+$(".chat").outerHeight(true));
+                        //console.log('window: '+$(window).height());
+                        //$(".chat-section").animate({scrollTop:($(".chat").outerHeight(true) - $(window).height())+45}, 'fast');
+                    }
+                },
+                setUsername: function() {
+                    username = Math.random().toString(36).substr(2, 5);//"user";
+                    if (username) {
+                        socket.emit('add user', username);
+                    }
+                },
+                changeStatus: function(data) {
+                    var message = '';
+                    if (data.numUsers === 1) {
+                        message += "1 member online";
+                    } else if (data.numUsers > 1) {
+                        message += data.numUsers + " members online";
+                    } else {
+                        message = '';
+                    }
+                    $(".inp-section .status").text(message);
+                },
+                changeOnline: function(data) {
+                    if (data) {
+                        $("#sidebar").css("box-shadow", "0px 0px 4px 0px greenyellow");
+                    } else {
+                        $("#sidebar").css("box-shadow", "0px 0px 4px 0px red");
+                    }
+                },
+                sendMessage: function(data) {
+                    var cu_queue = this.getLastMsg(1) + 1;
+                    var msgText = $(".msg-input input").val();
+                    var msgObj = {};
+                    if (msgText && connected) {
+                        //$(".msg-input input").val("");
+                        $(".msg-input input").focus();
+                        msgObj = {
+                            conversationID: 1,
+                            text: msgText,
+                            from: 0,
+                            time: "12:10",
+                            date: "date",
+                        };
+                        socket.emit('new message', msgObj);
+                    }
+                },
+                addMsg: function(data) {
+                    $(".msg-input input").focus();
+                    this.chats.push({
+                        conversationID: 1,
+                        queue: data.queue,
+                        id: data.id,
+                        text: data.text,
+                        from: data.from,
+                        time: "12:10",
+                        date: "date",
+                    });
+                },
+                log: function(message, options) {
+                    app.chats.push({
+                        conversationID: 1,
+                        queue: app.getLastMsg(1) + 1,
+                        time: "12:10",
+                        date: "date",
+                        notification: true,
+                        desc: message
+                    });
+                },
+                getUserID: function() {
+                    
+                },
+            },
+        })
+
+
+        app.setUsername();
+
+        // Socket events
+
+        // Whenever the server emits 'login', log the login message
+        socket.on('login', function(data) {
+            connected = true;
+            app.changeOnline(true);
+            //log(message);
+            app.changeStatus({ numUsers: app.users.length });
+        });
+
+        // Whenever the server emits 'new message', update the chat body
+        socket.on('new message', function(data) {
+            app.addMsg(data);
+            console.log("msg");
+        });
+
+        // Whenever the server emits 'user joined', log it in the chat body
+        socket.on('user joined', function(data) {
+            app.log(data.name + ' joined');
+            app.users.push(data);
+            app.changeStatus({ numUsers: app.users.length });
+            console.log("online: "+ app.users.length);            
+        });
+
+        // Whenever the server emits 'user left', log it in the chat body
+        socket.on('user left', function(data) {
+            app.log(data.name + ' left');
+            app.changeStatus({ numUsers: app.users.length });
+            app.users.forEach(function (elem) {
+                if (elem.id == data.id) {
+                    app.users.splice(app.users.indexOf(elem), 1);
+                }
+            });
+            
+            console.log(app.users);
+            removeChatTyping(data);
+        });
+
+        socket.on('disconnect', function() {
+            //log('you have been disconnected');
+            app.changeOnline(false);
+            app.changeStatus("");
+        });
+
+        socket.on('reconnect', function() {
+            //log('you have been reconnected');
+            app.changeOnline(true);
+            if (username) {
+                socket.emit('add user', username);
+            }
+        });
+
+        socket.on('reconnect_error', function() {
+            //log('attempt to reconnect has failed');
+            //app.changeOnline(false);
+        });
+
+    </script>
+</body>
+
+</html>

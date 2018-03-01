@@ -1,0 +1,7 @@
+chat is a cloud based webapp with real time technology. users can use chat to create their own virtual servers and add or manage users and chat rooms on the server. the goal is to make interactive chatting platform. chat has customizable interface. chat is free and open-source. all connections between the client and the server are encrypted using ssl.
+
+used client side technologies are vue.js and web socket. websocket is used to make user interaction realtime.
+
+node.js & express are used to build the api. user data will be stored in MongoDB because of its compatibility with node.js.
+we will also be using Mongoose for creating the MongoDB models and socket.io will be used to push content to client side. built api will be tested with postman. AJAX is used for authentication.
+

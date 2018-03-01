@@ -1,0 +1,82 @@
+message: {
+    id: {
+        type: Number,
+    },
+    msgType: {
+        type: String,
+    },
+    text: {
+        type: String,
+    },
+    from: {
+        type: ObjectId,
+        ref: 'user',
+    },
+    sendersName: {
+        type: String
+    },
+    conversationID: {
+        type: ObjectId,
+        ref: 'conversation',
+    },
+    queue: {
+        type: Number,
+    },
+    spam: {
+        type: Boolean,
+    },
+    sent: {
+        type: Boolean,
+    },
+    seen: {
+        type: Boolean,
+    },
+    reportCount: {
+        type: Number,
+    },
+    date: {
+        type: Date,
+    },
+    deleted: {
+        type: Boolean,
+    },
+
+}
+
+
+
+user: {
+    id: {
+        type: Number,
+    },
+    name: {
+        type: String,
+    },
+    conversations: {
+        type: [ObjectId],
+        ref: 'conversation',
+    },
+    banned: {
+        type: Boolean,
+    },
+    online: {
+        type: Boolean,
+    }
+
+}
+
+
+
+conversation: {
+    id: {
+        type: Number,
+    },
+    members: {
+        type: [ObjectId],
+        ref: 'user',
+    },
+    messages: {
+        type: [ObjectId],
+        ref: 'message',
+    }
+}
