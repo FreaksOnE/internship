@@ -1,30 +1,255 @@
 <html lang="en">
 
 <head>
-    <title>chat</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>chat</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!--styles-->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+	<!--styles-->
+	<link rel="stylesheet" href="css/font-awesome.min.css">
 
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<style>
+		body {
+			margin: 0;
+			font-family: 'Raleway', sans-serif !important;
+			color: #555 !important;
+			background-color: #e1e4e7;
+			height: 100%;
+		}
 
-    <script src="/socket.io/socket.io.js"></script>
+		#container {
+			position: relative;
+			min-height: 200px;
+			width: 350px;
+			background-color: #fff;
+			top: 30%;
+			margin: auto;
+			border-radius: 10px;
+			box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.5);
+		}
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+		.user-img {
+			position: absolute;
+			height: 86px;
+			width: 86px;
+			border-radius: 50%;
+			background-color: #fff;
+			left: 0px;
+			right: 0px;
+			margin: auto;
+			top: -43px;
+			box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15);
+			font-size: 86px;
+			color: #666;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			cursor: default;
+		}
 
+		.select-action-cont {
+			position: relative;
+			width: 80%;
+			padding-top: 46px;
+			text-align: center;
+			margin: auto;
+			height: 44px;
+		}
+
+		.select-action-cont .login-action,
+		.select-action-cont .register-action {
+			width: 50%;
+			border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+			float: left;
+			height: 40px;
+			line-height: 40px;
+			cursor: pointer;
+			transition: all 0.1s ease;
+			-moz-transition: all 0.1s ease;
+			font-size: 15px;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		.select-action-cont .login-action:hover,
+		.select-action-cont .register-action:hover {
+			color: #111;
+		}
+
+		.select-action-cont .login-action.active,
+		.select-action-cont .register-action.active {
+			color: #111;
+			border-bottom: 3px solid rgba(0, 0, 0, 0.3);
+		}
+
+		.clearboth {
+			clear: both;
+		}
+
+		.form {
+			position: relative;
+			width: 80%;
+			padding: 20px 0px;
+			text-align: center;
+			margin: auto;
+		}
+
+		.form .username-inp,
+		.form .password-inp {
+			padding: 10px 5px;
+			position: relative;
+		}
+
+		.form .username-inp input,
+		.form .password-inp input {
+			border: none;
+			background: #777;
+			border-radius: 6px;
+			padding: 7px 10px;
+			color: #fff;
+			width: 100%;
+		}
+
+		.form .username-inp::before {
+			content: "username";
+			position: absolute;
+			top: -5px;
+			font-size: 12px;
+			left: 10px;
+		}
+
+		.form .password-inp::before {
+			content: "password";
+			position: absolute;
+			top: -5px;
+			font-size: 12px;
+			left: 10px;
+		}
+
+		.form .submit-button {
+			height: 40px;
+			line-height: 40px;
+			width: 70%;
+			background-color: #e1e4e7;
+			border-radius: 6px;
+			margin: auto;
+			margin-top: 22px;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			cursor: pointer;
+			box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.15);
+		}
+
+		.form .error {
+			font-size: 13px;
+			color: red;
+			position: absolute;
+			left: 0;
+			right: 0;
+		}
+		
+		.form .success {
+			font-size: 13px;
+			color: green;
+			position: absolute;
+			left: 0;
+			right: 0;
+		}
+
+	</style>
 </head>
 
-<body class="">
-    
+<body>
+	<div id="container">
+		<div class="user-img"><i class="fa fa-user-circle-o"></i></div>
+		<div class="select-action-cont">
+			<div class="login-action active">Login</div>
+			<div class="register-action">Register</div>
+			<div class="clearboth"></div>
+		</div>
+		<div class="form">
+			<div class="username-inp">
+				<input type="text" placeholder="Enter your username">
+			</div>
+			<div class="password-inp">
+				<input type="password" placeholder="Enter your password">
+			</div>
+			<div class="submit-button">submit</div>
+		</div>
+	</div>
 
+	<script type="text/javascript">
+		$(".login-action, .register-action").click(function() {
+			$(".select-action-cont > *").removeClass("active");
+			$(this).addClass("active");
+		});
+
+		$(".submit-button").click(function() {
+			var actionUrl = "";
+			if($(".login-action").hasClass("active")){
+				actionUrl = "/api/login";
+			} else {
+				actionUrl = "/api/signup";
+			}
+			var usernameVal = $(".username-inp input").val();
+			var passwordVal = $(".password-inp input").val();
+			console.log(usernameVal);
+
+			var request = $.ajax({
+				url: actionUrl,
+				type: "POST",
+				data: {
+					username: usernameVal,
+					password: passwordVal
+				}
+			});
+
+			request.done(function(msg) {
+				console.log(msg.message);
+				if (msg.message == "done") {
+					if (actionUrl == "/api/login"){
+						//window.location.replace("/");
+						window.location.href = "/";
+					} else {
+						sendAlert('user created. you can login now.', false);
+						$(".select-action-cont > *").removeClass("active");
+						$(".login-action").addClass("active");
+					}
+					
+				} else {
+					sendAlert(msg.message, true);
+				}
+
+			});
+
+			request.fail(function(jqXHR, textStatus) {
+				//alert("Request failed: " + textStatus);
+				console.log(jqXHR);
+				console.log(textStatus);
+			});
+		});
+
+		function sendAlert(msg, error) {
+			$(".form .error").remove();
+			var elemClass = "success";
+			if(error){
+				var elemClass = "error";
+			}
+			$("<div class='"+elemClass+"'>" + msg + "</div>").fadeIn(400).insertAfter($(".password-inp")).delay(1500).fadeOut(400, function(){
+				$(this).remove();
+			});
+		}
+
+	</script>
 </body>
 
 </html>

@@ -1,0 +1,311 @@
+<html lang="en">
+
+<head>
+	<title>chat</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!--styles-->
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+
+</head>
+
+<body class="">
+	<div id="app1">
+		<div id="sidebar" v-bind:class="{ open: startApp}">
+			<div class="logo-cont" v-on:click="fetchConversations"></div>
+			<div class="server" v-for="(conv, index) in convs" :key="conv._id" :title="conv._id"></div>
+			<div class="addNew-btn"><i class="material-icons" @click="showNewChatModal = true">add</i></div>
+			<!--<button id="show-modal" >Show Modal</button>-->
+			<!-- use the modal component, pass in the prop -->
+			<modal v-if="showNewChatModal" @close="showNewChatModal = false">
+				<div slot="header">Create new chat</div>
+				<div slot="body">
+					Enter a name for the chatroom:
+					<input type="text" placeholder="ex. name">
+				</div>
+				<div slot="footer">
+					<button class="modal-ok-button">Create</button>
+					<button class="modal-cancel-button" @click="showNewChatModal = false">Cancel</button>
+					<div class="clearfix"></div>
+				</div>
+				<img slot="image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlKr7pHvwA9ytIY707rewhSTorl1ATf0DYgjWvuad755ev6Pjv">
+			</modal>
+		</div>
+		<div id="main-container">
+			<div v-if="!startApp" class="cu-footer">
+				<div class="profile-ico-container">
+					<div class="profile-ico"><i class="fa fa-user-circle-o"></i></div>
+				</div>
+				<div class="inp-section">
+					<div class="msg-input">
+						<div class="status"></div>
+						<input type="text" placeholder="Write a message...">
+						<button type="button" class="send-btn" v-on:click="sendMessage"><i class="material-icons">send</i></button>
+					</div>
+				</div>
+			</div>
+			<div v-if="!startApp" class="chat-section">
+				<div class="chat">
+					<div class="msg-cont" v-for="(message, index) in chats" v-bind:class="{ mine: !message.from}">
+						<div class="user-change" v-if="message.userChange">{{ }}</div>
+						<div class="notification" v-if="message.notification">{{ message.desc }}</div>
+						<div class="user-msg" v-if="!message.notification">
+							<div class="time">{{ message.time }}</div>
+							<div class="text">{{ message.text }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var username;
+		var connected = false;
+		var typing = false;
+		var lastTypingTime;
+
+		var socket = io();
+
+		Vue.component('modal', {
+			template: '#modal-template'
+		})
+
+		var app = new Vue({
+			el: '#app1',
+			data: {
+				chats: [{
+						conversationID: 1,
+						queue: 1,
+						id: 1,
+						text: "Lorem ipsum dolor sit amet, consectetur ",
+						from: 1,
+						time: "12:10",
+						date: "date",
+						userChange: true,
+					},
+					{
+						conversationID: 1,
+						queue: 2,
+						time: "12:10",
+						date: "date",
+						notification: true,
+						desc: "you joined",
+					},
+					{
+						conversationID: 1,
+						queue: 3,
+						id: 2,
+						text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus, nulla ut commodo sagittis, sapien dui mattis dui",
+						from: 0,
+						time: "12:10",
+						date: "date",
+						userChange: true,
+					},
+					{
+						conversationID: 1,
+						queue: 4,
+						id: 3,
+						text: "Lorem ipsum dolor sit amet, consectetur ",
+						from: 1,
+						time: "12:10",
+						date: "date",
+						userChange: true,
+					},
+					{
+						conversationID: 1,
+						queue: 5,
+						id: 4,
+						text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus, nulla ut commodo sagittis, sapien dui mattis dui",
+						from: 1,
+						time: "12:10",
+						date: "date",
+						userChange: false,
+					},
+					{
+						conversationID: 1,
+						queue: 6,
+						id: 5,
+						text: "Lorem ipsum dolor sit amet, consectetur ",
+						from: 0,
+						time: "12:10",
+						date: "date",
+						userChange: true,
+					},
+
+				],
+				users: [],
+				convs: [],
+				showNewChatModal: false,
+				startApp: true,
+				preLoad: true,
+
+			},
+			methods: {
+				getMsg: function(conv, offset, count) {
+					var temp = this.getConv(conv);
+					var tempMsgs = [];
+					if (offset == -1) {
+
+					} else {
+						temp.forEach(function(elem) {
+							if (elem.queue >= (offset - count) && elem.queue < offset && tempMsgs.length <= count) {
+								tempMsgs.push(elem);
+							}
+						});
+					}
+					return tempMsgs;
+				},
+				getLastMsg: function(num) {
+					var temp = [];
+					this.chats.forEach(function(elem) {
+						if (elem.conversationID == num) {
+							temp.push(elem.queue);
+						}
+					});
+					//console.log(Math.max(...temp));
+					return Math.max(...temp);
+				},
+				sendMsg: function() {
+					//console.log("msg");
+					var cu_queue = this.getLastMsg(1) + 1;
+					var msgText = $(".msg-input input").val();
+					if (msgText != "") {
+						//$(".msg-input input").val("");
+						$(".msg-input input").focus();
+						this.chats.push({
+							conversationID: 1,
+							queue: cu_queue,
+							id: cu_queue,
+							text: msgText,
+							from: 0,
+							time: "12:10",
+							date: "date",
+						});
+						//console.log('chat: '+$(".chat").outerHeight(true));
+						//console.log('window: '+$(window).height());
+						//$(".chat-section").animate({scrollTop:($(".chat").outerHeight(true) - $(window).height())+45}, 'fast');
+					}
+				},
+				changeStatus: function(data) {
+					var message = '';
+					if (data.numUsers === 1) {
+						message += "1 member online";
+					} else if (data.numUsers > 1) {
+						message += data.numUsers + " members online";
+					} else {
+						message = '';
+					}
+					$(".inp-section .status").text(message);
+				},
+				changeOnline: function(data) {
+					if (data) {
+						$("#sidebar").css("box-shadow", "0px 0px 4px 0px greenyellow");
+					} else {
+						$("#sidebar").css("box-shadow", "0px 0px 4px 0px red");
+					}
+				},
+				sendMessage: function(data) {
+					var cu_queue = this.getLastMsg(1) + 1;
+					var msgText = $(".msg-input input").val();
+					var msgObj = {};
+					if (msgText && connected) {
+						//$(".msg-input input").val("");
+						$(".msg-input input").focus();
+						msgObj = {
+							conversationID: 1,
+							text: msgText,
+							from: 0,
+							time: "12:10",
+							date: "date",
+						};
+						socket.emit('new message', msgObj);
+					}
+				},
+				fetchConversations: function() {
+					var request = $.ajax({
+						url: '/api/convs',
+						type: 'GET',
+					}).done(function(msg) {
+						if (msg.message == 'done') {
+							msg.data.forEach(function(elem) {
+								app.convs.push(elem);
+							})
+							console.log(app.convs);
+						}
+					}).fail(function(jqXHR, textStatus) {
+						//console.log(jqXHR);
+						console.log(textStatus);
+					});
+				},
+				fetchMessages: function() {
+					var request = $.ajax({
+						url: actionUrl,
+						type: reqMethod,
+						data: data
+					}).done(function(msg) {
+						console.log(msg.message);
+						return msg;
+					}).fail(function(jqXHR, textStatus) {
+						//console.log(jqXHR);
+						console.log(textStatus);
+					});
+				},
+			},
+		});
+
+		app.fetchConversations();
+
+	</script>
+
+	<!-- template for the modal component -->
+	<script type="text/x-template" id="modal-template">
+		<transition name="modal">
+			<div class="modal-mask">
+				<div class="modal-wrapper">
+					<div class="modal-container">
+						<div style="float: left;">
+						<div class="modal-header">
+							<slot name="header">
+								default header
+							</slot>
+						</div>
+
+						<div class="modal-body">
+							<slot name="body">
+								default body
+							</slot>
+						</div>
+
+						<div class="modal-footer">
+							<slot name="footer">
+								<button class="modal-ok-button">Create</button>
+								<button class="modal-cancel-button" @click="$emit('close')">Cancel</button>
+								<div class="clearfix"></div>
+							</slot>
+						</div>
+						</div>
+						<div class="modal-image">
+							<slot name="image"></slot>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+		</transition>
+	</script>
+</body>
+
+</html>
