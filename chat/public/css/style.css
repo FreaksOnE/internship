@@ -44,8 +44,8 @@ input * {
 	width: 80px;
 	background-color: #fff;
 	z-index: 2;
-    transition: box-shadow 0.2s ease;
-	box-shadow: 3px 0px 6px 0px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+	box-shadow: 3px 0px 6px 0px rgba(0, 0, 0, 0.5);
 }
 
 #sidebar.open {
@@ -55,14 +55,14 @@ input * {
 
 #sidebar .logo-cont {
 	position: relative;
-	width: 60px;
 	display: block;
 	height: 50px;
 	border-radius: 10px;
 	background-color: #555;
 	margin: 20px 10px;
 	cursor: pointer;
-	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
+	transition: all 0.2s ease;
 }
 
 #sidebar .server {
@@ -74,7 +74,12 @@ input * {
 	display: block;
 	margin: 20px 10px;
 	cursor: pointer;
-	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.3);
+	transition: all 0.2s ease;
+}
+
+#sidebar .server:hover, #sidebar .logo-cont:hover, #sidebar .addNew-btn:hover {
+	box-shadow: 2px 2px 9px 0px rgba(0, 0, 0, 0.6);
 }
 
 #sidebar .server::after {
@@ -87,8 +92,11 @@ input * {
 	background-color: #e1e4e7;
 }
 
+#sidebar.open .server::after {
+	width: 190px;
+}
+
 #sidebar .addNew-btn {
-	width: 60px;
 	height: 60px;
 	border-radius: 30px;
 	background-color: #555;
@@ -96,10 +104,16 @@ input * {
 	display: block;
 	margin: 20px 10px;
 	cursor: pointer;
-	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
 	color: #fff;
 	font-size: 46px;
 	text-align: center;
+	transition: all 0.2s ease;
+}
+
+#sidebar.open .addNew-btn {
+	height: 40px;
+	font-size: 26px;
 }
 
 #sidebar .addNew-btn > * {
@@ -297,6 +311,10 @@ button::-moz-focus-inner, button:active, button:focus {
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+/Edge */
 	user-select: none; /* Standard */
+}
+
+.chat-section .msg-cont.mine .user-msg .time {
+	left: 10px;
 }
 
 .chat-section .msg-cont .user-msg .text {

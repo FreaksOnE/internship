@@ -230,7 +230,7 @@ Route					HTTP Verb	Description
 // on routes that end in /convs
 router.route('/convs').post(function (req, res) {
 	var newConversation = new conversationModel();
-	
+
 	newConversation.name = req.body.name;
 
 	newConversation.save(function (err, result) {
@@ -303,6 +303,15 @@ router.route('/convs/:conv_id').get(function (req, res) {
 	});
 
 })*/
+
+router.route('/user').get(function (req, res) {
+	res.json({
+		message: 'done',
+		data: { name: req.user.local.name,
+			  id: req.user.id}
+	});
+});
+
 router.route('/users').get(function (req, res) {
 	userModel.find().select('local.name local.online').exec(function (err, result) {
 		if (err)
