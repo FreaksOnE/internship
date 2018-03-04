@@ -59,10 +59,25 @@ input * {
 	height: 50px;
 	border-radius: 10px;
 	background-color: #555;
-	margin: 20px 10px;
+	margin: 20px 10px 12px 10px;
 	cursor: pointer;
 	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
 	transition: all 0.2s ease;
+}
+
+#sidebar .logo-cont::after {
+	content: "";
+	position: absolute;
+	bottom: -11px;
+	height: 2px;
+	width: 40px;
+	left: 10px;
+	background-color: #e1e4e7;
+	transition: all 0.2s ease;
+}
+
+#sidebar.open .logo-cont::after {
+	width: 190px;
 }
 
 #sidebar .server {
@@ -71,28 +86,51 @@ input * {
 	border-radius: 30px;
 	background-color: #555;
 	position: relative;
-	display: block;
-	margin: 20px 10px;
-	cursor: pointer;
+	margin: 10px 10px;
 	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.3);
 	transition: all 0.2s ease;
+	float: left;
 }
 
-#sidebar .server:hover, #sidebar .logo-cont:hover, #sidebar .addNew-btn:hover {
+#sidebar .server-name {
+	padding-top: 25px;
+	float: left;
+	width: 130px;
+}
+
+#sidebar .server-users {
+	float: left;
+	width: 130px;
+}
+
+#sidebar .server-cont:hover .server, #sidebar .logo-cont:hover, #sidebar .addNew-btn:hover {
 	box-shadow: 2px 2px 9px 0px rgba(0, 0, 0, 0.6);
 }
 
-#sidebar .server::after {
-	content: "";
-	position: absolute;
-	bottom: -11px;
-	height: 2px;
-	width: 40px;
-	left: 10px;
-	background-color: #e1e4e7;
+#sidebar .server-cont {
+	position: relative;
+	font-size: 13px;
+	cursor: pointer;
+	-webkit-user-select: none;       
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	height: 80px;
+	overflow: hidden;
 }
 
-#sidebar.open .server::after {
+#sidebar .server-cont::after {
+	content: "";
+	position: absolute;
+	bottom: 0px;
+	height: 2px;
+	width: 40px;
+	left: 20px;
+	background-color: #e1e4e7;
+	transition: all 0.2s ease;
+}
+
+#sidebar.open .server-cont::after {
 	width: 190px;
 }
 
@@ -102,7 +140,7 @@ input * {
 	background-color: #555;
 	position: relative;
 	display: block;
-	margin: 20px 10px;
+	margin: 10px 10px;
 	cursor: pointer;
 	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
 	color: #fff;
@@ -136,6 +174,7 @@ input * {
 	background-clip: border-box;
 	background-origin: padding-box;
 	background-size: auto auto;
+	overflow: hidden;
 }
 
 #main-container .cu-footer {
@@ -272,7 +311,8 @@ button::-moz-focus-inner, button:active, button:focus {
 	margin-left: 25px;
     margin-right: 25px;
     float: left;
-	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
+	max-width: 70%;
 }
 
 .chat-section .msg-cont.mine .user-msg {
@@ -307,10 +347,10 @@ button::-moz-focus-inner, button:active, button:focus {
 	top: 3px;
 	right: 10px;
 	color: #888;
-	-webkit-user-select: none; /* Safari */        
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* IE10+/Edge */
-	user-select: none; /* Standard */
+	-webkit-user-select: none;       
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .chat-section .msg-cont.mine .user-msg .time {
@@ -318,21 +358,19 @@ button::-moz-focus-inner, button:active, button:focus {
 }
 
 .chat-section .msg-cont .user-msg .text {
-    width: 90%%;
     position: relative;
 	padding: 15px;
 	font-size: 13px;	
-    padding-right: 25px;
+    padding-right: 30px;
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap; 
+	word-wrap: break-word;
 }
 
 .chat-section .msg-cont.mine .user-msg .text {
     padding: 15px;
-    padding-left: 25px;
-}
-
-.server-cont {
-	width: 80px;
-	height: 100px;
+    padding-left: 30px;
 }
 
 /* vue */ 
@@ -410,6 +448,7 @@ button::-moz-focus-inner, button:active, button:focus {
 	cursor: pointer;
 	border-radius: 6px;
 	transition: all 0.2s ease;
+	background: none;
 }
 
 .modal-footer button:hover {
@@ -440,15 +479,6 @@ button::-moz-focus-inner, button:active, button:focus {
 
 
 
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
-
 .modal-enter {
   opacity: 0;
 }
@@ -463,7 +493,19 @@ button::-moz-focus-inner, button:active, button:focus {
   transform: scale(1.1);
 }
 
+.slideUp-enter-active, .slideUp-leave-active {
+	transition: all 0.4s;
+	
+}
+.slideUp-enter, .slideUp-leave-to {
+	opacity: 0;
+	transform: translateY(20px);
+}
 
-
-
+.msg-in-enter-active, .msg-in-leave-active {
+  transition: opacity .2s;
+}
+.msg-in-enter, .msg-in-leave-to {
+  opacity: 0;
+}
 

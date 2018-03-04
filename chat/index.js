@@ -41,7 +41,7 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-server.listen(port, function () { // "192.168.42.221",
+server.listen(port, "192.168.1.59", function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
 

@@ -25,8 +25,13 @@
 <body class="">
 	<div id="app1">
 		<div id="sidebar" v-bind:class="{ open: startApp}">
-			<div class="logo-cont" v-on:click="fetchConversations"></div>
-			<div class="server" v-for="(conv, index) in convs" :key="conv._id" :title="conv._id" @click="openChat(conv._id)"></div>
+			<div class="logo-cont" @click="startApp = true"></div>
+			<div class="server-cont" v-for="(conv, index) in convs" :key="conv._id" :title="conv._id" @click="openChat(conv._id)">
+				<div class="server"></div>
+				<div v-if="startApp" class="server-name"><i class="material-icons" style="padding: 1px 4px 1px 0px; float: left;">group</i>{{ conv.name }}</div>
+				<div v-if="startApp" class="server-users">0 members</div>
+				<div class="clearfix"></div>
+			</div>
 			<div class="addNew-btn" @click="showNewChatModal = true"><i class="material-icons">add</i></div>
 			<!--<button id="show-modal" >Show Modal</button>-->
 			<!-- use the modal component, pass in the prop -->
@@ -45,27 +50,31 @@
 			</modal>
 		</div>
 		<div id="main-container">
-			<div v-if="!startApp" class="cu-footer">
-				<div class="profile-ico-container">
-					<div class="profile-ico"><i class="fa fa-user-circle-o"></i></div>
-				</div>
-				<div class="inp-section">
-					<div class="msg-input">
-						<div class="status"></div>
-						<input type="text" placeholder="Write a message...">
-						<button type="button" class="send-btn" v-on:click="sendMessage"><i class="material-icons">send</i></button>
+			<transition name="slideUp">
+				<div v-if="!startApp" class="cu-footer">
+					<div class="profile-ico-container">
+						<div class="profile-ico"><i class="fa fa-user-circle-o"></i></div>
 					</div>
-				</div>
-			</div>
-			<div v-if="!startApp" class="chat-section">
-				<div class="chat">
-					<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}">
-						<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
-						<div class="user-msg" v-if="message.msgType != 'notification'">
-							<div class="time">12:10</div>
-							<div class="text">{{ message.text }}</div>
+					<div class="inp-section">
+						<div class="msg-input">
+							<div class="status"></div>
+							<input type="text" placeholder="Write a message...">
+							<button type="button" class="send-btn" v-on:click="sendMessage"><i class="material-icons">send</i></button>
 						</div>
 					</div>
+				</div>
+			</transition>
+			<div v-if="!startApp" class="chat-section">
+				<div class="chat">
+					<transition-group name="msg-in" appear>
+						<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
+							<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
+							<div class="user-msg" v-if="message.msgType != 'notification'">
+								<div class="time">12:10</div>
+								<div class="text">{{ message.text }}</div>
+							</div>
+						</div>
+					</transition-group>
 				</div>
 			</div>
 		</div>
@@ -244,6 +253,7 @@
 								name: convName,
 							},
 						}).done(function(msg) {
+							console.log(msg.message);
 							if (msg.message == 'done') {
 								app.fetchConversations();
 								app.showNewChatModal = false;
