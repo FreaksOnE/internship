@@ -14,6 +14,7 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 	<script src="js/jquery.min.js"></script>
+	<script src="js/underscore-min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 
 	<script src="/socket.io/socket.io.js"></script>
@@ -69,6 +70,7 @@
 					<transition-group name="msg-in" appear>
 						<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 							<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
+							<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID)">{{ message.from }}</div>
 							<div class="user-msg" v-if="message.msgType != 'notification'">
 								<div class="time">12:10</div>
 								<div class="text">{{ message.text }}</div>
@@ -96,6 +98,7 @@
 			data: {
 				msgs: [],
 				users: [],
+				userData: [],
 				convs: [],
 				userDetail: {
 					name: "",
@@ -214,7 +217,6 @@
 					}).done(function(msg) {
 						if (msg.message == 'done') {
 							app.msgs = msg.data;
-							//console.log(app.msgs);
 						}
 					}).fail(function(jqXHR, textStatus) {
 						//console.log(jqXHR);
@@ -227,6 +229,7 @@
 					this.openedChat = chatID;
 					console.log(chatID);
 					this.fetchMessages(chatID);
+					this.fetchUsernames();
 				},
 				getUser: function() {
 					var request = $.ajax({
@@ -263,6 +266,61 @@
 							console.log(textStatus);
 						});
 					}
+				},
+				userChange: function(queue, convID) {
+					if (queue < 1) {
+						return false;
+					} else {
+						var firstMsg = _.findWhere(this.msgs, {
+							conversationID: convID,
+							queueNumber: queue
+						});
+						var secondMsg = _.findWhere(this.msgs, {
+							conversationID: convID,
+							queueNumber: (queue - 1)
+						});
+						if (firstMsg.from == secondMsg.from) {
+							return false;
+						} else {
+							return true;
+						}
+					}
+				},
+				fetchUsernames: function() {
+					var temp = [];
+					this.msgs.forEach(function(elem) {
+						temp.push(elem.from);
+					});
+					temp = _.without(temp, undefined);
+					temp = _.uniq(temp);
+
+					var request = $.ajax({
+						url: '/api/userdata',
+						type: 'POST',
+						data: {
+							"users": temp
+						},
+					}).done(function(msg) {
+						if (msg.message == 'done') {
+							msg.data.forEach(function(elem) {
+								app.userData.push({
+									id: elem._id,
+									name: elem.local.name
+								});
+							});
+							console.log(app.getUsername('5a9b85d5955e3222af132ed1'));
+						}
+					}).fail(function(jqXHR, textStatus) {
+						//console.log(jqXHR);
+						console.log(textStatus);
+					});
+				},
+				getUsername: function(userID) {
+					var temp;
+					temp = _.findWhere(this.userData, {
+						id: userID
+					});
+					return temp.name;
 				},
 			},
 		});

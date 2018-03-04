@@ -41,7 +41,7 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-server.listen(port, "192.168.1.59", function () { // "192.168.42.221",
+server.listen(port, function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
 
@@ -307,8 +307,10 @@ router.route('/convs/:conv_id').get(function (req, res) {
 router.route('/user').get(function (req, res) {
 	res.json({
 		message: 'done',
-		data: { name: req.user.local.name,
-			  id: req.user.id}
+		data: {
+			name: req.user.local.name,
+			id: req.user.id
+		}
 	});
 });
 
@@ -364,8 +366,31 @@ router.route('/users/:user_id').get(function (req, res) {
 	});
 });
 
+router.route('/userdata').post(function (req, res) {
+	console.log(req.body.users[0]);
+	//var temp = JSON.parse(req.body.users);
+	//console.log(temp[0]);
+	var temp = req.body.users;
 
+	for (var i = 0; i < temp.length; i++) {
+		temp[i] = mongoose.Types.ObjectId(temp[i]);
+	}
 
+	userModel.find({
+		_id: {
+			$in: temp
+		}
+	}).select('local.id local.name').exec(function (err, result) {
+		if (err)
+			console.log(err);
+
+		res.json({
+			message: 'done',
+			data: result
+		});
+	});
+
+});
 
 // on routes that end in /msgs
 router.route('/msgs').post(function (req, res) {
