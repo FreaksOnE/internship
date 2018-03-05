@@ -42,11 +42,10 @@ input * {
 	left: 0px;
 	height: 100vh;
 	width: 80px;
-	background-color: #555;
+	background-color: #fff;
 	z-index: 2;
     transition: all 0.3s ease;
-	box-shadow: 3px 0px 4px 0px rgba(0, 0, 0, 0.3);
-	color: #eee;
+	box-shadow: 3px 0px 6px 0px rgba(0, 0, 0, 0.5);
 }
 
 #sidebar.open {
@@ -59,10 +58,10 @@ input * {
 	display: block;
 	height: 50px;
 	border-radius: 10px;
-	background-color: #eee;
+	background-color: #555;
 	margin: 20px 10px 12px 10px;
 	cursor: pointer;
-	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
 	transition: all 0.2s ease;
 }
 
@@ -85,10 +84,10 @@ input * {
 	width: 60px;
 	height: 60px;
 	border-radius: 30px;
-	background-color: #eee;
+	background-color: #555;
 	position: relative;
 	margin: 10px 10px;
-	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.3);
 	transition: all 0.2s ease;
 	float: left;
 }
@@ -105,7 +104,7 @@ input * {
 }
 
 #sidebar .server-cont:hover .server, #sidebar .logo-cont:hover, #sidebar .addNew-btn:hover {
-	box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 2px 2px 9px 0px rgba(0, 0, 0, 0.6);
 }
 
 #sidebar .server-cont {
@@ -138,13 +137,13 @@ input * {
 #sidebar .addNew-btn {
 	height: 60px;
 	border-radius: 30px;
-	background-color: #eee;
+	background-color: #555;
 	position: relative;
 	display: block;
 	margin: 10px 10px;
 	cursor: pointer;
-	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
-	color: #555;
+	box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.3);
+	color: #fff;
 	font-size: 46px;
 	text-align: center;
 	transition: all 0.2s ease;
@@ -182,8 +181,8 @@ input * {
 	position: absolute;
 	bottom: 0px;
 	width: 100%;
-	height: 100px;
-	z-index: 3;
+	height: 130px;
+	z-index: 1;
 }
 
 #main-container .cu-footer .profile-ico-container {
@@ -198,14 +197,13 @@ input * {
 	height: 54px;
 	width: 54px;
 	border-radius: 50%;
-	background-color: #eee;
+	background-color: #fff;
 	margin: auto;
-	top: 30px;
+	top: 33px;
 	cursor: pointer;
-	transition: border 0.2s ease;
-	font-size: 54px;
-	color: #555;
-	box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.4);
+    transition: border 0.2s ease;
+    font-size: 54px;
+    color: #555;
 }
 
 #main-container .cu-footer .profile-ico i {
@@ -216,9 +214,6 @@ input * {
 
 #main-container .cu-footer .inp-section {
 	height: 100%;
-	/*width: 100%;*/
-	transition: width 0.3s ease;
-	margin-right: 250px;
 }
 
 #main-container .cu-footer .inp-section .status {
@@ -231,60 +226,28 @@ input * {
 
 #main-container .cu-footer .inp-section .msg-input {
     display: block;
-	margin: 0px 55px 0px 120px;
-	height: 90px;
-	position: relative;
-	background-color: #555;
-	border-top-right-radius: 10px;
-	color: #eee;
-	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
-	border-top-left-radius: 10px;
-	top: 20px;
-	font-size: 20px;
-}
-
-#main-container .cu-footer .inp-section .msg-input > i {
-	height: 44px;
-	line-height: 33px;
-	width: 36px;
-	text-align: center;
-	color: #aaa;
-	cursor: pointer;
-	-webkit-user-select: none;       
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	float: left;
-}
-
-#main-container .cu-footer .inp-section .msg-input > i:first-of-type {
-	margin-left: 20px;
-}
-	
-#main-container .cu-footer .inp-section .msg-input::after {
-	content: "";
-    width: 96%;
-    height: 2px;
-    background-color: #666;
-    position: absolute;
-    left: 0;
-    top: 44px;
-    right: 0;
-    margin: auto;
+    margin: 0px 50px 0px 120px;
+    height: 54px;
+    position: relative;
+    top: 33px;
+    background-color: #555;
+    border-radius: 10px;
+    color: #fff;
+    box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.5);
 }
 
 #main-container .cu-footer .inp-section .msg-input input {
-	height: 46px;
+	height: 100%;
 	width: 100%;
-	padding: 0px 50px 0px 20px;
+	padding: 0px 50px 0px 12px;
 	border: none;
     background: none;
 	float: left;
-	color: #eee;
+	color: #fff;
 }
 
 #main-container .cu-footer .inp-section .msg-input .send-btn {
-	height: 46px;
+	height: 100%;
     background: none;
 	border: none;
 	cursor: pointer;
@@ -294,17 +257,7 @@ input * {
     z-index: 3;
     right: 0px;
     font-size: 24px;
-	color: #eee;
-}
-
-#main-container .frind-list {
-	position: absolute;
-	width: 250px;
-	height: 100%;
-	background-color: #555;
-	right: 0px;
-	top: 0px;
-	
+	color: #fff;
 }
 
 button::-moz-focus-inner, button:active, button:focus { 
@@ -313,11 +266,9 @@ button::-moz-focus-inner, button:active, button:focus {
 }
 
 #main-container .chat-section {
-	/*width: 100%;*/
+	width: 100%;
 	height: 100%;
     overflow-y: scroll;
-	transition: width 0.3s ease;
-	margin-right: 250px;
 }
 
 #main-container .chat-section .chat {
@@ -360,53 +311,12 @@ button::-moz-focus-inner, button:active, button:focus {
 	margin-left: 25px;
     margin-right: 25px;
     float: left;
-	box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
-	max-width: 550px;
-	cursor: pointer;
-	z-index: 2;
-	transition: all 0.2s ease;
-	color: #222;
-}
-
-.chat-section .msg-cont .user-msg.selected {
-	background-color: #555;
-	color: #eee;
-}
-
-.chat-section .msg-cont .msg-prop {
-	width: 20px;
-	position: absolute;
-	right: -25px;
-	left: unset;
-	font-size: 16px;
-	top: 0px;
-	bottom: 0;
-	margin: auto;
-	height: 40px;
-	padding-bottom: 2px;
-	text-align: center;
-	background-color: #555;
-	border-radius: 4px;
-	color: #eee;
-}
-
-.chat-section .msg-cont.mine .msg-prop {
-	left: -25px;
-	right: unset;
-}
-
-.chat-section .msg-cont .msg-prop > i {
-	padding: 2px 0px;
-	cursor: pointer;
-	-webkit-user-select: none;       
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
+	max-width: 70%;
 }
 
 .chat-section .msg-cont.mine .user-msg {
     float: right;
-	background-color: #eee;
 }
 
 .chat-section .msg-cont .notification {
@@ -414,7 +324,7 @@ button::-moz-focus-inner, button:active, button:focus {
     font-size: 12px;
     padding: 4px;
     border-radius: 6px;
-    /*background-color: #eee;
+    /*background-color: #fff;
     min-width: 240px;
     width: 20%;*/
     margin: 12px auto 4px auto;
@@ -472,8 +382,9 @@ button::-moz-focus-inner, button:active, button:focus {
 	top: 12px;
 	border-radius: 50%;
 	cursor: pointer;
-	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
+	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
+
 
 
 
@@ -614,32 +525,10 @@ button::-moz-focus-inner, button:active, button:focus {
 	transform: translateY(20px);
 }
 
-.msg-cont .prop-slide-enter-active, .msg-cont .prop-slide-leave-active {
-	transition: all 0.15s;
-	
-}
-.msg-cont .prop-slide-enter, .msg-cont .prop-slide-leave-to {
-	opacity: 0.3;
-	transform: translateX(15px);
-}
-
-.msg-cont.mine .prop-slide-enter, .msg-cont.mine .prop-slide-leave-to {
-	opacity: 0;
-	transform: translateX(-15px);
-}
-
 .msg-in-enter-active, .msg-in-leave-active {
-  transition: all .15s;
+  transition: opacity .2s;
 }
 .msg-in-enter, .msg-in-leave-to {
   opacity: 0;
-}
-
-.friendListSlide-enter-active, .friendListSlide-leave-active {
-  transition: all .25s;
-}
-.friendListSlide-enter, .friendListSlide-leave-to {
-	opacity: 0;
-	transform: translateX(45px);
 }
 

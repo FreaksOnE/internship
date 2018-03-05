@@ -367,7 +367,7 @@ router.route('/users/:user_id').get(function (req, res) {
 });
 
 router.route('/userdata').post(function (req, res) {
-	console.log(req.body.users[0]);
+	//console.log(req.body.users[0]);
 	//var temp = JSON.parse(req.body.users);
 	//console.log(temp[0]);
 	var temp = req.body.users;
