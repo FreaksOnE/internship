@@ -6,6 +6,10 @@ var conversationSchema = new Schema({
 	name: {
 		type: String,
 		required: true
+	},
+	members: {
+		type: [Schema.ObjectId],
+        ref: 'user'
 	}
 });
 

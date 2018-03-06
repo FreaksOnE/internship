@@ -326,7 +326,7 @@ router.route('/users').get(function (req, res) {
 	});
 });
 
-// on routes that end in /convs/:conv_id
+// on routes that end in /users/:user_id
 router.route('/users/:user_id').get(function (req, res) {
 	userModel.findById(req.params.user_id).select('name online').exec(function (err, result) {
 		if (err)
@@ -380,7 +380,7 @@ router.route('/userdata').post(function (req, res) {
 		_id: {
 			$in: temp
 		}
-	}).select('local.id local.name').exec(function (err, result) {
+	}).select('local.id local.name local.online').exec(function (err, result) {
 		if (err)
 			console.log(err);
 
@@ -439,9 +439,44 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 		if (err)
 			res.send(err);
 
+		conversationModel.findById(req.params.conv_id, function (err, result2) {
+			if (result2) {
+				//console.log(result2.members.indexOf(req.user.id));
+				//console.log(result2.members);
+				//console.log(req.user.id);
+
+				if (result2.members.indexOf(req.user.id) < 0) {
+					result2.members.push(req.user.id);
+					result2.save(function (err) {
+						if (err)
+							res.send(err);
+
+						res.json({
+							message: 'done',
+							data: result
+						});
+					});
+				} else {
+					res.json({
+						message: 'done',
+						data: result
+					});
+				}
+			} else {
+				res.json({
+					message: 'done',
+					data: null
+				});
+			}
+		});
+	});
+});
+
+router.route('/conv_users/:conv_id').get(function (req, res) {
+	conversationModel.findById(req.params.conv_id, function (err, result) {
 		res.json({
 			message: 'done',
-			data: result
+			data: result.members
 		});
 	});
 });

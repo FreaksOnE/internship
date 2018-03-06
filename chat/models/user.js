@@ -25,6 +25,10 @@ var userSchema = new Schema({
 		online: {
 			type: Boolean,
 			default: false
+		},
+		deleted: {
+			type: Boolean,
+			default: false
 		}
 	},
 
