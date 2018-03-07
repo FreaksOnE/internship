@@ -68,7 +68,7 @@ server.listen(port, function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
 
-/*userModel.find({
+userModel.find({
 	'local.online': true
 }, function (err, result) {
 	if (result) {
@@ -81,7 +81,7 @@ server.listen(port, function () { // "192.168.42.221",
 			//console.log(result);
 		});
 	}
-});*/
+});
 
 // Configuring Passport
 passport.serializeUser(function (user, done) {

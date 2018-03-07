@@ -115,7 +115,7 @@
 				</transition>
 				<div class="chat-cont" v-bind:class="{ open: selectedMsgsCount }">
 					<div class="chat">
-						<transition-group name="msg-in" appear>
+						<transition-group name="msg-in" mode="out-in">
 							<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 								<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
 								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">{{ getUsername(message.from) }}</div>
