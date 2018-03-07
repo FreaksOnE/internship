@@ -12,11 +12,17 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 var mongoose = require('mongoose');
+var cookie = require('cookie');
 // Add db models
 var userModel = require('./models/user');
 var conversationModel = require('./models/conversation');
 var messageModel = require('./models/message');
 var LocalStrategy = require('passport-local').Strategy;
+var passportSocketIo = require('passport.socketio');
+
+/*var sessionStore = new RedisStore({
+	client: redisUrl.connect(process.env.REDIS_URL)
+});*/
 
 // Configuring Express
 app.use(morgan('dev')); // log requests to the console
@@ -28,11 +34,27 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(expressSession({
-	secret: 'mySecretKey'
-}));
+var sessionMiddleware = expressSession({
+	//store: sessionStore,
+	secret: 'mySecretKey',
+});
+
+/*io.use(function(socket, next) {
+    sessionMiddleware(socket.request, socket.request.res, next);
+});*/
+
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+/*io.use(passportSocketIo.authorize({
+	key: 'connect.sid',
+	secret: process.env.SECRET_KEY_BASE,
+	store: sessionStore,
+	passport: passport,
+	cookieParser: cookieParser
+}));*/
 
 // Configuring Mangoose
 var mongoDB = 'mongodb://chatUser:123@ds249718.mlab.com:49718/chatdb';
@@ -83,7 +105,13 @@ passport.use('local_login', new LocalStrategy({
 						message: 'Invalid Password.'
 					});
 				}
-				return done(null, user);
+				user.local.sessionID = req.sessionID;
+				console.log('req: ' + req.sessionID);
+				user.save(function (err, updatedUser) {
+					if (err) return handleError(err);
+					console.log(updatedUser);
+					return done(null, user);
+				});
 			}
 		);
 	}));
@@ -217,15 +245,6 @@ router.all('/*', function (req, res, next) {
 });
 
 //router.all('/api/*', requireAuthentication);
-
-/*
-Route					HTTP Verb	Description
-/api/bears 				GET 		Get all the bears.
-/api/bears 				POST 		Create a bear.
-/api/bears/:bear_id 	GET 		Get a single bear.
-/api/bears/:bear_id 	PUT 		Update a bear with new info.
-/api/bears/:bear_id 	DELETE 		Delete a bear.
-*/
 
 // on routes that end in /convs
 router.route('/convs').post(function (req, res) {
@@ -438,7 +457,6 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 	}, function (err, result) {
 		if (err)
 			res.send(err);
-
 		conversationModel.findById(req.params.conv_id, function (err, result2) {
 			if (result2) {
 				//console.log(result2.members.indexOf(req.user.id));
@@ -451,9 +469,32 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 						if (err)
 							res.send(err);
 
-						res.json({
-							message: 'done',
-							data: result
+						var temp = [];
+						var tmp_queue = 0;
+						result.forEach(function (elem) {
+							temp.push(elem.queueNumber);
+						});
+						if (temp.length < 1) {
+							tmp_queue = 0;
+						} else {
+							tmp_queue = math.max(temp) + 1;
+							//console.log(newMsg.queueNumber);
+						}
+
+						messageModel.create({
+							msgType: 'notification',
+							text: req.user.local.name + ' joined',
+							conversationID: req.params.conv_id,
+							queueNumber: tmp_queue
+						}, function (err, result3) {
+							if (err) return handleError(err);
+							// saved!
+							//console.log(result3);
+							result.push(result3);
+							res.json({
+								message: 'done',
+								data: result
+							});
 						});
 					});
 				} else {
@@ -524,79 +565,50 @@ router.route('/msgs/:msg_id').get(function (req, res) {
 // Chatroom
 var numUsers = 0;
 
-var msgs = [];
 var users = [];
+var sockets = {};
 
 function logUsers() {
 	console.log(numUsers + " online");
 	console.log(users);
 }
 
+io.set('authorization', function (data, accept) {
+	// check if there's a cookie header
+	if (data.headers.cookie) {
+		//console.log('cookie: ' + data.headers.cookie);
+		// if there is, parse the cookie
+		data.cookie = cookie.parse(data.headers.cookie);
+		// note that you will need to use the same key to grad the
+		// session id, as you specified in the Express setup.
+		//console.log(data.cookie['connect.sid']);
+		//console.log(data.cookie['connect.sid'].match(/(?!\:)[A-Za-z0-9_-]+(?=\.)/g));
+		data.headers.sessionID = data.cookie['connect.sid'].match(/(?!\:)[A-Za-z0-9_-]+(?=\.)/g)[0];
+		//console.log('session: ' + data.headers.sessionID);
+	} else {
+		// if there isn't, turn down the connection with a message
+		// and leave the function.
+		return accept('No cookie transmitted.', false);
+	}
+	// accept the incoming connection
+	accept(null, true);
+});
+
 io.on('connection', function (socket) {
-	//console.log("user joined.");
+	console.log("user joined.");
+	//console.log(io);
+	//console.log(socket.request);
 	var addedUser = false;
 
-	socket.on('new message', function (data) {
-		msgs.push(data);
-		console.log(data);
-		io.emit('new message', data); //socket.broadcast.emit('new message', data);
-	});
-
-	socket.on('add user', function (username) {
-		if (addedUser) return;
-
-		socket.username = username;
-		++numUsers;
-		addedUser = true;
-
-		var userID = Math.floor((Math.random() * (99999 - 10000)) + 10000);
-
-		var userIDs = [];
-		users.forEach(function (elem) {
-			userIDs.push(elem.id);
-		});
-
-		var IDexists = userIDs.includes(userID);
-
-		while (IDexists) {
-			userID = Math.floor((Math.random() * (99999 - 10000)) + 10000);
-			if (!userIDs.includes(userID))
-				break;
-		}
-
-		socket.userID = userID;
-
-		socket.emit('login', {
-			id: socket.userID,
-		});
-
-		users.push({
-			id: socket.userID,
-			name: socket.username,
-			conversations: 1,
-			banned: false,
-		});
-
-		io.emit('user joined', {
-			id: socket.userID,
-			name: socket.username,
-		});
-		logUsers();
-	});
+	var sessionID = socket.handshake.headers.sessionID;
+	console.log('session id: ' + sessionID);
+	sockets[sessionID] = socket;
+	//console.log(sockets);
 
 	socket.on('disconnect', function () {
 		if (addedUser) {
 			--numUsers;
 
-			io.emit('user left', {
-				id: socket.userID,
-				name: socket.username,
-			});
-			users.forEach(function (elem) {
-				if (elem.name == socket.username) {
-					users.splice(users.indexOf(elem), 1);
-				}
-			});
 			logUsers();
 		}
 	});

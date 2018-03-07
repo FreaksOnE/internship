@@ -29,6 +29,9 @@ var userSchema = new Schema({
 		deleted: {
 			type: Boolean,
 			default: false
+		},
+		sessionID: {
+			type: String
 		}
 	},
 

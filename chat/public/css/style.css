@@ -543,7 +543,7 @@ button::-moz-focus-inner, button:active, button:focus {
 	left: 0px;
 	font-size: 20px;
 	margin: auto;
-	height: 50px;
+	min-height: 50px;
 	line-height: 50px;
 	text-align: center;
 	background-color: #555;

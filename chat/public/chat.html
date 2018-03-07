@@ -91,7 +91,7 @@
 						</div>
 						<div class="elem" style="width: 140px;">
 							<div class="label">
-								messages selected&nbsp;<span style="font-size: 14px;padding: 0px 3px;font-weight: 700;">{{ selectedMsgsCount }}</span>
+								selected messages&nbsp;<span style="font-size: 14px;padding: 0px 3px;font-weight: 700;">{{ selectedMsgsCount }}</span>
 							</div>
 						</div>
 						<div class="elem">
@@ -102,6 +102,15 @@
 							<i class="material-icons">delete</i>
 							<div class="label">Delete</div>
 						</div>
+						<div class="elem">
+							<i class="material-icons">forward</i>
+							<div class="label">Forward</div>
+						</div>
+						<div class="elem">
+							<i class="material-icons">content_copy</i>
+							<div class="label">Copy</div>
+						</div>
+						
 					</div>
 				</transition>
 				<div class="chat-cont" v-bind:class="{ open: selectedMsgsCount }">
@@ -109,8 +118,8 @@
 						<transition-group name="msg-in" appear>
 							<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 								<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
-								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID)">{{ getUsername(message.from) }}</div>
-								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id"></div>
+								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">{{ getUsername(message.from) }}</div>
+								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType == 'message'"></div>
 								<div class="user-msg" v-if="message.msgType != 'notification'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
 									<div class="time">12:10</div>
 									<div class="text">{{ message.text }}</div>
@@ -162,10 +171,8 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		var username;
 		var connected = false;
 		var typing = false;
-		var lastTypingTime;
 
 		var socket = io();
 
@@ -494,6 +501,8 @@
 		});
 
 		app.fetchConversations();
+		
+		
 
 	</script>
 
