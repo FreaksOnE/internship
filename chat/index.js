@@ -57,7 +57,8 @@ app.use(passport.session());
 }));*/
 
 // Configuring Mangoose
-var mongoDB = 'mongodb://chatUser:123@ds249718.mlab.com:49718/chatdb';
+var mongoDB = 'mongodb://localhost:27017/test';
+//var mongoDB = 'mongodb://chatUser:123@ds249718.mlab.com:49718/chatdb';
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
@@ -66,6 +67,21 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 server.listen(port, function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
+
+/*userModel.find({
+	'local.online': true
+}, function (err, result) {
+	if (result) {
+		result.forEach(function (elem) {
+			elem.local.online = false;
+			//console.log(elem);
+		});
+		result.save(function (err) {
+			if (err) return handleError(err);
+			//console.log(result);
+		});
+	}
+});*/
 
 // Configuring Passport
 passport.serializeUser(function (user, done) {
@@ -443,7 +459,7 @@ router.route('/msgs').post(function (req, res) {
 		newMsg.save(function (err) {
 			if (err)
 				res.send(err);
-
+			io.emit('refresh chat');
 			res.json({
 				message: 'done'
 			});
@@ -498,6 +514,9 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 						});
 					});
 				} else {
+
+
+
 					res.json({
 						message: 'done',
 						data: result
@@ -596,20 +615,44 @@ io.set('authorization', function (data, accept) {
 
 io.on('connection', function (socket) {
 	console.log("user joined.");
-	//console.log(io);
-	//console.log(socket.request);
-	var addedUser = false;
 
 	var sessionID = socket.handshake.headers.sessionID;
 	console.log('session id: ' + sessionID);
 	sockets[sessionID] = socket;
-	//console.log(sockets);
+
+	userModel.findOne({
+		'local.sessionID': sessionID
+	}, function (err, user) {
+		if (err)
+			return done(err);
+		if (user) {
+			user.local.online = true;
+			user.save(function (err) {
+				io.emit('refresh chat');
+			});
+		}
+
+	});
+
+	socket.emit('login');
+
+	socket.on('typing', function () {
+
+	});
 
 	socket.on('disconnect', function () {
-		if (addedUser) {
-			--numUsers;
+		userModel.findOne({
+			'local.sessionID': sessionID
+		}, function (err, user) {
+			if (err)
+				return done(err);
+			if (user) {
+				user.local.online = false;
+				user.save(function (err) {
+					io.emit('refresh chat');
+				});
+			}
 
-			logUsers();
-		}
+		});
 	});
 });

@@ -110,7 +110,7 @@
 							<i class="material-icons">content_copy</i>
 							<div class="label">Copy</div>
 						</div>
-						
+
 					</div>
 				</transition>
 				<div class="chat-cont" v-bind:class="{ open: selectedMsgsCount }">
@@ -134,7 +134,7 @@
 				<div class="member-list" v-if="!startApp" v-bind:class="{ open: showProfile }">
 					<transition name="fade">
 						<div class="online" v-if="!showProfile">
-							<div class="header">online-2</div>
+							<div class="header">online-</div>
 							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile;">
 								<div class="user-image"></div>
 								<span style="float:left;width:130px;">
@@ -146,7 +146,7 @@
 					</transition>
 					<transition name="fade">
 						<div class="offline" v-if="!showProfile">
-							<div class="header">offline-0</div>
+							<div class="header">offline-</div>
 							<div class="user" v-for="user in offlineUsers" @click="showProfile = !showProfile;">
 								<div class="user-image"></div>
 								<span style="float:left;width:130px;">
@@ -227,51 +227,6 @@
 				},
 			},
 			methods: {
-				getMsg: function(conv, offset, count) {
-					var temp = this.getConv(conv);
-					var tempMsgs = [];
-					if (offset == -1) {
-
-					} else {
-						temp.forEach(function(elem) {
-							if (elem.queue >= (offset - count) && elem.queue < offset && tempMsgs.length <= count) {
-								tempMsgs.push(elem);
-							}
-						});
-					}
-					return tempMsgs;
-				},
-				getLastMsg: function(num) {
-					var temp = [];
-					this.msgs.forEach(function(elem) {
-						if (elem.conversationID == num) {
-							temp.push(elem.queue);
-						}
-					});
-					//console.log(Math.max(...temp));
-					return Math.max(...temp);
-				},
-				sendMsg: function() {
-					//console.log("msg");
-					var cu_queue = this.getLastMsg(1) + 1;
-					var msgText = $(".msg-input input").val();
-					if (msgText != "") {
-						//$(".msg-input input").val("");
-						$(".msg-input input").focus();
-						this.msgs.push({
-							conversationID: 1,
-							queue: cu_queue,
-							id: cu_queue,
-							text: msgText,
-							from: 0,
-							time: "12:10",
-							date: "date",
-						});
-						//console.log('chat: '+$(".chat").outerHeight(true));
-						//console.log('window: '+$(window).height());
-						//$(".chat-section").animate({scrollTop:($(".chat").outerHeight(true) - $(window).height())+45}, 'fast');
-					}
-				},
 				changeStatus: function(data) {
 					var message = '';
 					if (data.numUsers === 1) {
@@ -285,9 +240,9 @@
 				},
 				changeOnline: function(data) {
 					if (data) {
-						$("#sidebar").css("box-shadow", "0px 0px 4px 0px greenyellow");
+						$("#sidebar").css("box-shadow", "1px 0px 4px 0px greenyellow");
 					} else {
-						$("#sidebar").css("box-shadow", "0px 0px 4px 0px red");
+						$("#sidebar").css("box-shadow", "1px 0px 4px 0px red");
 					}
 				},
 				sendMessage: function() {
@@ -489,9 +444,9 @@
 						console.log(textStatus);
 					});
 				},
-				deselectAll: function(){
-					if(this.msgs){
-						this.msgs.forEach(function(elem){
+				deselectAll: function() {
+					if (this.msgs) {
+						this.msgs.forEach(function(elem) {
 							elem.selected = false;
 						});
 						this.selectedMsgsCount = 0;
@@ -501,8 +456,32 @@
 		});
 
 		app.fetchConversations();
-		
-		
+
+		socket.on('login', function() {
+			connected = true;
+			app.changeOnline(true);
+		});
+
+		socket.on('refresh chat', function() {
+			app.fetchMessages(app.openedChat, function() {
+				app.fetchUsernames(function() {
+					console.log('loaded');
+				});
+			});
+		})
+
+		socket.on('disconnect', function() {
+			connected = false;
+			app.changeOnline(false);
+		});
+
+		socket.on('reconnect', function() {
+
+		});
+
+		socket.on('reconnect_error', function() {
+
+		});
 
 	</script>
 
