@@ -178,7 +178,17 @@
 
 		Vue.component('modal', {
 			template: '#modal-template'
-		})
+		});
+
+		$(document).keypress(function(e) {
+			if (e.which == 13) {
+				if($(".msg-input input").is(":focus")){
+					if($(".msg-input input").val().length){
+						app.sendMessage();
+					}
+				}
+			}
+		});
 
 		var app = new Vue({
 			el: '#app1',
@@ -248,7 +258,7 @@
 				sendMessage: function() {
 					var msgText = $(".msg-input input").val();
 					if (msgText) {
-						//$(".msg-input input").val("");
+						$(".msg-input input").val("");
 						$(".msg-input input").focus();
 						var request = $.ajax({
 							url: '/api/msgs',

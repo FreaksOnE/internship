@@ -251,17 +251,18 @@ router.get(
 		failureRedirect: '/'
 	}),
 	function (req, res) {
-		console.log(req.session.passport.user.id);
+		//console.log(req.session.passport.user.id);
 
 		userModel.findOne({
 			'local.auth_id': req.session.passport.user.id
 		}, function (err, result) {
 			if (err)
 				console.log(err);
-			console.log('res: '+result);
+			//console.log('res: '+result);
 			if (result) {
 				result.local.name = req.session.passport.user.displayName;
 				result.local.picture = req.session.passport.user.picture;
+				result.local.sessionID = req.sessionID;
 				result.save(function (err) {
 					if (err)
 						console.log(err);
@@ -272,12 +273,13 @@ router.get(
 				newUser.local.name = req.session.passport.user.displayName;
 				newUser.local.auth_id = req.session.passport.user.id;
 				newUser.local.picture = req.session.passport.user.picture;
+				newUser.local.sessionID = req.sessionID;
 
 				newUser.save(function (err, result2) {
 					if (err)
 						console.log(err);
 					console.log('new user saved');
-					console.log(result2);
+					//console.log(result2);
 				});
 			}
 		});
@@ -344,7 +346,7 @@ router.route('/convs').post(function (req, res) {
 	newConversation.save(function (err, result) {
 		if (err)
 			res.send(err);
-		console.log(result._id);
+		//console.log(result._id);
 		messageModel.create({
 			msgType: 'notification',
 			text: 'chat created',
@@ -478,6 +480,7 @@ router.route('/userdata').post(function (req, res) {
 	//console.log(req.body.users[0]);
 	//var temp = JSON.parse(req.body.users);
 	//console.log(temp[0]);
+	
 	var temp = req.body.users;
 
 	for (var i = 0; i < temp.length; i++) {
@@ -492,7 +495,7 @@ router.route('/userdata').post(function (req, res) {
 		if (err)
 			console.log(err);
 		
-		console.log(result);
+		//console.log(result);
 		
 		res.json({
 			message: 'done',
@@ -694,7 +697,7 @@ io.on('connection', function (socket) {
 	//console.log("user joined.");
 
 	var sessionID = socket.handshake.headers.sessionID;
-	//console.log('session id: ' + sessionID);
+	console.log('session id: ' + sessionID);
 	sockets[sessionID] = socket;
 
 	userModel.findOne({
