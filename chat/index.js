@@ -419,7 +419,8 @@ router.route('/user').get(function (req, res) {
 		message: 'done',
 		data: {
 			name: req.session.passport.user.displayName,//req.user.local.name,
-			id: req.session.passport.user.id
+			id: req.session.passport.user.id,
+			picture: req.session.passport.user.picture
 		}
 	});
 });
@@ -491,7 +492,7 @@ router.route('/userdata').post(function (req, res) {
 		'local.auth_id': {
 			$in: temp
 		}
-	}).select('local.auth_id local.name local.online').exec(function (err, result) {
+	}).select('local.auth_id local.name local.online local.picture').exec(function (err, result) {
 		if (err)
 			console.log(err);
 		

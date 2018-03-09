@@ -206,6 +206,14 @@ input * {
 	font-size: 54px;
 	color: #555;
 	box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.4);
+	overflow: hidden;
+}
+
+#main-container .cu-footer .profile-ico img {
+	width: 54px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
 }
 
 #main-container .cu-footer .profile-ico i {
@@ -385,6 +393,11 @@ input * {
 	border-radius: 50%;
 	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
 	float: left;
+	overflow: hidden;
+}
+
+#main-container .member-list .user .user-image img {
+	width: 40px;
 }
 
 #main-container .member-list .user .user-name {
@@ -662,11 +675,33 @@ button::-moz-focus-inner, button:active, button:focus {
 	border-radius: 50%;
 	cursor: pointer;
 	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
 }
 
+.chat-section .msg-cont .user-img img {
+	width: 50px;
+}
 
+.preLoader {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100vw;
+	height: 100vh;
+	background-color: #222;
+	text-align: center;
+	z-index: 100;
+}
 
-
+.preLoader .content {
+	position: absolute;
+	top: 45%;
+	margin: auto;
+	color: #aaa;
+	font-size: 70px;
+	left: 0px;
+	right: 0px;
+}
 
 
 
@@ -819,10 +854,17 @@ button::-moz-focus-inner, button:active, button:focus {
 }
 
 .memberListSlide-enter-active, .memberListSlide-leave-active {
-  transition: all .25s;
+  transition: all .2s;
 }
 .memberListSlide-enter, .memberListSlide-leave-to {
 	opacity: .0;
 	transform: translateX(40px);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: all .3s;
+}
+.fade-enter, .fade-leave-to {
+	opacity: .0;
 }
 

@@ -25,6 +25,11 @@
 
 <body class="">
 	<div id="app1">
+		<transition name="fade">
+			<div v-if="preLoad" class="preLoader">
+				<div class="content">{"loaded": "{{loaded}}%"}</div>
+			</div>
+		</transition>
 		<transition name="sidebarSlide">
 			<div id="sidebar" v-bind:class="{ open: startApp}">
 				<div class="logo-cont" @click="startApp = true"></div>
@@ -56,7 +61,9 @@
 			<transition name="slideUp">
 				<div v-if="!startApp" class="cu-footer">
 					<div class="profile-ico-container">
-						<div class="profile-ico" @click="userOptions = !userOptions"><i class="fa fa-user-circle-o"></i></div>
+						<div class="profile-ico" @click="userOptions = !userOptions"><i class="fa fa-user-circle-o"></i>
+							<img :src="userDetail.picture">
+						</div>
 					</div>
 					<div class="inp-section">
 						<div class="msg-input" v-bind:class="{ open: userOptions }">
@@ -119,7 +126,7 @@
 							<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 								<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
 								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">{{ getUsername(message.from) }}</div>
-								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType == 'message'"></div>
+								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType == 'message'"><img :src="getUserImage(message.from)"></div>
 								<div class="user-msg" v-if="message.msgType != 'notification'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
 									<div class="time">12:10</div>
 									<div class="text">{{ message.text }}</div>
@@ -136,7 +143,7 @@
 						<div class="online" v-if="!showProfile">
 							<div class="header">online-</div>
 							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile;">
-								<div class="user-image">{{ user.picture }}</div>
+								<div class="user-image"><img :src="user.picture"></div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
 									<div class="user-status">{{ user.online ? 'online' : 'offline' }}</div>
@@ -148,7 +155,7 @@
 						<div class="offline" v-if="!showProfile">
 							<div class="header">offline-</div>
 							<div class="user" v-for="user in offlineUsers" @click="showProfile = !showProfile;">
-								<div class="user-image"></div>
+								<div class="user-image"><img :src="user.picture"></div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
 									<div class="user-status">{{ user.online ? 'online' : 'offline' }}</div>
@@ -189,7 +196,7 @@
 				}
 			}
 		});
-
+		
 		var app = new Vue({
 			el: '#app1',
 			data: {
@@ -205,8 +212,9 @@
 					id: ""
 				},
 				showNewChatModal: false,
-				startApp: true,
+				startApp: false,
 				preLoad: false,
+				loaded: 0,
 				openedChat: "",
 				userOptions: false,
 				showProfile: false,
@@ -234,6 +242,19 @@
 							this.selectedMsgsCount = 0;
 					},
 					deep: true,
+				},
+				preLoad: function(val) {
+					if (val) {
+						var cuTimer = setInterval(function() {
+							//console.log('loaded: ' + app.loaded);
+							app.loaded += 1;
+							if (app.loaded > 99) {
+								clearInterval(cuTimer);
+								app.preLoad = false;
+								app.startApp = true;
+							}
+						}, 40);
+					}
 				},
 			},
 			methods: {
@@ -328,6 +349,7 @@
 						if (msg.message == 'done') {
 							app.userDetail.name = msg.data.name;
 							app.userDetail.id = msg.data.id;
+							app.userDetail.picture = msg.data.picture;
 							//console.log(app.userDetail);
 						}
 					}).fail(function(jqXHR, textStatus) {
@@ -407,7 +429,8 @@
 											app.userData.push({
 												id: elem.local.auth_id,
 												name: elem.local.name,
-												online: elem.local.online
+												online: elem.local.online,
+												picture: elem.local.picture
 											});
 										});
 										//console.log(app.getUsername('5a9b85d5955e3222af132ed1'));
@@ -441,6 +464,16 @@
 					else
 						return userID;
 				},
+				getUserImage: function(userID) {
+					var temp;
+					temp = _.findWhere(this.userData, {
+						id: userID
+					});
+					if (temp != undefined)
+						return temp.picture;
+					else
+						return userID;
+				},
 				signout: function() {
 					var request = $.ajax({
 						url: '/api/signout',
@@ -465,6 +498,8 @@
 			},
 		});
 
+		app.preLoad = true;
+
 		app.fetchConversations();
 
 		socket.on('login', function() {
@@ -473,17 +508,22 @@
 		});
 
 		socket.on('refresh chat', function() {
-			app.fetchMessages(app.openedChat, function() {
-				app.fetchUsernames(function() {
-					console.log('loaded');
+			if (app.openedChat) {
+				app.fetchMessages(app.openedChat, function() {
+					app.fetchUsernames(function() {
+						console.log('loaded');
+					});
 				});
-			});
+			} else {
+				console.log("no chats open yet");
+			}
+
 		})
 
 		socket.on('disconnect', function() {
 			connected = false;
 			app.changeOnline(false);
-			app.userData.forEach(function(elem){
+			app.userData.forEach(function(elem) {
 				elem.online = false;
 			});
 		});
