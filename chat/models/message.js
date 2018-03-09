@@ -14,8 +14,7 @@ var messageSchema = new Schema({
         required: true
     },
     from: {
-        type: Schema.ObjectId,
-        ref: 'user',
+        type: String
     },
     sendersName: {
         type: String

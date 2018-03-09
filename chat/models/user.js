@@ -12,7 +12,6 @@ var userSchema = new Schema({
 		},
 		password: {
 			type: String,
-			required: true
 		},
 		conversations: {
 			type: [Schema.ObjectId],
@@ -31,6 +30,12 @@ var userSchema = new Schema({
 			default: false
 		},
 		sessionID: {
+			type: String
+		},
+		auth_id: {
+			type: String
+		},
+		picture: {
 			type: String
 		}
 	},

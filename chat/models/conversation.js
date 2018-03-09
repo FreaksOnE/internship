@@ -8,8 +8,7 @@ var conversationSchema = new Schema({
 		required: true
 	},
 	members: {
-		type: [Schema.ObjectId],
-        ref: 'user'
+		type: [String]
 	}
 });
 

@@ -136,7 +136,7 @@
 						<div class="online" v-if="!showProfile">
 							<div class="header">online-</div>
 							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile;">
-								<div class="user-image"></div>
+								<div class="user-image">{{ user.picture }}</div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
 									<div class="user-status">{{ user.online ? 'online' : 'offline' }}</div>
@@ -395,7 +395,7 @@
 										app.userData = [];
 										msg2.data.forEach(function(elem) {
 											app.userData.push({
-												id: elem._id,
+												id: elem.local.auth_id,
 												name: elem.local.name,
 												online: elem.local.online
 											});

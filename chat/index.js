@@ -18,11 +18,8 @@ var userModel = require('./models/user');
 var conversationModel = require('./models/conversation');
 var messageModel = require('./models/message');
 var LocalStrategy = require('passport-local').Strategy;
-var passportSocketIo = require('passport.socketio');
-
-/*var sessionStore = new RedisStore({
-	client: redisUrl.connect(process.env.REDIS_URL)
-});*/
+const Auth0Strategy = require('passport-auth0');
+//var passportSocketIo = require('passport.socketio');
 
 // Configuring Express
 app.use(morgan('dev')); // log requests to the console
@@ -34,14 +31,34 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+// Configure Passport to use Auth0
+var strategy = new Auth0Strategy({
+		domain: 'chat-demo-app.eu.auth0.com',
+		clientID: 'xLdhXhO_gp2bCFQ0B5cJTcqJqqpq_hBI',
+		clientSecret: 'ANQXjiqmUrpMzkxstT94TuJUL1l_xbvPtgCT5ds2kvYgrHitpphpb48ycbwewWdp',
+		callbackURL: 'http://localhost:3000/api/callback'
+	},
+	(accessToken, refreshToken, extraParams, profile, done) => {
+		return done(null, profile);
+	}
+);
+
+passport.use(strategy);
+
+// This can be used to keep a smaller payload
+passport.serializeUser(function (user, done) {
+	done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+	done(null, user);
+});
+
+
 var sessionMiddleware = expressSession({
 	//store: sessionStore,
 	secret: 'mySecretKey',
 });
-
-/*io.use(function(socket, next) {
-    sessionMiddleware(socket.request, socket.request.res, next);
-});*/
 
 app.use(sessionMiddleware);
 app.use(passport.initialize());
@@ -68,7 +85,7 @@ server.listen(port, function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
 
-userModel.find({
+/*userModel.find({
 	'local.online': true
 }, function (err, result) {
 	if (result) {
@@ -81,9 +98,9 @@ userModel.find({
 			//console.log(result);
 		});
 	}
-});
+});*/
 
-// Configuring Passport
+/*// Configuring Passport
 passport.serializeUser(function (user, done) {
 	done(null, user._id);
 });
@@ -92,9 +109,9 @@ passport.deserializeUser(function (id, done) {
 	userModel.findById(id, function (err, user) {
 		done(err, user);
 	});
-});
+});*/
 
-passport.use('local_login', new LocalStrategy({
+/*passport.use('local_login', new LocalStrategy({
 		usernameField: 'username',
 		passwordField: 'password',
 		passReqToCallback: true
@@ -169,9 +186,12 @@ passport.use('local_signup', new LocalStrategy({
 		};
 		process.nextTick(findOrCreateUser);
 	}));
-
+*/
 app.get('/', function (req, res) {
-	res.sendFile(path.join(__dirname + '/public/chat.html'));
+	if (req.isAuthenticated())
+		res.sendFile(path.join(__dirname + '/public/chat.html'));
+	else
+		res.redirect('/login');
 });
 
 // Routing
@@ -188,9 +208,13 @@ router.get('/', function (req, res) {
 	});
 });
 
+var env = {
+	AUTH0_CLIENT_ID: 'xLdhXhO_gp2bCFQ0B5cJTcqJqqpq_hBI',
+	AUTH0_DOMAIN: 'chat-demo-app.eu.auth0.com',
+	AUTH0_CALLBACK_URL: 'http://localhost:3000/api/callback'
+};
 
-
-router.route('/login').post(function (req, res, next) {
+/*router.route('/login').post(function (req, res, next) {
 	passport.authenticate('local_login', function (err, user, info) {
 		if (err) {
 			return next(err);
@@ -207,12 +231,61 @@ router.route('/login').post(function (req, res, next) {
 			});
 		});
 	})(req, res, next);
-});
-app.route('/login').get(function (req, res) {
-	res.sendFile(path.join(__dirname + '/public/login.html'));
+});*/
+
+app.route('/login').get(passport.authenticate('auth0', {
+	clientID: env.AUTH0_CLIENT_ID,
+	domain: env.AUTH0_DOMAIN,
+	redirectUri: env.AUTH0_CALLBACK_URL,
+	audience: 'https://' + env.AUTH0_DOMAIN + '/userinfo',
+	responseType: 'code',
+	scope: 'openid profile email'
+}), function (req, res) {
+	//res.sendFile(path.join(__dirname + '/public/login.html'));
+	res.redirect('/');
 });
 
-router.route('/signup').post(function (req, res, next) {
+router.get(
+	'/callback',
+	passport.authenticate('auth0', {
+		failureRedirect: '/'
+	}),
+	function (req, res) {
+		console.log(req.session.passport.user.id);
+
+		userModel.findOne({
+			'local.auth_id': req.session.passport.user.id
+		}, function (err, result) {
+			if (err)
+				console.log(err);
+			console.log('res: '+result);
+			if (result) {
+				result.local.name = req.session.passport.user.displayName;
+				result.local.picture = req.session.passport.user.picture;
+				result.save(function (err) {
+					if (err)
+						console.log(err);
+					
+				});
+			} else {
+				var newUser = new userModel();
+				newUser.local.name = req.session.passport.user.displayName;
+				newUser.local.auth_id = req.session.passport.user.id;
+				newUser.local.picture = req.session.passport.user.picture;
+
+				newUser.save(function (err, result2) {
+					if (err)
+						console.log(err);
+					console.log('new user saved');
+					console.log(result2);
+				});
+			}
+		});
+		res.redirect(req.session.returnTo || '/');
+	}
+);
+
+/*router.route('/signup').post(function (req, res, next) {
 	passport.authenticate('local_signup', function (err, user, info) {
 		if (err) {
 			return next(err);
@@ -222,20 +295,20 @@ router.route('/signup').post(function (req, res, next) {
 		}
 		return res.json({
 			message: 'done'
-		});
-		/*req.logIn(user, function (err) {
+		});*/
+/*req.logIn(user, function (err) {
 			if (err) {
 				return next(err);
 			}
 			return res.json({
 				message: 'done'
 			});
-		});*/
+		});/*
 	})(req, res, next);
 });
 app.route('/signup').get(function (req, res) {
 	res.sendFile(path.join(__dirname + '/public/signup.html'));
-});
+});*/
 
 // Handle Logout
 router.get('/signout', function (req, res) {
@@ -343,8 +416,8 @@ router.route('/user').get(function (req, res) {
 	res.json({
 		message: 'done',
 		data: {
-			name: req.user.local.name,
-			id: req.user.id
+			name: req.session.passport.user.displayName,//req.user.local.name,
+			id: req.session.passport.user.id
 		}
 	});
 });
@@ -408,17 +481,19 @@ router.route('/userdata').post(function (req, res) {
 	var temp = req.body.users;
 
 	for (var i = 0; i < temp.length; i++) {
-		temp[i] = mongoose.Types.ObjectId(temp[i]);
+		//temp[i] = mongoose.Types.ObjectId(temp[i]);
 	}
 
 	userModel.find({
-		_id: {
+		'local.auth_id': {
 			$in: temp
 		}
-	}).select('local.id local.name local.online').exec(function (err, result) {
+	}).select('local.auth_id local.name local.online').exec(function (err, result) {
 		if (err)
 			console.log(err);
-
+		
+		console.log(result);
+		
 		res.json({
 			message: 'done',
 			data: result
@@ -453,12 +528,11 @@ router.route('/msgs').post(function (req, res) {
 		}
 
 
-		newMsg.from = req.user.id;
-		newMsg.sendersName = req.user.name;
+		newMsg.from = req.session.passport.user.id;
 
 		newMsg.save(function (err) {
 			if (err)
-				res.send(err);
+				console.log(err);
 			io.emit('refresh chat');
 			res.json({
 				message: 'done'
@@ -474,17 +548,19 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 		if (err)
 			res.send(err);
 		conversationModel.findById(req.params.conv_id, function (err, result2) {
+			if(err)
+				console.log(err);
+			//console.log('res2: '+result2);
 			if (result2) {
 				//console.log(result2.members.indexOf(req.user.id));
 				//console.log(result2.members);
 				//console.log(req.user.id);
 
-				if (result2.members.indexOf(req.user.id) < 0) {
-					result2.members.push(req.user.id);
+				if (result2.members.indexOf(req.session.passport.user.id) < 0) {
+					result2.members.push(req.session.passport.user.id);
 					result2.save(function (err) {
 						if (err)
 							res.send(err);
-
 						var temp = [];
 						var tmp_queue = 0;
 						result.forEach(function (elem) {
@@ -496,10 +572,12 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							tmp_queue = math.max(temp) + 1;
 							//console.log(newMsg.queueNumber);
 						}
-
+						
+						console.log(temp);
+						
 						messageModel.create({
 							msgType: 'notification',
-							text: req.user.local.name + ' joined',
+							text: req.session.passport.user.displayName + ' joined',
 							conversationID: req.params.conv_id,
 							queueNumber: tmp_queue
 						}, function (err, result3) {
@@ -507,6 +585,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							// saved!
 							//console.log(result3);
 							result.push(result3);
+							console.log(result);
 							res.json({
 								message: 'done',
 								data: result
@@ -514,9 +593,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 						});
 					});
 				} else {
-
-
-
+					
 					res.json({
 						message: 'done',
 						data: result
@@ -614,10 +691,10 @@ io.set('authorization', function (data, accept) {
 });
 
 io.on('connection', function (socket) {
-	console.log("user joined.");
+	//console.log("user joined.");
 
 	var sessionID = socket.handshake.headers.sessionID;
-	console.log('session id: ' + sessionID);
+	//console.log('session id: ' + sessionID);
 	sockets[sessionID] = socket;
 
 	userModel.findOne({
