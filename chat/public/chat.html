@@ -182,8 +182,8 @@
 
 		$(document).keypress(function(e) {
 			if (e.which == 13) {
-				if($(".msg-input input").is(":focus")){
-					if($(".msg-input input").val().length){
+				if ($(".msg-input input").is(":focus")) {
+					if ($(".msg-input input").val().length) {
 						app.sendMessage();
 					}
 				}
@@ -483,10 +483,17 @@
 		socket.on('disconnect', function() {
 			connected = false;
 			app.changeOnline(false);
+			app.userData.forEach(function(elem){
+				elem.online = false;
+			});
 		});
 
 		socket.on('reconnect', function() {
-
+			app.fetchMessages(app.openedChat, function() {
+				app.fetchUsernames(function() {
+					console.log('loaded');
+				});
+			});
 		});
 
 		socket.on('reconnect_error', function() {
