@@ -31,12 +31,15 @@
 			</div>
 		</transition>
 		<transition name="sidebarSlide">
-			<div id="sidebar" v-bind:class="{ open: startApp}">
+			<div id="sidebar" v-bind:class="{ open: startApp }">
 				<div class="logo-cont" @click="startApp = true"></div>
 				<div class="server-cont" v-for="(conv, index) in convs" :key="conv._id" :title="conv._id" @click="openChat(conv._id);showProfile = false;">
 					<div class="server"></div>
 					<div v-if="startApp" class="server-name"><i class="material-icons" style="padding: 1px 4px 1px 0px; float: left;">group</i>{{ conv.name }}</div>
-					<div v-if="startApp" class="server-users">0 members</div>
+					<div v-if="startApp" class="server-users">{{ conv.members.length }} members</div>
+					<!--<transition name="fade">-->
+					<div class="notifications" v-show="conv.notification">{{ conv.notification }}</div>
+					<!--</transition>-->
 					<div class="clearfix"></div>
 				</div>
 				<div class="addNew-btn" @click="showNewChatModal = true"><i class="material-icons">add</i></div>
@@ -123,12 +126,12 @@
 				<div class="chat-cont" v-bind:class="{ open: selectedMsgsCount }">
 					<div class="chat">
 						<transition-group name="msg-in" mode="out-in">
-							<div class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
+							<div v-if="!hideChat" class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 								<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
 								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">{{ getUsername(message.from) }}</div>
 								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType == 'message'"><img :src="getUserImage(message.from)"></div>
 								<div class="user-msg" v-if="message.msgType != 'notification'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
-									<div class="time">12:10</div>
+									<div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
 									<div class="text">{{ message.text }}</div>
 								</div>
 
@@ -139,30 +142,30 @@
 			</div>
 			<transition name="memberListSlide">
 				<div class="member-list" v-if="!startApp" v-bind:class="{ open: showProfile }">
-					<transition name="fade">
-						<div class="online" v-if="!showProfile">
-							<div class="header">online-</div>
-							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile;">
+					<div class="online" v-if="!showProfile && onlineUsers.length">
+						<div class="header">online-{{ onlineUsers.length }}</div>
+						<transition-group name="fade">
+							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile;" :key="user.id">
 								<div class="user-image"><img :src="user.picture"></div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
 									<div class="user-status">{{ user.online ? 'online' : 'offline' }}</div>
 								</span>
 							</div>
-						</div>
-					</transition>
-					<transition name="fade">
-						<div class="offline" v-if="!showProfile">
-							<div class="header">offline-</div>
-							<div class="user" v-for="user in offlineUsers" @click="showProfile = !showProfile;">
+						</transition-group>
+					</div>
+					<div class="offline" v-if="!showProfile && offlineUsers.length">
+						<div class="header">offline-{{ offlineUsers.length }}</div>
+						<transition-group name="fade">
+							<div class="user" v-for="user in offlineUsers" @click="showProfile = !showProfile;" :key="user.id">
 								<div class="user-image"><img :src="user.picture"></div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
 									<div class="user-status">{{ user.online ? 'online' : 'offline' }}</div>
 								</span>
 							</div>
-						</div>
-					</transition>
+						</transition-group>
+					</div>
 
 
 					<transition name="fade">
@@ -196,7 +199,7 @@
 				}
 			}
 		});
-		
+
 		var app = new Vue({
 			el: '#app1',
 			data: {
@@ -218,6 +221,7 @@
 				openedChat: "",
 				userOptions: false,
 				showProfile: false,
+				hideChat: false,
 
 			},
 			watch: {
@@ -253,9 +257,12 @@
 								app.preLoad = false;
 								app.startApp = true;
 							}
-						}, 40);
+						}, 30);
 					}
 				},
+			},
+			beforeMount() {
+				this.preLoad = true;
 			},
 			methods: {
 				changeStatus: function(data) {
@@ -304,6 +311,13 @@
 						type: 'GET',
 					}).done(function(msg) {
 						if (msg.message == 'done') {
+							msg.data.forEach(function(elem) {
+								elem.notification = 0;
+
+								socket.emit('join room', {
+									'chatID': elem._id
+								});
+							});
 							app.convs = msg.data;
 							console.log(app.convs);
 						}
@@ -313,6 +327,8 @@
 					});
 				},
 				fetchMessages: function(convID, next) {
+					if (convID != app.openedChat)
+						app.msgs = [];
 					var request = $.ajax({
 						url: '/api/msgs/' + convID,
 						type: 'GET',
@@ -322,6 +338,7 @@
 								elem.selected = false;
 							});
 							app.msgs = msg.data;
+							app.chatScrollBottom(true);
 							if (next)
 								next();
 						}
@@ -332,12 +349,23 @@
 				},
 				openChat: function(chatID) {
 					this.getUser();
+					this.hideChat = true;
+					/*socket.emit('join room', {
+						'chatID': chatID
+					});*/
+
+					_.findWhere(app.convs, {
+						_id: chatID
+					}).notification = 0;
+
 					//this.startApp = false;
 					this.openedChat = chatID;
-					console.log(chatID);
+					//console.log(chatID);
 					this.fetchMessages(chatID, function() {
 						app.fetchUsernames(function() {
-							console.log('loaded');
+							//console.log('loaded');
+							//var scrollElem = $('.chat-cont');
+							app.chatScrollBottom(true);
 						});
 					});
 				},
@@ -434,9 +462,13 @@
 											});
 										});
 										//console.log(app.getUsername('5a9b85d5955e3222af132ed1'));
-										app.startApp = false;
-										if (next)
-											next();
+										setTimeout(function() {
+											app.startApp = false;
+											app.hideChat = false;
+											if (next)
+												next();
+										}, 200);
+
 									}
 								}).fail(function(jqXHR, textStatus) {
 									//console.log(jqXHR);
@@ -444,9 +476,12 @@
 								});
 							} else {
 								console.log('no users');
-								app.startApp = false;
-								if (next)
-									next();
+								setTimeout(function() {
+									app.startApp = false;
+									app.hideChat = false;
+									if (next)
+										next();
+								}, 200);
 							}
 						}
 					}).fail(function(jqXHR, textStatus) {
@@ -495,10 +530,19 @@
 						this.selectedMsgsCount = 0;
 					}
 				},
+				chatScrollBottom: function(data) {
+					if (data) {
+						setTimeout(function() {
+							$('.chat-cont').scrollTop($('.chat-cont').prop("scrollHeight"));
+						}, 20);
+					} else {
+						$('.chat-cont').animate({
+							scrollTop: $('.chat-cont').prop("scrollHeight")
+						}, 700);
+					}
+				},
 			},
 		});
-
-		app.preLoad = true;
 
 		app.fetchConversations();
 
@@ -507,11 +551,20 @@
 			app.changeOnline(true);
 		});
 
-		socket.on('refresh chat', function() {
+		socket.on('refresh chat', function(data) {
+			if (data) {
+				console.log(data);
+				if (data.convID != app.openedChat) {
+					_.findWhere(app.convs, {
+						_id: data.convID
+					}).notification += 1;
+				}
+			}
 			if (app.openedChat) {
+				//app.fetchConversations();
 				app.fetchMessages(app.openedChat, function() {
 					app.fetchUsernames(function() {
-						console.log('loaded');
+						//console.log('loaded');
 					});
 				});
 			} else {
@@ -531,7 +584,7 @@
 		socket.on('reconnect', function() {
 			app.fetchMessages(app.openedChat, function() {
 				app.fetchUsernames(function() {
-					console.log('loaded');
+					//console.log('loaded');
 				});
 			});
 		});

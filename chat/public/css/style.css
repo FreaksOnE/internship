@@ -135,6 +135,20 @@ input * {
 	width: 190px;
 }
 
+#sidebar .server-cont .notifications {
+	position: absolute;
+	top: 50px;
+	left: 52px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background-color: lightcoral;
+	text-align: center;
+	line-height: 16px;
+	color: #eee;
+	font-size: 13px;
+}
+
 #sidebar .addNew-btn {
 	height: 60px;
 	border-radius: 30px;
@@ -861,10 +875,6 @@ button::-moz-focus-inner, button:active, button:focus {
 	transform: translateX(40px);
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: all .3s;
-}
-.fade-enter, .fade-leave-to {
-	opacity: .0;
-}
+
+
 

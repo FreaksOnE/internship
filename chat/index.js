@@ -537,7 +537,7 @@ router.route('/msgs').post(function (req, res) {
 		newMsg.save(function (err) {
 			if (err)
 				console.log(err);
-			io.emit('refresh chat');
+			io.to(newMsg.conversationID).emit('refresh chat', { 'convID': newMsg.conversationID });
 			res.json({
 				message: 'done'
 			});
@@ -577,7 +577,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							//console.log(newMsg.queueNumber);
 						}
 						
-						console.log(temp);
+						//console.log(temp);
 						
 						messageModel.create({
 							msgType: 'notification',
@@ -589,7 +589,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							// saved!
 							//console.log(result3);
 							result.push(result3);
-							console.log(result);
+							//console.log(result);
 							res.json({
 								message: 'done',
 								data: result
@@ -685,6 +685,7 @@ io.set('authorization', function (data, accept) {
 		//console.log(data.cookie['connect.sid'].match(/(?!\:)[A-Za-z0-9_-]+(?=\.)/g));
 		data.headers.sessionID = data.cookie['connect.sid'].match(/(?!\:)[A-Za-z0-9_-]+(?=\.)/g)[0];
 		//console.log('session: ' + data.headers.sessionID);
+		//console.log(data);
 	} else {
 		// if there isn't, turn down the connection with a message
 		// and leave the function.
@@ -695,8 +696,10 @@ io.set('authorization', function (data, accept) {
 });
 
 io.on('connection', function (socket) {
+	
+	socket.joinedRoom = '';
+	
 	//console.log("user joined.");
-
 	var sessionID = socket.handshake.headers.sessionID;
 	console.log('session id: ' + sessionID);
 	sockets[sessionID] = socket;
@@ -719,6 +722,12 @@ io.on('connection', function (socket) {
 
 	socket.on('typing', function () {
 
+	});
+	
+	socket.on('join room', function (data) {
+		//console.log('join room: '+data.chatID);
+		socket.join(data.chatID);
+		socket.joinedRoom = data.chatID;
 	});
 
 	socket.on('disconnect', function () {
