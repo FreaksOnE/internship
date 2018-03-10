@@ -6,7 +6,7 @@ var messageSchema = new Schema({
     msgType: {
         type: String,
         default: 'message',
-        enum: ['message', 'notification']
+        enum: ['message', 'notification', 'image']
     },
     text: {
         type: String,

@@ -74,7 +74,7 @@
 							<input type="text" placeholder="Write a message...">
 							<button type="button" class="send-btn" v-on:click="sendMessage"><i class="material-icons">send</i></button>
 							<i class="material-icons">keyboard_voice</i>
-							<i class="material-icons">add_a_photo</i>
+							<i class="material-icons" @click="addImgToMsg">add_a_photo</i>
 							<i class="material-icons">attachment</i>
 							<div class="user-options">
 								<div class="logout" @click="signout">
@@ -129,10 +129,14 @@
 							<div v-if="!hideChat" class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 								<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
 								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">{{ getUsername(message.from) }}</div>
-								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType == 'message'"><img :src="getUserImage(message.from)"></div>
-								<div class="user-msg" v-if="message.msgType != 'notification'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
+								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType != 'notification'"><img :src="getUserImage(message.from)"></div>
+								<div class="user-msg" v-if="message.msgType == 'message'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
 									<div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
 									<div class="text">{{ message.text }}</div>
+								</div>
+								<div class="user-msg image" v-if="message.msgType == 'image'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
+									<div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
+									<img :src="message.text">
 								</div>
 
 							</div>
@@ -285,15 +289,22 @@
 				},
 				sendMessage: function() {
 					var msgText = $(".msg-input input").val();
+					var msgType = 'message';
 					if (msgText) {
 						$(".msg-input input").val("");
 						$(".msg-input input").focus();
+						if (msgText.match(/\:img\:$/g)) {
+							msgText = msgText.match(/.+(?=\:.*\:)/g)[0];
+							//console.log(msgText);
+							msgType = 'image';
+						}
 						var request = $.ajax({
 							url: '/api/msgs',
 							type: 'POST',
 							data: {
 								conversationID: app.openedChat,
-								text: msgText
+								text: msgText,
+								'msgType': msgType
 							},
 						}).done(function(msg) {
 							if (msg.message == 'done') {
@@ -414,10 +425,16 @@
 							conversationID: convID,
 							queueNumber: queue
 						});
-						var secondMsg = _.findWhere(this.msgs, {
-							conversationID: convID,
-							queueNumber: (queue - 1)
-						});
+						var tempOffset = 1;
+						var secondMsg;
+						while (secondMsg == undefined) {
+							secondMsg = _.findWhere(this.msgs, {
+								conversationID: convID,
+								queueNumber: (queue - tempOffset)
+							});
+							tempOffset += 1;
+						}
+
 						if (firstMsg.from == secondMsg.from) {
 							return false;
 						} else {
@@ -540,6 +557,11 @@
 							scrollTop: $('.chat-cont').prop("scrollHeight")
 						}, 700);
 					}
+				},
+				addImgToMsg: function() {
+					var temp = $(".msg-input input").val();
+					temp += ':img:';
+					$(".msg-input input").val(temp);
 				},
 			},
 		});

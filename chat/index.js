@@ -58,6 +58,9 @@ passport.deserializeUser(function (user, done) {
 var sessionMiddleware = expressSession({
 	//store: sessionStore,
 	secret: 'mySecretKey',
+	resave: true,
+	saveUninitialized: false
+
 });
 
 app.use(sessionMiddleware);
@@ -85,20 +88,20 @@ server.listen(port, function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
 
-/*userModel.find({
+userModel.find({
 	'local.online': true
 }, function (err, result) {
 	if (result) {
-		result.forEach(function (elem) {
-			elem.local.online = false;
-			//console.log(elem);
-		});
-		result.save(function (err) {
-			if (err) return handleError(err);
-			//console.log(result);
-		});
+		for (var i = 0; i < result.length; i++) {
+			result[i].local.online = false;
+			result[i].save(function (err, result2) {
+				if(err)
+					console.log(err);
+				//console.log('res: ' + result2);
+			});
+		}
 	}
-});*/
+});
 
 /*// Configuring Passport
 passport.serializeUser(function (user, done) {
@@ -266,7 +269,7 @@ router.get(
 				result.save(function (err) {
 					if (err)
 						console.log(err);
-					
+
 				});
 			} else {
 				var newUser = new userModel();
@@ -418,7 +421,7 @@ router.route('/user').get(function (req, res) {
 	res.json({
 		message: 'done',
 		data: {
-			name: req.session.passport.user.displayName,//req.user.local.name,
+			name: req.session.passport.user.displayName, //req.user.local.name,
 			id: req.session.passport.user.id,
 			picture: req.session.passport.user.picture
 		}
@@ -481,7 +484,7 @@ router.route('/userdata').post(function (req, res) {
 	//console.log(req.body.users[0]);
 	//var temp = JSON.parse(req.body.users);
 	//console.log(temp[0]);
-	
+
 	var temp = req.body.users;
 
 	for (var i = 0; i < temp.length; i++) {
@@ -495,9 +498,9 @@ router.route('/userdata').post(function (req, res) {
 	}).select('local.auth_id local.name local.online local.picture').exec(function (err, result) {
 		if (err)
 			console.log(err);
-		
+
 		//console.log(result);
-		
+
 		res.json({
 			message: 'done',
 			data: result
@@ -537,7 +540,9 @@ router.route('/msgs').post(function (req, res) {
 		newMsg.save(function (err) {
 			if (err)
 				console.log(err);
-			io.to(newMsg.conversationID).emit('refresh chat', { 'convID': newMsg.conversationID });
+			io.to(newMsg.conversationID).emit('refresh chat', {
+				'convID': newMsg.conversationID
+			});
 			res.json({
 				message: 'done'
 			});
@@ -552,7 +557,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 		if (err)
 			res.send(err);
 		conversationModel.findById(req.params.conv_id, function (err, result2) {
-			if(err)
+			if (err)
 				console.log(err);
 			//console.log('res2: '+result2);
 			if (result2) {
@@ -576,9 +581,9 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							tmp_queue = math.max(temp) + 1;
 							//console.log(newMsg.queueNumber);
 						}
-						
+
 						//console.log(temp);
-						
+
 						messageModel.create({
 							msgType: 'notification',
 							text: req.session.passport.user.displayName + ' joined',
@@ -597,7 +602,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 						});
 					});
 				} else {
-					
+
 					res.json({
 						message: 'done',
 						data: result
@@ -696,9 +701,9 @@ io.set('authorization', function (data, accept) {
 });
 
 io.on('connection', function (socket) {
-	
+
 	socket.joinedRoom = '';
-	
+
 	//console.log("user joined.");
 	var sessionID = socket.handshake.headers.sessionID;
 	console.log('session id: ' + sessionID);
@@ -723,7 +728,7 @@ io.on('connection', function (socket) {
 	socket.on('typing', function () {
 
 	});
-	
+
 	socket.on('join room', function (data) {
 		//console.log('join room: '+data.chatID);
 		socket.join(data.chatID);

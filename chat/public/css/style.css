@@ -563,6 +563,19 @@ button::-moz-focus-inner, button:active, button:focus {
 	color: #eee !important;
 }
 
+.chat-section .msg-cont .user-msg.image {
+	width: 400px;
+	height: 400px;
+}
+
+.chat-section .msg-cont .user-msg.image img {
+	width: 380px;
+	height: 360px;
+	position: relative;
+	left: 10px;
+	top: 25px;
+}
+
 .chat-section .msg-prop {
 	width: 98%;
 	position: absolute;
