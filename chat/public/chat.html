@@ -129,7 +129,7 @@
 							<div v-if="!hideChat" class="msg-cont" v-for="(message, index) in msgs" v-bind:class="{ mine: message.from == userDetail.id}" :key="message._id">
 								<div class="notification" v-if="message.msgType == 'notification'">{{ message.text }}</div>
 								<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">{{ getUsername(message.from) }}</div>
-								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType != 'notification'"><img :src="getUserImage(message.from)"></div>
+								<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetail.id && message.msgType != 'notification'" @click="showProfile = !showProfile; profileID = message.from;"><img :src="getUserImage(message.from)"></div>
 								<div class="user-msg" v-if="message.msgType == 'message'" @click="message.selected = !message.selected" v-bind:class="{ selected: message.selected }">
 									<div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
 									<div class="text">{{ message.text }}</div>
@@ -149,7 +149,7 @@
 					<div class="online" v-if="!showProfile && onlineUsers.length">
 						<div class="header">online-{{ onlineUsers.length }}</div>
 						<transition-group name="fade">
-							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile;" :key="user.id">
+							<div class="user" v-for="user in onlineUsers" @click="showProfile = !showProfile; profileID = user.id;" :key="user.id">
 								<div class="user-image"><img :src="user.picture"></div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
@@ -161,7 +161,7 @@
 					<div class="offline" v-if="!showProfile && offlineUsers.length">
 						<div class="header">offline-{{ offlineUsers.length }}</div>
 						<transition-group name="fade">
-							<div class="user" v-for="user in offlineUsers" @click="showProfile = !showProfile;" :key="user.id">
+							<div class="user" v-for="user in offlineUsers" @click="showProfile = !showProfile; profileID = user.id;" :key="user.id">
 								<div class="user-image"><img :src="user.picture"></div>
 								<span style="float:left;width:130px;">
 									<div class="user-name">{{ user.name }}</div>
@@ -175,8 +175,8 @@
 					<transition name="fade">
 						<div class="profile" v-if="showProfile">
 							<div class="pf-container">
-								<div class="user-image"></div>
-								<div class="close-btn" @click="showProfile = false"><i class="material-icons">keyboard_arrow_right</i></div>
+								<div class="user-image"><img :src="getProfile(profileID).picture"></div>
+								<div class="close-btn" @click="showProfile = false;"><i class="material-icons">keyboard_arrow_right</i></div>
 							</div>
 						</div>
 					</transition>
@@ -219,12 +219,13 @@
 					id: ""
 				},
 				showNewChatModal: false,
-				startApp: false,
+				startApp: true,
 				preLoad: false,
 				loaded: 0,
 				openedChat: "",
 				userOptions: false,
 				showProfile: false,
+				profileID: "",
 				hideChat: false,
 
 			},
@@ -264,9 +265,13 @@
 						}, 30);
 					}
 				},
+				showProfile: function(val) {
+					if(!val)
+						this.profileID = "";
+				}
 			},
 			beforeMount() {
-				this.preLoad = true;
+				//this.preLoad = true;
 			},
 			methods: {
 				changeStatus: function(data) {
@@ -482,6 +487,7 @@
 										setTimeout(function() {
 											app.startApp = false;
 											app.hideChat = false;
+											//console.log(app.getProfile('google-oauth2|101149272805410177076'));
 											if (next)
 												next();
 										}, 200);
@@ -563,10 +569,19 @@
 					temp += ':img:';
 					$(".msg-input input").val(temp);
 				},
+				getProfile: function(data) {
+					if(!data)
+						return false;
+					var temp = _.findWhere(app.userData, {
+						id: data
+					});
+					return temp;
+				},
 			},
 		});
 
 		app.fetchConversations();
+
 
 		socket.on('login', function() {
 			connected = true;

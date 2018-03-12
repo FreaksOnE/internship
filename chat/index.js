@@ -84,7 +84,7 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-server.listen(port, function () { // "192.168.42.221",
+server.listen(port, '::', function () { // "192.168.42.221",
 	console.log('Server listening at port %d', port);
 });
 
@@ -95,7 +95,7 @@ userModel.find({
 		for (var i = 0; i < result.length; i++) {
 			result[i].local.online = false;
 			result[i].save(function (err, result2) {
-				if(err)
+				if (err)
 					console.log(err);
 				//console.log('res: ' + result2);
 			});
@@ -595,6 +595,9 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							//console.log(result3);
 							result.push(result3);
 							//console.log(result);
+							io.to(req.params.conv_id).emit('refresh chat', {
+								'convID': req.params.conv_id
+							});
 							res.json({
 								message: 'done',
 								data: result
@@ -602,7 +605,9 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 						});
 					});
 				} else {
-
+					/*io.to(req.params.conv_id).emit('refresh chat', {
+						'convID': req.params.conv_id
+					});*/
 					res.json({
 						message: 'done',
 						data: result

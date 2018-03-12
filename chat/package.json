@@ -22,6 +22,8 @@
     "passport-auth0": "^0.6.1",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
-    "socket.io": "latest"
+    "path": "^0.12.7",
+    "socket.io": "latest",
+    "url": "^0.11.0"
   }
 }
