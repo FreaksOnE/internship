@@ -9,7 +9,7 @@ Vue.use(Vuex)
 
 Vue.config.productionTip = false
 
-import './assets/style.css'
+//import './assets/style.css'
 
 const store = new Vuex.Store({
 	state: {
