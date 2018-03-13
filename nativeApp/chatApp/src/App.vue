@@ -1,58 +1,63 @@
 <template>
-    <div id="app">
-        <!--<img src="./assets/logo.png">
-        <router-view/>-->
+	<div id="app">
+		<!--<img src="./assets/logo.png">
+			<router-view />-->
 		<side-bar></side-bar>
 		<div id="main-container">
 			<chat-section></chat-section>
 			<member-list></member-list>
 			<cu-footer></cu-footer>
 		</div>
-        
-    </div>
+
+	</div>
 </template>
 
 <script>
-	import sideBar from '@/components/sideBar';
-	import cuFooter from '@/components/cuFooter';
-	import chatSection from '@/components/chatSection';
-	import memberList from '@/components/memberList';
+import sideBar from "@/components/sideBar";
+import cuFooter from "@/components/cuFooter";
+import chatSection from "@/components/chatSection";
+import memberList from "@/components/memberList";
 
-	export default {
-		name: 'App',
-		data() {
-			return {
-				msg: 'hello'
-			}
-		},
-		computed: {
-			count() {
-				return this.$store.state.selectedMsgsCount
-			}
-		},
-		components: {
-			'side-bar': sideBar,
-			'cu-footer': cuFooter,
-			'chat-section': chatSection,
-			'member-list': memberList,
-
+export default {
+	name: "App",
+	data() {
+		return {
+			msg: "hello"
+		};
+	},
+	computed: {
+		count() {
+			return this.$store.state.selectedMsgsCount;
 		}
+	},
+	components: {
+		"side-bar": sideBar,
+		"cu-footer": cuFooter,
+		"chat-section": chatSection,
+		"member-list": memberList
 	}
-
+};
 </script>
 
 <style>
 	ol,
 	ul {
-		margin-top: 0;
+		margin: 0;
 		margin-bottom: 0px !important;
 	}
 
 	body {
 		margin: 0;
 		/*	font-family: 'Open Sans', sans-serif; */
-		font-family: 'Raleway', sans-serif !important;
+		font-family: "Raleway", sans-serif !important;
 		color: #555 !important;
+	}
+
+	button::-moz-focus-inner,
+	button:active,
+	button:focus {
+		border: 0;
+		outline: none;
 	}
 
 	a:hover {
@@ -87,13 +92,31 @@
 		/*background-color: #e1e4e7 !important;*/
 		/* #eaecee */
 		background-color: transparent;
-		background-image: url("/tile.gif");
+		background-image: url("assets/tile.gif");
 		background-repeat: repeat;
 		background-attachment: scroll;
 		background-clip: border-box;
 		background-origin: padding-box;
 		background-size: auto auto;
 		overflow: hidden;
+	}
+
+	.fade-enter-active,
+	.fade-leave-active {
+		transition: all 0.3s;
+	}
+
+	.fade-enter,
+	.fade-leave-to {
+		opacity: 0;
+	}
+
+	/*.fade-leave-active {
+		position: absolute;
+	}*/
+
+	.fade-move {
+		transition: transform 0.3s;
 	}
 
 	iframe,
@@ -195,16 +218,6 @@
 		display: block;
 	}
 
-	body {
-		line-height: 1;
-	}
-
-	ol,
-	ul,
-	li {
-		list-style: none;
-	}
-
 	blockquote,
 	q {
 		quotes: none;
@@ -214,13 +227,12 @@
 	blockquote:after,
 	q:before,
 	q:after {
-		content: '';
+		content: "";
 		content: none;
 	}
 
 	table {
-		border-collapse: collapse;
+		border: collapse;
 		border-spacing: 0;
 	}
-
 </style>

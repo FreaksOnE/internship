@@ -1,58 +1,61 @@
 <template>
-<transition name="memberListSlide">
-	<div class="member-list">
-		<div class="online">
-			<div class="header">online-0</div>
-			<!--<transition-group name="fade">-->
-			<user-cont>
-				<span slot="user-picture"><img src="yoyo.com/this.png"></span>
-				<span slot="display-name">sam</span>
-				<span slot="user-status">Online</span>
-			</user-cont>
-			<!--</transition-group>-->
-		</div>
-		<div class="offline">
-			<div class="header">offline-0</div>
-			<!--<transition-group name="fade">-->
-			
-			<!--</transition-group>-->
-		</div>
-
-		<transition name="fade">
-			<div class="profile" style="display: none;">
-				<div class="pf-container">
-					<div class="user-image"><img></div>
-					<div class="close-btn"><i class="material-icons">keyboard_arrow_right</i></div>
-				</div>
+	<transition name="memberListSlide">
+		<div class="member-list" v-if="!showMenu">
+			<div class="online">
+				<div class="header">online-0</div>
+				<!--<transition-group name="fade">-->
+				<user-cont v-for="user in users" :key="user.id">
+					<span slot="user-picture">
+						<img :src="user.picture">
+					</span>
+					<span slot="display-name">{{ user.name }}</span>
+					<span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
+				</user-cont>
+				<!--</transition-group>-->
 			</div>
-		</transition>
-	</div>
-</transition>
+			<div class="offline">
+				<div class="header">offline-0</div>
+				<!--<transition-group name="fade">-->
+
+				<!--</transition-group>-->
+			</div>
+
+			<transition name="fade">
+				<div class="profile" style="display: none;">
+					<div class="pf-container">
+						<div class="user-image">
+							<img>
+						</div>
+						<div class="close-btn">
+							<i class="material-icons">keyboard_arrow_right</i>
+						</div>
+					</div>
+				</div>
+			</transition>
+		</div>
+	</transition>
 </template>
 
 <script>
-	var userCont = {
-		template: '<div class="user"><div class="user-image"><slot name="user-picture">%user-picture%</slot></div><span style="float:left;width:130px;"><div class="user-name"><slot name="display-name">%display-name%</slot></div><div class="user-status"><slot name="user-status">%user-status%</slot></div></span></div>',
-	}
+var userCont = {
+	template:
+			"<div class=\"user\"><div class=\"user-image\"><slot name=\"user-picture\">%user-picture%</slot></div><span style=\"float:left;width:130px;\"><div class=\"user-name\"><slot name=\"display-name\">%display-name%</slot></div><div class=\"user-status\"><slot name=\"user-status\">%user-status%</slot></div></span></div>"
+};
 
-	export default {
-		name: 'memberList',
-		data: function() {
-			return {
-				cuname: 'sam'
-			}
+export default {
+	name: "memberList",
+	computed: {
+		showMenu() {
+			return this.$store.getters.getShowMenu;
 		},
-		computed: {
-			count() {
-				return this.$store.state.selectedMsgsCount
-			},
-
-		},
-		components: {
-			'user-cont': userCont
+		users() {
+			return this.$store.getters.getUsers;
 		}
+	},
+	components: {
+		"user-cont": userCont
 	}
-
+};
 </script>
 
 <style>
@@ -84,7 +87,6 @@
 		font-size: 17px;
 		position: relative;
 		padding-bottom: 8px;
-
 	}
 
 	.member-list .header::after {
@@ -192,4 +194,14 @@
 		height: 300px;
 	}
 
+	.memberListSlide-enter-active,
+	.memberListSlide-leave-active {
+		transition: all .2s;
+	}
+
+	.memberListSlide-enter,
+	.memberListSlide-leave-to {
+		opacity: .0;
+		transform: translateX(40px);
+	}
 </style>

@@ -1,13 +1,13 @@
 <template>
 <transition name="slideUp">
-	<div class="cu-footer">
+	<div class="cu-footer"  v-if="!showMenu">
 		<div class="profile-ico-container">
-			<div class="profile-ico"><i class="fa fa-user-circle-o"></i>
+			<div class="profile-ico" @click="toggleUserOptions"><i class="fa fa-user-circle-o"></i>
 				<!--<img>-->
 			</div>
 		</div>
 		<div class="inp-section">
-			<div class="msg-input">
+			<div class="msg-input" :class="{ open: userOptions }">
 				<div class="status"></div>
 				<input type="text" placeholder="Write a message...">
 				<button type="button" class="send-btn"><i class="material-icons">send</i></button>
@@ -34,174 +34,189 @@
 </template>
 
 <script>
-	export default {
-		name: 'cuFooter',
-		computed: {
-			count() {
-				return this.$store.state.selectedMsgsCount
-			}
+export default {
+	name: "cuFooter",
+	computed: {
+		userOptions() {
+			return this.$store.getters.getShowUserOptions;
+		},
+		showMenu() {
+			return this.$store.getters.getShowMenu;
+		}
+	},
+	methods: {
+		toggleUserOptions: function() {
+			this.$store.dispatch("toggleUserOptions");
 		}
 	}
-
+};
 </script>
 
 <style>
-	.cu-footer {
-		position: absolute;
-		bottom: 0px;
-		width: 100%;
-		height: 120px;
-		z-index: 3;
-	}
+.cu-footer {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 120px;
+  z-index: 3;
+}
 
-	.cu-footer .profile-ico-container {
-		height: 100%;
-		width: 120px;
-		left: 0px;
-		position: absolute;
-	}
+.cu-footer .profile-ico-container {
+  height: 100%;
+  width: 120px;
+  left: 0px;
+  position: absolute;
+}
 
-	.cu-footer .profile-ico {
-		position: relative;
-		height: 54px;
-		width: 54px;
-		border-radius: 50%;
-		background-color: #eee;
-		margin: auto;
-		top: 50px;
-		cursor: pointer;
-		transition: border 0.2s ease;
-		font-size: 54px;
-		color: #555;
-		box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.4);
-		overflow: hidden;
-	}
+.cu-footer .profile-ico {
+  position: relative;
+  height: 54px;
+  width: 54px;
+  border-radius: 50%;
+  background-color: #eee;
+  margin: auto;
+  top: 50px;
+  cursor: pointer;
+  transition: border 0.2s ease;
+  font-size: 54px;
+  color: #555;
+  box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
 
-	.cu-footer .profile-ico img {
-		width: 54px;
-		position: absolute;
-		top: 0px;
-		left: 0px;
-	}
+.cu-footer .profile-ico img {
+  width: 54px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
 
-	.cu-footer .profile-ico i {
-		position: relative;
-		left: 0px;
-		top: 0px;
-	}
+.cu-footer .profile-ico i {
+  position: relative;
+  left: 0px;
+  top: 0px;
+}
 
-	.cu-footer .inp-section {
-		height: 100%;
-		/*width: 100%;*/
-		transition: width 0.3s ease;
-		margin-right: 250px;
-	}
+.cu-footer .inp-section {
+  height: 100%;
+  /*width: 100%;*/
+  transition: width 0.3s ease;
+  margin-right: 250px;
+}
 
-	.cu-footer .inp-section .status {
-		position: absolute;
-		font-size: 12px;
-		top: -15px;
-		left: 10px;
-	}
+.cu-footer .inp-section .status {
+  position: absolute;
+  font-size: 12px;
+  top: -15px;
+  left: 10px;
+}
 
+.cu-footer .inp-section .msg-input {
+  display: block;
+  margin: 0px 55px 0px 120px;
+  height: 120px;
+  position: relative;
+  background-color: #555;
+  border-top-right-radius: 10px;
+  color: #eee;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
+  border-top-left-radius: 10px;
+  top: 40px;
+  font-size: 20px;
+  transition: all 0.2s ease;
+}
 
-	.cu-footer .inp-section .msg-input {
-		display: block;
-		margin: 0px 55px 0px 120px;
-		height: 120px;
-		position: relative;
-		background-color: #555;
-		border-top-right-radius: 10px;
-		color: #eee;
-		box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
-		border-top-left-radius: 10px;
-		top: 40px;
-		font-size: 20px;
-		transition: all 0.2s ease;
-	}
+.cu-footer .inp-section .msg-input.open {
+  top: 0px;
+}
 
-	.cu-footer .inp-section .msg-input.open {
-		top: 0px;
-	}
+.cu-footer .inp-section .msg-input > i {
+  line-height: 33px;
+  width: 36px;
+  text-align: center;
+  color: #aaa;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  float: right;
+}
 
-	.cu-footer .inp-section .msg-input>i {
-		line-height: 33px;
-		width: 36px;
-		text-align: center;
-		color: #aaa;
-		cursor: pointer;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-		float: right;
-	}
+.cu-footer .inp-section .msg-input > i:first-of-type {
+  margin-right: 20px;
+}
 
-	.cu-footer .inp-section .msg-input>i:first-of-type {
-		margin-right: 20px;
-	}
+.cu-footer .inp-section .msg-input .user-options {
+  width: 100%;
+  height: 40px;
+  float: right;
+}
 
-	.cu-footer .inp-section .msg-input .user-options {
-		width: 100%;
-		height: 40px;
-		float: right;
-	}
+.cu-footer .inp-section .msg-input .user-options > div {
+  width: 100px;
+  float: left;
+  height: 100%;
+  text-align: center;
+  cursor: pointer;
+}
 
-	.cu-footer .inp-section .msg-input .user-options>div {
-		width: 100px;
-		float: left;
-		height: 100%;
-		text-align: center;
-		cursor: pointer;
-	}
+.user-options .label {
+  font-size: 12px;
+  float: left;
+  height: 40px;
+  line-height: 40px;
+}
 
-	.user-options .label {
-		font-size: 12px;
-		float: left;
-		height: 40px;
-		line-height: 40px;
-	}
+.cu-footer .inp-section .msg-input .user-options i {
+  padding: 10px 2px 10px 12px;
+  font-size: 20px;
+  float: left;
+}
 
-	.cu-footer .inp-section .msg-input .user-options i {
-		padding: 10px 2px 10px 12px;
-		font-size: 20px;
-		float: left;
-	}
+.cu-footer .inp-section .msg-input::after {
+  content: "";
+  width: 96%;
+  height: 2px;
+  background-color: #666;
+  position: absolute;
+  left: 0;
+  top: 44px;
+  right: 0;
+  margin: auto;
+}
 
-	.cu-footer .inp-section .msg-input::after {
-		content: "";
-		width: 96%;
-		height: 2px;
-		background-color: #666;
-		position: absolute;
-		left: 0;
-		top: 44px;
-		right: 0;
-		margin: auto;
-	}
+.cu-footer .inp-section .msg-input input {
+  height: 46px;
+  width: 100%;
+  padding: 0px 50px 0px 20px;
+  border: none;
+  background: none;
+  float: left;
+  color: #eee;
+}
 
-	.cu-footer .inp-section .msg-input input {
-		height: 46px;
-		width: 100%;
-		padding: 0px 50px 0px 20px;
-		border: none;
-		background: none;
-		float: left;
-		color: #eee;
-	}
+.cu-footer .inp-section .msg-input .send-btn {
+  height: 46px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: right;
+  padding-right: 15px;
+  position: absolute;
+  z-index: 3;
+  right: 0px;
+  font-size: 24px;
+  color: #eee;
+}
 
-	.cu-footer .inp-section .msg-input .send-btn {
-		height: 46px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		text-align: right;
-		padding-right: 15px;
-		position: absolute;
-		z-index: 3;
-		right: 0px;
-		font-size: 24px;
-		color: #eee;
-	}
-
+.slideUp-enter-active,
+.slideUp-leave-active {
+	transition: all 0.2s;
+}
+.slideUp-enter,
+.slideUp-leave-to {
+	opacity: 0;
+	transform: translateY(20px);
+}
 </style>

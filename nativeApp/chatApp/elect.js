@@ -14,7 +14,7 @@ app.on('ready', function () {
 
     // Initialize the window to our specified dimensions
     win = new BrowserWindow({
-        width: 800,
+        width: 1000,
         height: 600
     });
 
