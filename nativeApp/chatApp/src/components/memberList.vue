@@ -1,10 +1,10 @@
 <template>
 	<transition name="memberListSlide">
-		<div class="member-list" v-if="!showMenu">
-			<div class="online">
+		<div class="member-list" v-if="!showMenu" :class="{ open: showProfile }">
+			<div class="online" v-if="!showProfile">
 				<div class="header">online-0</div>
 				<!--<transition-group name="fade">-->
-				<user-cont v-for="user in users" :key="user.id">
+				<user-cont v-for="user in users" :key="user.id" @click.native="toggleShowProfile">
 					<span slot="user-picture">
 						<img :src="user.picture">
 					</span>
@@ -13,7 +13,7 @@
 				</user-cont>
 				<!--</transition-group>-->
 			</div>
-			<div class="offline">
+			<div class="offline" v-if="!showProfile">
 				<div class="header">offline-0</div>
 				<!--<transition-group name="fade">-->
 
@@ -21,12 +21,12 @@
 			</div>
 
 			<transition name="fade">
-				<div class="profile" style="display: none;">
+				<div class="profile" v-if="showProfile">
 					<div class="pf-container">
 						<div class="user-image">
 							<img>
 						</div>
-						<div class="close-btn">
+						<div class="close-btn" @click="toggleShowProfile">
 							<i class="material-icons">keyboard_arrow_right</i>
 						</div>
 					</div>
@@ -50,10 +50,18 @@ export default {
 		},
 		users() {
 			return this.$store.getters.getUsers;
-		}
+		},
+		showProfile() {
+			return this.$store.getters.getShowProfile;
+		},
 	},
 	components: {
 		"user-cont": userCont
+	},
+	methods: {
+		toggleShowProfile: function() {
+			this.$store.dispatch("toggleShowProfile");
+		}
 	}
 };
 </script>

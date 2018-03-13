@@ -16,6 +16,7 @@ const store = new Vuex.Store({
 		showMenu: false,
 		selectedMsgsCount: 0,
 		showUserOptions: false,
+		showProfile: false,
 		servers: [
 			{
 				"members": [],
@@ -77,6 +78,7 @@ const store = new Vuex.Store({
 		getShowMenu: state => state.showMenu,
 		getSelectedMsgsCount: state => state.selectedMsgsCount,
 		getShowUserOptions: state => state.showUserOptions,
+		getShowProfile: state => state.showProfile,
 	},
 	mutations: {
 		ADD_TODO: (state, payload) => {
@@ -93,6 +95,9 @@ const store = new Vuex.Store({
 		TOGGLE_USER_OPTIONS: (state) => {
 			state.showUserOptions = !state.showUserOptions;
 		},
+		TOGGLE_SHOW_PROFILE: (state) => {
+			state.showProfile = !state.showProfile;
+		},
 		
 	},
 	actions: {
@@ -102,6 +107,10 @@ const store = new Vuex.Store({
 		toggleUserOptions: (context) => {
 			context.commit("TOGGLE_USER_OPTIONS");
 		},
+		toggleShowProfile: (context) => {
+			context.commit("TOGGLE_SHOW_PROFILE");
+		},
+			
 	},
 });
 

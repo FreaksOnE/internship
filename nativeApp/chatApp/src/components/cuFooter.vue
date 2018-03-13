@@ -1,6 +1,6 @@
 <template>
 <transition name="slideUp">
-	<div class="cu-footer"  v-if="!showMenu">
+	<div class="cu-footer"  v-if="!showMenu && !showProfile">
 		<div class="profile-ico-container">
 			<div class="profile-ico" @click="toggleUserOptions"><i class="fa fa-user-circle-o"></i>
 				<!--<img>-->
@@ -42,7 +42,10 @@ export default {
 		},
 		showMenu() {
 			return this.$store.getters.getShowMenu;
-		}
+		},
+		showProfile() {
+			return this.$store.getters.getShowProfile;
+		},
 	},
 	methods: {
 		toggleUserOptions: function() {
