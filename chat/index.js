@@ -430,13 +430,23 @@ router.route('/convs/:conv_id').get(function (req, res) {
 })*/
 
 router.route('/user').get(function (req, res) {
-	res.json({
-		message: 'done',
-		data: {
+	var temp = {};
+	if (requireAuth) {
+		temp = {
 			name: req.session.passport.user.displayName, //req.user.local.name,
-			id: req.session.passport.user.id,
+			_id: req.session.passport.user.id,
 			picture: req.session.passport.user.picture
 		}
+	} else {
+		temp = {
+			name: "xxx",
+			_id: "sejkfhu3y78rtq87r782",
+			picture: "test.png"
+		}
+	}
+	res.json({
+		message: 'done',
+		data: temp
 	});
 });
 

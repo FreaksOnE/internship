@@ -33,7 +33,7 @@
 		<div class="chat-cont" :class="{ open: selectedMsgsCount }">
 			<div class="chat">
 				<transition-group name="msg-in" mode="out-in">
-				<div class="msg-cont" v-for="message in msgs" :key="message.id" :class="{ mine: message.from == userDetails.id }">
+				<div class="msg-cont" v-for="message in msgs" :key="message._id" :class="{ mine: message.from == userDetails._id }">
 					<div class="notification" v-if="message.msgType == 'notification'">
 						{{ message.text }}
 					</div>
@@ -42,11 +42,11 @@
 						{{ getUsername(message.from) }}
 					</div>
 
-					<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetails.id && message.msgType != 'notification'" @click="showProfile = !showProfile; profileID = message.from;">
+					<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetails._id && message.msgType != 'notification'">
 						<img :src="getUserImage(message.from)">
 					</div>
 
-					<div class="user-msg" v-if="message.msgType != 'notification'" @click="toggleSelectMsg(message.id)" v-bind:class="{ selected: message.selected, image: message.msgType == 'image' }">
+					<div class="user-msg" v-if="message.msgType != 'notification'" @click="toggleSelectMsg(message._id)" v-bind:class="{ selected: message.selected, image: message.msgType == 'image' }">
 						<div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
 						<div class="text" >{{ message.text }}</div>
 						<img :src="message.text" v-if="message.msgType == 'image'">
@@ -114,7 +114,7 @@ export default {
 		getUsername: function(userID) {
 			var temp;
 			temp = _.findWhere(this.users, {
-				id: userID
+				_id: userID
 			});
 			if (temp != undefined)
 				return temp.name;
@@ -124,7 +124,7 @@ export default {
 		getUserImage: function(userID){
 			var temp;
 			temp = _.findWhere(this.users, {
-				id: userID
+				_id: userID
 			});
 			if (temp != undefined)
 				return temp.picture;

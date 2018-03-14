@@ -20,16 +20,17 @@ const store = new Vuex.Store({
 		selectedMsgsCount: 0,
 		showUserOptions: false,
 		showProfile: false,
+		openedChat: "",
 		servers: [
 			{
 				"members": [],
-				"id": "5aa28c735bbed02703410dc8",
+				"_id": "5aa28c735bbed02703410dc8",
 				"name": "chat1",
 				"notifications": 4
 			},
 			{
 				"members": [],
-				"id": "5aa28c735bbed02703410dc9",
+				"_id": "5aa28c735bbed02703410dc9",
 				"name": "chat2",
 				"notifications": 1
 			},
@@ -37,7 +38,7 @@ const store = new Vuex.Store({
 		],
 		msgs: [
 			{
-				"id": "5aa28csdf735bb",
+				"_id": "5aa28csdf735bb",
 				"msgType": "notification",
 				"conversationID": "fijoiajfoiahfoafjpafk",
 				"date": "2018-03-11T08:44:18.716Z",
@@ -46,7 +47,7 @@ const store = new Vuex.Store({
 				"selected": false,
 			},
 			{
-				"id": "5aa28c735bb",
+				"_id": "5aa28c735bb",
 				"msgType": "message",
 				"from": "fasdrtwekrjieoewjroiqq",
 				"conversationID": "fijoiajfoiahfoafjpafk",
@@ -56,7 +57,7 @@ const store = new Vuex.Store({
 				"selected": false,
 			},
 			{
-				"id": "5aa28c73234235bb",
+				"_id": "5aa28c73234235bb",
 				"msgType": "message",
 				"from": "fasdrtwekrjieoewjroiqq",
 				"conversationID": "fijoiajfoiahfoafjpafk",
@@ -66,7 +67,7 @@ const store = new Vuex.Store({
 				"selected": false,
 			},
 			{
-				"id": "5aa28c7werwe35bb",
+				"_id": "5aa28c7werwe35bb",
 				"msgType": "message",
 				"from": "fasdrtwekrjieoewjroiqq",
 				"conversationID": "fijoiajfoiahfoafjpafk",
@@ -76,9 +77,9 @@ const store = new Vuex.Store({
 				"selected": false,
 			},
 			{
-				"id": "5aa28c7sdf354b",
+				"_id": "5aa28c7sdf354b",
 				"msgType": "message",
-				"from": "fasdrtwekrjioewjroiqq",
+				"from": "sejkfhu3y78rtq87r782",
 				"conversationID": "fijoiajfoiahfoafjpafk",
 				"date": "2018-03-11T08:44:18.716Z",
 				"text": "lorem ipsum",
@@ -86,7 +87,7 @@ const store = new Vuex.Store({
 				"selected": false,
 			},
 			{
-				"id": "5aa28c7wewrerwe35bb",
+				"_id": "5aa28c7wewrerwe35bb",
 				"msgType": "message",
 				"from": "fasdrtwekrjieoewjroiqq",
 				"conversationID": "fijoiajfoiahfoafjpafk",
@@ -99,20 +100,20 @@ const store = new Vuex.Store({
 		],
 		usersData: [
 			{
-				"id": "fasdrtwekrjioewjroiqq",
+				"_id": "sejkfhu3y78rtq87r782",
 				"name": "user1",
 				"online": false,
 				"picture": "test.png"
 			},
 			{
-				"id": "fasdrtwekrjieoewjroiqq",
+				"_id": "fasdrtwekrjieoewjroiqq",
 				"name": "user2",
 				"online": false,
 				"picture": "test.png"
 			},
 		],
 		userDetails: {
-			"id": "fasdrtwekrjioewjroiqq",
+			"_id": "sejkfhu3y78rtq87r782",
 			"username": "user1",
 			"picture": "test.png"
 		},
@@ -126,7 +127,9 @@ const store = new Vuex.Store({
 		getSelectedMsgsCount: state => state.selectedMsgsCount,
 		getShowUserOptions: state => state.showUserOptions,
 		getShowProfile: state => state.showProfile,
-		getUserDetails: state=> state.userDetails,
+		getUserDetails: state => state.userDetails,
+		getOpenedChat: state => state.openedChat,
+
 	},
 	mutations: {
 		ADD_TODO: (state, payload) => {
@@ -147,7 +150,7 @@ const store = new Vuex.Store({
 			state.showProfile = !state.showProfile;
 		},
 		TOGGLE_SELECT_MSG: (state, payload) => {
-			var item = state.msgs.find(msg => msg.id === payload);
+			var item = state.msgs.find(msg => msg._id === payload);
 			item.selected = !item.selected;
 			if(item.selected){
 				state.selectedMsgsCount++;
@@ -161,6 +164,14 @@ const store = new Vuex.Store({
 		},
 		FETCH_SERVERS: (state, payload) => {
 			state.servers = payload;
+		},
+		GET_USER: (state, payload) => {
+			state.userDetails._id = payload._id;
+			state.userDetails.username = payload.username;
+			state.userDetails.picture = payload.picture;
+		},
+		SET_OPENED_CHAT: (state, payload) => {
+			state.openedChat = payload;
 		},
 	},
 	actions: {
@@ -196,7 +207,37 @@ const store = new Vuex.Store({
 						reject(error);
 					});
 			});
-		}
+		},
+		getUser(context) {
+			return new Promise((resolve, reject) => {
+				axios.get(serverAddress+"api/user")
+					.then(function (response) {
+						//console.log(response);
+						if(response.data.message == "done"){
+							context.commit("GET_USER", response.data.data);
+							resolve();						
+						} else {
+							reject("error");
+						}
+					}).catch(function (error) {
+						reject(error);
+					});
+			});
+		},
+		openChat: function(context, payload) {
+			store.dispatch("getUser");
+
+			var temp = store.getters.getServers.find(server => server._id === payload);
+
+			temp.notifications = 0;
+
+			context.commit("SET_OPENED_CHAT", payload);
+			/*context.fetchMessages(payload, function() {
+				context.fetchUsernames(function() {
+					context.chatScrollBottom(true);
+				});
+			});*/
+		},
 	},
 });
 

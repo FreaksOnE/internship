@@ -4,7 +4,7 @@
 			<div class="online" v-if="!showProfile">
 				<div class="header">online-0</div>
 				<transition-group name="fade">
-				<user-cont v-for="user in users" :key="user.id" @click.native="toggleShowProfile">
+				<user-cont v-for="user in users" :key="user._id" @click.native="toggleShowProfile">
 					<span slot="user-picture">
 						<img :src="user.picture">
 					</span>

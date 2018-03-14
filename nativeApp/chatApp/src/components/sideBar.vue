@@ -2,7 +2,7 @@
 	<transition name="sidebarSlide">
 			<div id="sidebar" :class="{ open: showMenu }">
 			<div class="logo-cont" @click="toggleMenu"></div>
-			<server-cont v-for="server in servers" :key="server._id">
+			<server-cont v-for="server in servers" :key="server._id" @click.native="openChat(server._id)">
 					<div class="server-name"  slot="server-name" v-show="showMenu">
 						<i class="material-icons" style="padding: 1px 4px 1px 0px; float: left;">group</i>
 						{{ server.name }}
@@ -48,7 +48,10 @@ export default {
 		},
 		fetchServers() {
 			this.$store.dispatch("fetchServers");
-		}
+		},
+		openChat(id) {
+			this.$store.dispatch("openChat", id);
+		},
 	},
 };
 </script>
