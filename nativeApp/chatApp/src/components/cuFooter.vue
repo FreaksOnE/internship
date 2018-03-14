@@ -1,13 +1,13 @@
 <template>
 <transition name="slideUp">
-	<div class="cu-footer"  v-if="!showMenu && !showProfile">
+	<div class="cu-footer"  v-if="!showMenu && !showProfile" :class="{ open: userOptions }">
 		<div class="profile-ico-container">
 			<div class="profile-ico" @click="toggleUserOptions"><i class="fa fa-user-circle-o"></i>
 				<!--<img>-->
 			</div>
 		</div>
 		<div class="inp-section">
-			<div class="msg-input" :class="{ open: userOptions }">
+			<div class="msg-input">
 				<div class="status"></div>
 				<input type="text" placeholder="Write a message...">
 				<button type="button" class="send-btn"><i class="material-icons">send</i></button>
@@ -60,15 +60,17 @@ export default {
   position: absolute;
   bottom: 0px;
   width: 100%;
-  height: 120px;
+  height: 80px;
   z-index: 3;
+  transition: all 0.2s ease;
 }
 
 .cu-footer .profile-ico-container {
-  height: 100%;
+  height: 80px;
   width: 120px;
   left: 0px;
   position: absolute;
+  bottom: 0px;
 }
 
 .cu-footer .profile-ico {
@@ -78,7 +80,7 @@ export default {
   border-radius: 50%;
   background-color: #eee;
   margin: auto;
-  top: 50px;
+  bottom: -10px;
   cursor: pointer;
   transition: border 0.2s ease;
   font-size: 54px;
@@ -124,13 +126,12 @@ export default {
   color: #eee;
   box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
   border-top-left-radius: 10px;
-  top: 40px;
+  top: 0px;
   font-size: 20px;
-  transition: all 0.2s ease;
 }
 
-.cu-footer .inp-section .msg-input.open {
-  top: 0px;
+.cu-footer.open {
+  height: 120px;
 }
 
 .cu-footer .inp-section .msg-input > i {

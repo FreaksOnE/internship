@@ -145,21 +145,7 @@
 
 
 
-.prop-slide-enter-active, .prop-slide-leave-active {
-	transition: all 0.2s ease;
-	
-}
-.prop-slide-enter, .prop-slide-leave-to {
-	opacity: 0;
-	transform: translateY(-15px);
-}
 
-.msg-in-enter-active, .msg-in-leave-active {
-  transition: all .15s;
-}
-.msg-in-enter, .msg-in-leave-to {
-  opacity: 0;
-}
 
 
 

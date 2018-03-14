@@ -19,6 +19,8 @@ var conversationModel = require('./models/conversation');
 var messageModel = require('./models/message');
 var LocalStrategy = require('passport-local').Strategy;
 const Auth0Strategy = require('passport-auth0');
+
+const requireAuth = false;
 //var passportSocketIo = require('passport.socketio');
 
 // Configuring Express
@@ -191,10 +193,15 @@ passport.use('local_signup', new LocalStrategy({
 	}));
 */
 app.get('/', function (req, res) {
-	if (req.isAuthenticated())
+	if (requireAuth) {
+		if (req.isAuthenticated())
+			res.sendFile(path.join(__dirname + '/public/chat.html'));
+		else
+			res.redirect('/login');
+	} else {
 		res.sendFile(path.join(__dirname + '/public/chat.html'));
-	else
-		res.redirect('/login');
+	}
+
 });
 
 // Routing
@@ -331,11 +338,16 @@ router.get('/signout', function (req, res) {
 });
 
 router.all('/*', function (req, res, next) {
-	if (req.isAuthenticated())
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	if (requireAuth) {
+		if (req.isAuthenticated())
+			return next();
+		res.json({
+			message: 'unauthorized'
+		});
+	} else {
 		return next();
-	res.json({
-		message: 'unauthorized'
-	});
+	}
 });
 
 //router.all('/api/*', requireAuthentication);

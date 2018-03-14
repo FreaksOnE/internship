@@ -10,9 +10,13 @@
 					<div class="server-users" slot="members-count" v-show="showMenu">
 						{{ server.members.length }}&nbsp;people
 					</div>
-				<span slot="notifications-count">{{ server.notifications }}</span>
+				<span slot="notifications-count">
+					<div class="notifications" v-if="server.notifications">
+						{{ server.notifications }}
+					</div>
+				</span>
 			</server-cont>
-			<div class="addNew-btn">
+			<div class="addNew-btn" @click="fetchServers">
 				<i class="material-icons">add</i>
 			</div>
 		</div>
@@ -22,7 +26,7 @@
 <script>
 var serverCont = {
 	template:
-		"<div class=\"server-cont\"><div class=\"server\"></div><slot name=\"server-name\">%server-name%</slot><slot name=\"members-count\">%members-count%</slot><div class=\"notifications\"><slot name=\"notifications-count\">%notifications-count%</slot></div><div class=\"clearfix\"></div></div>"
+		"<div class=\"server-cont\"><div class=\"server\"></div><slot name=\"server-name\">%server-name%</slot><slot name=\"members-count\">%members-count%</slot><slot name=\"notifications-count\">%notifications-count%</slot><div class=\"clearfix\"></div></div>"
 };
 
 export default {
@@ -42,6 +46,9 @@ export default {
 		toggleMenu: function() {
 			this.$store.dispatch("toggleMenu");
 		},
+		fetchServers() {
+			this.$store.dispatch("fetchServers");
+		}
 	},
 };
 </script>

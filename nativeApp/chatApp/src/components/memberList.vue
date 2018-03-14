@@ -3,7 +3,7 @@
 		<div class="member-list" v-if="!showMenu" :class="{ open: showProfile }">
 			<div class="online" v-if="!showProfile">
 				<div class="header">online-0</div>
-				<!--<transition-group name="fade">-->
+				<transition-group name="fade">
 				<user-cont v-for="user in users" :key="user.id" @click.native="toggleShowProfile">
 					<span slot="user-picture">
 						<img :src="user.picture">
@@ -11,7 +11,7 @@
 					<span slot="display-name">{{ user.name }}</span>
 					<span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
 				</user-cont>
-				<!--</transition-group>-->
+				</transition-group>
 			</div>
 			<div class="offline" v-if="!showProfile">
 				<div class="header">offline-0</div>
@@ -210,6 +210,6 @@ export default {
 	.memberListSlide-enter,
 	.memberListSlide-leave-to {
 		opacity: .0;
-		transform: translateX(40px);
+		transform: translateX(50px);
 	}
 </style>
