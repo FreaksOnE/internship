@@ -52,6 +52,10 @@ var messageSchema = new Schema({
         type: Boolean,
         default: false
     },
+	selected: {
+		type: Boolean,
+		default: false
+	},
 });
 
 module.exports = mongoose.model('messageModel', messageSchema);

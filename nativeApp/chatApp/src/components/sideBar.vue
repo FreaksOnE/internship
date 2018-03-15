@@ -26,7 +26,7 @@
 <script>
 var serverCont = {
 	template:
-		"<div class=\"server-cont\"><div class=\"server\"></div><slot name=\"server-name\">%server-name%</slot><slot name=\"members-count\">%members-count%</slot><slot name=\"notifications-count\">%notifications-count%</slot><div class=\"clearfix\"></div></div>"
+		"<div class=\"server-cont\"><div class=\"server\"></div><slot name=\"server-name\">%server-name%</slot><slot name=\"members-count\">%members-count%</slot><slot name=\"notifications-count\">%notifications-count%</slot><div class=\"clearfix\"></div></div>",
 };
 
 export default {
@@ -37,14 +37,14 @@ export default {
 		},
 		showMenu() {
 			return this.$store.getters.getShowMenu;
-		}
+		},
 	},
 	components: {
-		"server-cont": serverCont
+		"server-cont": serverCont,
 	},
 	methods: {
 		toggleMenu: function() {
-			this.$store.dispatch("toggleMenu");
+			this.$store.dispatch("toggleMenu", true);
 		},
 		fetchServers() {
 			this.$store.dispatch("fetchServers");
@@ -67,6 +67,7 @@ export default {
 	transition: all 0.2s ease;
 	box-shadow: 3px 0px 4px 0px rgba(0, 0, 0, 0.3);
 	color: #eee;
+	overflow: auto;
 }
 
 #sidebar.open {

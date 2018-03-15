@@ -28,6 +28,14 @@ module.exports = {
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "no-console": 0,
+        "comma-dangle": ["error", "always"],
+        "func-call-spacing": ["error", "never"],
+        "key-spacing": ["error",{
+            "beforeColon": false,
+            "afterColon": true,
+            "mode": "strict",
+        }],
     }
 };

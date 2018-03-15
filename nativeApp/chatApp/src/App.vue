@@ -22,20 +22,20 @@ export default {
 	name: "App",
 	data() {
 		return {
-			msg: "hello"
+			msg: "hello",
 		};
 	},
 	computed: {
 		count() {
 			return this.$store.state.selectedMsgsCount;
-		}
+		},
 	},
 	components: {
 		"side-bar": sideBar,
 		"cu-footer": cuFooter,
 		"chat-section": chatSection,
-		"member-list": memberList
-	}
+		"member-list": memberList,
+	},
 };
 </script>
 

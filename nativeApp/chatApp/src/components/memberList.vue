@@ -2,9 +2,9 @@
 	<transition name="memberListSlide">
 		<div class="member-list" v-if="!showMenu" :class="{ open: showProfile }">
 			<div class="online" v-if="!showProfile">
-				<div class="header">online-0</div>
+				<div class="header">online-{{ onlineMembers.length }}</div>
 				<transition-group name="fade">
-				<user-cont v-for="user in users" :key="user._id" @click.native="toggleShowProfile">
+				<user-cont v-for="user in onlineMembers" :key="user._id" @click.native="toggleShowProfile">
 					<span slot="user-picture">
 						<img :src="user.picture">
 					</span>
@@ -14,10 +14,16 @@
 				</transition-group>
 			</div>
 			<div class="offline" v-if="!showProfile">
-				<div class="header">offline-0</div>
-				<!--<transition-group name="fade">-->
-
-				<!--</transition-group>-->
+				<div class="header">offline-{{ offlineMembers.length }}</div>
+				<transition-group name="fade">
+					<user-cont v-for="user in offlineMembers" :key="user._id" @click.native="toggleShowProfile">
+					<span slot="user-picture">
+						<img :src="user.picture">
+					</span>
+					<span slot="display-name">{{ user.name }}</span>
+					<span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
+				</user-cont>
+				</transition-group>
 			</div>
 
 			<transition name="fade">
@@ -37,9 +43,12 @@
 </template>
 
 <script>
+
+import { mapGetters, } from "vuex";
+
 var userCont = {
 	template:
-			"<div class=\"user\"><div class=\"user-image\"><slot name=\"user-picture\">%user-picture%</slot></div><span style=\"float:left;width:130px;\"><div class=\"user-name\"><slot name=\"display-name\">%display-name%</slot></div><div class=\"user-status\"><slot name=\"user-status\">%user-status%</slot></div></span></div>"
+			"<div class=\"user\"><div class=\"user-image\"><slot name=\"user-picture\">%user-picture%</slot></div><span style=\"float:left;width:130px;\"><div class=\"user-name\"><slot name=\"display-name\">%display-name%</slot></div><div class=\"user-status\"><slot name=\"user-status\">%user-status%</slot></div></span></div>",
 };
 
 export default {
@@ -54,15 +63,33 @@ export default {
 		showProfile() {
 			return this.$store.getters.getShowProfile;
 		},
+		...mapGetters([
+			"getServerByID",
+		]),
+		openedChat() {
+			return this.$store.getters.getOpenedChat;
+		},
+		chatMembers(){
+			return this.$store.getters.getMembersObj;
+		},
+		onlineMembers(){
+			return this.$store.getters.getOnlineMembers;
+		},
+		offlineMembers(){
+			return this.$store.getters.getOfflineMembers;
+		},
 	},
 	components: {
-		"user-cont": userCont
+		"user-cont": userCont,
 	},
 	methods: {
 		toggleShowProfile: function() {
 			this.$store.dispatch("toggleShowProfile");
-		}
-	}
+			console.log(this.onlineMembers);
+			console.log(this.offlineMembers);
+			console.log("users length:"+this.chatMembers.length);
+		},
+	},
 };
 </script>
 
@@ -78,6 +105,7 @@ export default {
 		z-index: 5;
 		transition: all 0.35s ease;
 		box-shadow: -3px 0px 4px 0px rgba(0, 0, 0, 0.3);
+		overflow: auto;
 	}
 
 	.member-list.open {
@@ -119,7 +147,7 @@ export default {
 		height: 40px;
 		width: 40px;
 		margin: 10px 10px 10px 0px;
-		background-color: #eee;
+		/*background-color: #eee;*/
 		border-radius: 50%;
 		box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
 		float: left;

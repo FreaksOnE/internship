@@ -38,7 +38,7 @@
 						{{ message.text }}
 					</div>
 
-					<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType == 'message'">
+					<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType != 'notification'">
 						{{ getUsername(message.from) }}
 					</div>
 
@@ -92,14 +92,14 @@ export default {
 			} else {
 				var firstMsg = _.findWhere(this.msgs, {
 					conversationID: convID,
-					queueNumber: queue
+					queueNumber: queue,
 				});
 				var tempOffset = 1;
 				var secondMsg;
 				while (secondMsg == undefined) {
 					secondMsg = _.findWhere(this.msgs, {
 						conversationID: convID,
-						queueNumber: (queue - tempOffset)
+						queueNumber: (queue - tempOffset),
 					});
 					tempOffset += 1;
 				}
@@ -114,7 +114,7 @@ export default {
 		getUsername: function(userID) {
 			var temp;
 			temp = _.findWhere(this.users, {
-				_id: userID
+				_id: userID,
 			});
 			if (temp != undefined)
 				return temp.name;
@@ -124,13 +124,14 @@ export default {
 		getUserImage: function(userID){
 			var temp;
 			temp = _.findWhere(this.users, {
-				_id: userID
+				_id: userID,
 			});
 			if (temp != undefined)
 				return temp.picture;
 			else
 				return userID;
 		},
+		
 	},
 };
 </script>
@@ -210,7 +211,7 @@ export default {
 
 	.chat-section .msg-cont .user-msg.image {
 		width: 400px;
-		height: 400px;
+		height: auto;;
 	}
 
 	.chat-section .msg-cont .user-msg.image img {
@@ -219,6 +220,7 @@ export default {
 		position: relative;
 		left: 10px;
 		top: 25px;
+		padding-bottom: 35px;
 	}
 
 	.chat-section .msg-prop {
@@ -339,7 +341,7 @@ export default {
 		position: absolute;
 		width: 50px;
 		height: 50px;
-		background-color: #555;
+		/*background-color: #555;*/
 		left: 30px;
 		top: 12px;
 		border-radius: 50%;

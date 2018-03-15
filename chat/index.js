@@ -439,9 +439,9 @@ router.route('/user').get(function (req, res) {
 		}
 	} else {
 		temp = {
-			name: "xxx",
-			_id: "sejkfhu3y78rtq87r782",
-			picture: "test.png"
+			name: "Saman Asady",
+			_id: "google-oauth2|116452869023753433087",
+			picture: "https://lh3.googleusercontent.com/-ikUEdC7uVck/AAAAAAAAAAI/AAAAAAAABK0/GOgt-AJQdoY/photo.jpg"
 		}
 	}
 	res.json({
@@ -451,13 +451,24 @@ router.route('/user').get(function (req, res) {
 });
 
 router.route('/users').get(function (req, res) {
-	userModel.find().select('local.name local.online').exec(function (err, result) {
+	userModel.find().select('local.name local.online local.picture local.auth_id').exec(function (err, result) {
 		if (err)
-			res.send(err);
+			console.log(err);
+
+		var temp = [];
+
+		result.forEach((user) => {
+			temp.push({
+				name: user.local.name,
+				_id: user.local.auth_id,
+				online: user.local.online,
+				picture: user.local.picture
+			});
+		});
 
 		res.json({
 			message: 'done',
-			data: result
+			data: temp
 		});
 	});
 });
@@ -534,6 +545,8 @@ router.route('/userdata').post(function (req, res) {
 // on routes that end in /msgs
 router.route('/msgs').post(function (req, res) {
 	var newMsg = new messageModel();
+	
+	console.log(req.body);
 
 	newMsg.msgType = req.body.msgType;
 	newMsg.text = req.body.text;
@@ -556,8 +569,10 @@ router.route('/msgs').post(function (req, res) {
 			//console.log(newMsg.queueNumber);
 		}
 
-
-		newMsg.from = req.session.passport.user.id;
+		if(requireAuth)
+			newMsg.from = req.session.passport.user.id;
+		else
+			newMsg.from = "google-oauth2|116452869023753433087";
 
 		newMsg.save(function (err) {
 			if (err)
@@ -587,45 +602,53 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 				//console.log(result2.members);
 				//console.log(req.user.id);
 
-				if (result2.members.indexOf(req.session.passport.user.id) < 0) {
-					result2.members.push(req.session.passport.user.id);
-					result2.save(function (err) {
-						if (err)
-							res.send(err);
-						var temp = [];
-						var tmp_queue = 0;
-						result.forEach(function (elem) {
-							temp.push(elem.queueNumber);
-						});
-						if (temp.length < 1) {
-							tmp_queue = 0;
-						} else {
-							tmp_queue = math.max(temp) + 1;
-							//console.log(newMsg.queueNumber);
-						}
+				if (requireAuth) {
 
-						//console.log(temp);
-
-						messageModel.create({
-							msgType: 'notification',
-							text: req.session.passport.user.displayName + ' joined',
-							conversationID: req.params.conv_id,
-							queueNumber: tmp_queue
-						}, function (err, result3) {
-							if (err) return handleError(err);
-							// saved!
-							//console.log(result3);
-							result.push(result3);
-							//console.log(result);
-							io.to(req.params.conv_id).emit('refresh chat', {
-								'convID': req.params.conv_id
+					if (result2.members.indexOf(req.session.passport.user.id) < 0) {
+						result2.members.push(req.session.passport.user.id);
+						result2.save(function (err) {
+							if (err)
+								res.send(err);
+							var temp = [];
+							var tmp_queue = 0;
+							result.forEach(function (elem) {
+								temp.push(elem.queueNumber);
 							});
-							res.json({
-								message: 'done',
-								data: result
+							if (temp.length < 1) {
+								tmp_queue = 0;
+							} else {
+								tmp_queue = math.max(temp) + 1;
+								//console.log(newMsg.queueNumber);
+							}
+
+							//console.log(temp);
+
+							messageModel.create({
+								msgType: 'notification',
+								text: req.session.passport.user.displayName + ' joined',
+								conversationID: req.params.conv_id,
+								queueNumber: tmp_queue
+							}, function (err, result3) {
+								if (err) return handleError(err);
+								// saved!
+								//console.log(result3);
+								result.push(result3);
+								//console.log(result);
+								io.to(req.params.conv_id).emit('refresh chat', {
+									'convID': req.params.conv_id
+								});
+								res.json({
+									message: 'done',
+									data: result
+								});
 							});
 						});
-					});
+					} else {
+						res.json({
+							message: 'done',
+							data: result
+						});
+					}
 				} else {
 					/*io.to(req.params.conv_id).emit('refresh chat', {
 						'convID': req.params.conv_id

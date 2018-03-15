@@ -2,15 +2,15 @@
 <transition name="slideUp">
 	<div class="cu-footer"  v-if="!showMenu && !showProfile" :class="{ open: userOptions }">
 		<div class="profile-ico-container">
-			<div class="profile-ico" @click="toggleUserOptions"><i class="fa fa-user-circle-o"></i>
+			<div class="profile-ico" @click="toggleUserOptions"><img :src="userDetails.picture">
 				<!--<img>-->
 			</div>
 		</div>
 		<div class="inp-section">
 			<div class="msg-input">
 				<div class="status"></div>
-				<input type="text" placeholder="Write a message...">
-				<button type="button" class="send-btn"><i class="material-icons">send</i></button>
+				<input type="text" placeholder="Write a message..." v-model="msgText" ref="msg" @keyup.enter="sendMessage">
+				<button type="button" class="send-btn" @click="sendMessage"><i class="material-icons">send</i></button>
 				<i class="material-icons">keyboard_voice</i>
 				<i class="material-icons">add_a_photo</i>
 				<i class="material-icons">attachment</i>
@@ -36,6 +36,11 @@
 <script>
 export default {
 	name: "cuFooter",
+	data: function () {
+		return {
+			msgText: "",
+		};
+	},
 	computed: {
 		userOptions() {
 			return this.$store.getters.getShowUserOptions;
@@ -46,12 +51,34 @@ export default {
 		showProfile() {
 			return this.$store.getters.getShowProfile;
 		},
+		userDetails() {
+			return this.$store.getters.getUserDetails;
+		},
 	},
 	methods: {
 		toggleUserOptions: function() {
 			this.$store.dispatch("toggleUserOptions");
-		}
-	}
+		},
+		sendMessage: function() {
+			var userMsg = {
+				"msgType": "message",
+				"text": "",
+				"conversationID": this.$store.getters.getOpenedChat,
+			};
+
+			if (this.msgText) {
+				userMsg.text = this.msgText;
+				this.msgText = "";
+				this.$refs.msg.focus();
+				if (this.msgText.match(/:img:$/g)) {
+					this.msgText = this.msgText.match(/.+(?=:.*:)/g)[0];
+					userMsg.msgType = "image";
+				}
+
+				this.$store.dispatch("sendMessage", userMsg);
+			}
+		},
+	},
 };
 </script>
 
