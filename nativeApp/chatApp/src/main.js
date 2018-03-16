@@ -7,6 +7,13 @@ import router from "./router";
 import axios from "axios";
 
 import qs from "qs";
+//import Auth0Lock from "auth0-lock";
+
+import AuthService from "./auth/AuthService";
+
+const auth = new AuthService();
+
+const { login, logout, } = auth;
 
 const serverAddress = "http://localhost:3000/";
 
@@ -16,13 +23,53 @@ Vue.config.productionTip = false;
 
 //import './assets/style.css'
 
+/*var lock = new Auth0Lock(
+	"xLdhXhO_gp2bCFQ0B5cJTcqJqqpq_hBI",
+	"chat-demo-app.eu.auth0.com", {
+		auth: {
+			redirectUrl: "http://localhost:8080/#/",
+			responseType: "token",
+			autoParseHash: true,
+			redirect: true,
+			//responseMode: "form_post",
+			sso: true,
+			audience: "http://localhost:3000/api",
+			params: {
+				scope: "openid profile email",
+			},
+		},
+	}
+);*/
+
+// Listening for the authenticated event
+/*lock.on("authenticated", function(authResult) {
+	// Use the token in authResult to getUserInfo() and save it to localStorage
+	lock.getUserInfo(authResult.accessToken, function(error, profile) {
+		if (error) {
+			// Handle error
+			console.log(error);
+			return;
+		}
+		//console.log(profile);
+		//console.log(authResult);
+		//document.getElementById("nick").textContent = profile.nickname;
+
+		localStorage.setItem("accessToken", authResult.accessToken);
+		localStorage.setItem("profile", JSON.stringify(profile));
+		console.log("logged in");
+		store.dispatch("toggleLoggedIn", true);
+	});
+});*/
+
 const store = new Vuex.Store({
 	state: {
-		showMenu: true,
+		preLoad: true,
+		showMenu: false,
 		selectedMsgsCount: 0,
 		showUserOptions: false,
 		showProfile: false,
 		openedChat: "",
+		loggedIn: false,
 		servers: [
 			{
 				"members": [],
@@ -153,7 +200,15 @@ const store = new Vuex.Store({
 		getOfflineMembers: (state, getters) => {
 			return getters.getMembersObj.filter(member => !member.online);
 		},
-		
+		getHeaders: () => {
+			if(localStorage.getItem("access_token"))
+				return { "headers": { "Authorization": "Bearer " +localStorage.getItem("access_token"),},};
+			else
+				store.dispatch("doLogin");
+		},
+		getLoggedIn: (state) => state.loggedIn,
+		getPreLoad: state => state.preLoad,
+
 	},
 	mutations: {
 		ADD_TODO: (state, payload) => {
@@ -170,14 +225,29 @@ const store = new Vuex.Store({
 			else
 				state.showMenu = false;
 		},
+		TOGGLE_PRELOAD: (state, payload) => {
+			if(payload)
+				state.preLoad = true;
+			else
+				state.preLoad = false;
+		},
+		TOGGLE_LOGGEDIN: (state, payload) => {
+			if(payload)
+				state.loggedIn = true;
+			else
+				state.loggedIn = false;
+		},
 		TOGGLE_USER_OPTIONS: (state) => {
 			state.showUserOptions = !state.showUserOptions;
 		},
-		TOGGLE_SHOW_PROFILE: (state, payload) => {
+		TOGGLE_SHOW_PROFILE: (state) => {
+			state.showProfile = !state.showProfile;
+		},
+		HIDE_PROFILE: (state, payload) => {
 			if(payload)
-				state.showProfile = true;
-			else
 				state.showProfile = false;
+			else
+				state.showProfile = true;
 		},
 		TOGGLE_SELECT_MSG: (state, payload) => {
 			var item = state.msgs.find(msg => msg._id === payload);
@@ -214,13 +284,25 @@ const store = new Vuex.Store({
 		toggleMenu: (context, payload) => {
 			context.commit("DESELECT_ALL_MSGS");
 			context.commit("TOGGLE_MENU", payload);
+			//vm.login();
+		},
+		toggleLoggedIn: (context, payload) => {
+			context.commit("TOGGLE_LOGGEDIN", payload);
+		},
+		togglePreLoad: (context, payload) => {
+			context.commit("TOGGLE_MENU", !payload);
+			context.commit("TOGGLE_PRELOAD", payload);
 		},
 		toggleUserOptions: (context) => {
 			context.commit("TOGGLE_USER_OPTIONS");
 		},
-		toggleShowProfile: (context, payload) => {
+		toggleShowProfile: (context) => {
 			context.commit("DESELECT_ALL_MSGS");
-			context.commit("TOGGLE_SHOW_PROFILE", payload);
+			context.commit("TOGGLE_SHOW_PROFILE");
+		},
+		hideProfile: (context, payload) => {
+			context.commit("DESELECT_ALL_MSGS");
+			context.commit("HIDE_PROFILE", payload);
 		},
 		toggleSelectMsg: (context, payload) => {
 			context.commit("TOGGLE_SELECT_MSG", payload);
@@ -230,7 +312,8 @@ const store = new Vuex.Store({
 		},
 		fetchServers(context) {
 			return new Promise((resolve, reject) => {
-				axios.get(serverAddress+"api/convs")
+				console.log(serverAddress+"api/convs");
+				axios.get(serverAddress+"api/convs", store.getters.getHeaders)
 					.then(function (response) {
 						//console.log(response);
 						if(response.data.message == "done"){
@@ -238,25 +321,28 @@ const store = new Vuex.Store({
 							resolve();						
 						} else {
 							reject("error");
+							//store.dispatch("doLogin");
 						}
 					}).catch(function (error) {
 						reject(error);
+						//store.dispatch("doLogin");
 					});
 			});
 		},
 		getUser(context) {
 			return new Promise((resolve, reject) => {
-				axios.get(serverAddress+"api/user")
+				console.log(serverAddress+"api/user");
+				axios.get(serverAddress+"api/user", store.getters.getHeaders)
 					.then(function (response) {
 						//console.log(response);
 						if(response.data.message == "done"){
 							response.data.data.picture = decodeURIComponent(response.data.data.picture.replace(/^https.*?(?=https)/gi, ""));
 							response.data.data.picture = decodeURIComponent(response.data.data.picture.replace(/lh4\.google/, "lh3.google"));	
-							console.log(response.data.data);
 							context.commit("GET_USER", response.data.data);
 							resolve();						
 						} else {
 							reject("error");
+							//store.dispatch("doLogin");
 						}
 					}).catch(function (error) {
 						reject(error);
@@ -264,36 +350,34 @@ const store = new Vuex.Store({
 			});
 		},
 		openChat: function(context, payload) {
-			store.dispatch("getUser").then(() => {
-				var temp = store.getters.getServers.find(server => server._id === payload);
+			var temp = store.getters.getServers.find(server => server._id === payload);
 
-				temp.notifications = 0;
+			temp.notifications = 0;
 	
-				context.commit("SET_OPENED_CHAT", payload);
+			context.commit("SET_OPENED_CHAT", payload);
 				
-				store.dispatch("fetchMsgs", payload).then(() => {
-					store.dispatch("fetchUsers").then(() => {
+			store.dispatch("fetchMsgs", payload).then(() => {
+				store.dispatch("fetchUsers").then(() => {
 
-						this.dispatch("toggleMenu", false);
-					}, error => {
-						console.log(error);
-					});		
+					this.dispatch("toggleMenu", false);
 				}, error => {
 					console.log(error);
 				});		
 			}, error => {
 				console.log(error);
-			});		
+			});			
 		},
 		fetchMsgs: (context, payload) => {
 			return new Promise((resolve, reject) => {
-				axios.get(serverAddress+"api/msgs/"+payload)
+				console.log(serverAddress+"api/msgs/");
+				axios.get(serverAddress+"api/msgs/"+payload, store.getters.getHeaders)
 					.then(function (response) {
 						if(response.data.message == "done"){
 							context.commit("FETCH_MSGS", response.data.data);
 							resolve();						
 						} else {
 							reject("error");
+							//store.dispatch("doLogin");
 						}
 					}).catch(function (error) {
 						reject(error);
@@ -302,7 +386,8 @@ const store = new Vuex.Store({
 		},
 		fetchUsers: (context) => {
 			return new Promise((resolve, reject) => {
-				axios.get(serverAddress+"api/users")
+				console.log(serverAddress+"api/users");
+				axios.get(serverAddress+"api/users", store.getters.getHeaders)
 					.then(function (response) {
 						if(response.data.message == "done"){
 							response.data.data.forEach((user) => {
@@ -313,6 +398,7 @@ const store = new Vuex.Store({
 							resolve();						
 						} else {
 							reject("error");
+							//store.dispatch("doLogin");
 						}
 					}).catch(function (error) {
 						reject(error);
@@ -323,17 +409,59 @@ const store = new Vuex.Store({
 			console.log(payload);
 
 			return new Promise((resolve, reject) => {
-				axios.post(serverAddress+"api/msgs/",  qs.stringify(payload))
+				console.log("POST "+serverAddress+"api/msgs/");
+				axios.post(serverAddress+"api/msgs/",  qs.stringify(payload), store.getters.getHeaders)
 					.then(function (response) {
-						console.log(response);
 						if(response.data.message == "done"){
 							store.dispatch("fetchMsgs", store.getters.getOpenedChat);
 							resolve();						
 						} else {
 							reject("error");
+							//store.dispatch("doLogin");
 						}
 					}).catch(function (error) {
 						reject(error);
+					});
+			});
+		},
+		doLogin: () => {
+			//window.location.replace(serverAddress+"login");
+			//console.log("login");
+			vm.login();
+			//lock.show();
+		},
+		doLogout: () => {
+			console.log("logout");
+			vm.logout();
+			store.dispatch("togglePreLoad", true);
+			//store.dispatch("toggleLoggedIn", false);
+		},
+		checkAuth() {
+			console.log("check auth");
+			return new Promise((resolve, reject) => {
+				axios.get(serverAddress+"api", store.getters.getHeaders)
+					.then(function (response) {
+					//console.log(response);
+						if(response.data.message == "api"){
+							store.dispatch("getUser").then(() => {
+								store.dispatch("fetchServers").then(() => {
+									resolve();
+								});
+							});
+
+						} else {
+							console.log("unauth");
+							reject();
+						//store.dispatch("toggleLoggedIn", false);
+						//store.dispatch("doLogin");
+						//this.login();
+						}
+					}).catch(function () { //error
+						console.log("error");
+						reject();
+						//store.dispatch("toggleLoggedIn", false);
+					//store.dispatch("doLogin");
+					//vm.login();
 					});
 			});
 		},
@@ -350,8 +478,11 @@ var vm = new Vue({
 	template: "<App/>",
 	store: store,
 	mounted: function(){
-		store.dispatch("fetchServers");
-		store.dispatch("getUser");
+		//store.dispatch("checkAuth");
+		//console.log(this.authenticated);
+	},
+	methods: {
+		login,
+		logout,
 	},
 });
-vm;

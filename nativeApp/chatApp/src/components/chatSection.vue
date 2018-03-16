@@ -1,5 +1,5 @@
 <template>
-	<div class="chat-section" v-if="!showMenu">
+	<div class="chat-section" v-if="!showMenu && !preLoad">
 		<transition name="prop-slide">
 			<div class="msg-prop" v-if="selectedMsgsCount">
 				<div class="close-btn" @click="deselectAllMsgs">
@@ -77,6 +77,9 @@ export default {
 		},
 		users() {
 			return this.$store.getters.getUsers;
+		},
+		preLoad() {
+			return this.$store.getters.getPreLoad;
 		},
 	},
 	methods: {

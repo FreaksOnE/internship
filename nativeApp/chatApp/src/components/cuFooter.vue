@@ -1,6 +1,6 @@
 <template>
 <transition name="slideUp">
-	<div class="cu-footer"  v-if="!showMenu && !showProfile" :class="{ open: userOptions }">
+	<div class="cu-footer"  v-if="!showMenu && !showProfile && !preLoad" :class="{ open: userOptions }">
 		<div class="profile-ico-container">
 			<div class="profile-ico" @click="toggleUserOptions"><img :src="userDetails.picture">
 				<!--<img>-->
@@ -15,7 +15,7 @@
 				<i class="material-icons">add_a_photo</i>
 				<i class="material-icons">attachment</i>
 				<div class="user-options">
-					<div class="logout">
+					<div class="logout" @click="logout">
 						<i class="material-icons">exit_to_app</i>
 						<div class="label">Signout</div>
 					</div>
@@ -54,10 +54,16 @@ export default {
 		userDetails() {
 			return this.$store.getters.getUserDetails;
 		},
+		preLoad() {
+			return this.$store.getters.getPreLoad;
+		},
 	},
 	methods: {
 		toggleUserOptions: function() {
 			this.$store.dispatch("toggleUserOptions");
+		},
+		logout: function() {
+			this.$store.dispatch("doLogout");
 		},
 		sendMessage: function() {
 			var userMsg = {
@@ -109,10 +115,9 @@ export default {
   margin: auto;
   bottom: -10px;
   cursor: pointer;
-  transition: border 0.2s ease;
   font-size: 54px;
   color: #555;
-  box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
 

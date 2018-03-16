@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
-		<!--<img src="./assets/logo.png">
-			<router-view />-->
+		<pre-load :auth="auth"  :authenticated="authenticated"></pre-load>
+		<router-view :auth="auth"  :authenticated="authenticated"></router-view>
 		<side-bar></side-bar>
 		<div id="main-container">
 			<chat-section></chat-section>
@@ -17,13 +17,30 @@ import sideBar from "@/components/sideBar";
 import cuFooter from "@/components/cuFooter";
 import chatSection from "@/components/chatSection";
 import memberList from "@/components/memberList";
+import preLoad from "@/components/preLoad";
+
+import AuthService from "./auth/AuthService";
+
+const auth = new AuthService();
+
+const { login, logout, authenticated, authNotifier, } = auth;
 
 export default {
 	name: "App",
-	data() {
+	data () {
+		authNotifier.on("authChange", (authState) => {
+			this.authenticated = authState.authenticated;
+			console.log(authState);
+			this.$store.dispatch("checkAuth");
+		});
 		return {
-			msg: "hello",
+			auth,
+			authenticated,
 		};
+	},
+	methods: {
+		login,
+		logout,
 	},
 	computed: {
 		count() {
@@ -35,6 +52,7 @@ export default {
 		"cu-footer": cuFooter,
 		"chat-section": chatSection,
 		"member-list": memberList,
+		"pre-load": preLoad,
 	},
 };
 </script>
@@ -111,9 +129,9 @@ export default {
 		opacity: 0;
 	}
 
-	/*.fade-leave-active {
-		position: absolute;
-	}*/
+	.fade-leave-active {
+		position: absolute !important;
+	}
 
 	.fade-move {
 		transition: transform 0.3s;

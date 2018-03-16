@@ -1,6 +1,6 @@
 <template>
 	<transition name="memberListSlide">
-		<div class="member-list" v-if="!showMenu" :class="{ open: showProfile }">
+		<div class="member-list" v-if="!showMenu && !preLoad" :class="{ open: showProfile }">
 			<div class="online" v-if="!showProfile">
 				<div class="header">online-{{ onlineMembers.length }}</div>
 				<transition-group name="fade">
@@ -44,8 +44,6 @@
 
 <script>
 
-import { mapGetters, } from "vuex";
-
 var userCont = {
 	template:
 			"<div class=\"user\"><div class=\"user-image\"><slot name=\"user-picture\">%user-picture%</slot></div><span style=\"float:left;width:130px;\"><div class=\"user-name\"><slot name=\"display-name\">%display-name%</slot></div><div class=\"user-status\"><slot name=\"user-status\">%user-status%</slot></div></span></div>",
@@ -63,9 +61,6 @@ export default {
 		showProfile() {
 			return this.$store.getters.getShowProfile;
 		},
-		...mapGetters([
-			"getServerByID",
-		]),
 		openedChat() {
 			return this.$store.getters.getOpenedChat;
 		},
@@ -78,6 +73,9 @@ export default {
 		offlineMembers(){
 			return this.$store.getters.getOfflineMembers;
 		},
+		preLoad() {
+			return this.$store.getters.getPreLoad;
+		},
 	},
 	components: {
 		"user-cont": userCont,
@@ -85,9 +83,9 @@ export default {
 	methods: {
 		toggleShowProfile: function() {
 			this.$store.dispatch("toggleShowProfile");
-			console.log(this.onlineMembers);
+			/*console.log(this.onlineMembers);
 			console.log(this.offlineMembers);
-			console.log("users length:"+this.chatMembers.length);
+			console.log("users length:"+this.chatMembers.length);*/
 		},
 	},
 };

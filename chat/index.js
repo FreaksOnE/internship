@@ -20,8 +20,27 @@ var messageModel = require('./models/message');
 var LocalStrategy = require('passport-local').Strategy;
 const Auth0Strategy = require('passport-auth0');
 
-const requireAuth = false;
+const requireAuth = true;
+
+const callbackURL = 'http://localhost:3000/api/callback';
 //var passportSocketIo = require('passport.socketio');
+
+var jwt = require('express-jwt');
+var jwks = require('jwks-rsa');
+
+var jwtCheck = jwt({
+	secret: jwks.expressJwtSecret({
+		cache: true,
+		rateLimit: true,
+		jwksRequestsPerMinute: 5,
+		jwksUri: "https://chat-demo-app.eu.auth0.com/.well-known/jwks.json"
+	}),
+	audience: 'http://localhost:3000/api',
+	issuer: "https://chat-demo-app.eu.auth0.com/",
+	algorithms: ['RS256']
+});
+
+//app.use(jwtCheck);
 
 // Configuring Express
 app.use(morgan('dev')); // log requests to the console
@@ -38,7 +57,7 @@ var strategy = new Auth0Strategy({
 		domain: 'chat-demo-app.eu.auth0.com',
 		clientID: 'xLdhXhO_gp2bCFQ0B5cJTcqJqqpq_hBI',
 		clientSecret: 'ANQXjiqmUrpMzkxstT94TuJUL1l_xbvPtgCT5ds2kvYgrHitpphpb48ycbwewWdp',
-		callbackURL: 'http://localhost:3000/api/callback'
+		callbackURL: callbackURL
 	},
 	(accessToken, refreshToken, extraParams, profile, done) => {
 		return done(null, profile);
@@ -212,16 +231,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 var router = express.Router();
 app.use('/api', router);
 
-router.get('/', function (req, res) {
-	res.json({
-		message: 'api'
-	});
-});
-
 var env = {
 	AUTH0_CLIENT_ID: 'xLdhXhO_gp2bCFQ0B5cJTcqJqqpq_hBI',
 	AUTH0_DOMAIN: 'chat-demo-app.eu.auth0.com',
-	AUTH0_CALLBACK_URL: 'http://localhost:3000/api/callback'
+	AUTH0_CALLBACK_URL: callbackURL
 };
 
 /*router.route('/login').post(function (req, res, next) {
@@ -337,17 +350,64 @@ router.get('/signout', function (req, res) {
 
 });
 
-router.all('/*', function (req, res, next) {
+router.all('/*', jwtCheck, function (req, res, next) {
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	if (requireAuth) {
+	res.setHeader("Access-Control-Allow-Headers", "Authorization");
+	console.log("\n");
+	if (req.user) {
+		console.log(JSON.stringify(req.user, null, '  '));
+
+		userModel.findOne({
+			'local.auth_id': req.user.sub
+		}, function (err, result) {
+			if (err)
+				console.log(err);
+			console.log('res: '+result);
+			if (result) {
+				//result.local.name = req.session.passport.user.displayName;
+				//result.local.picture = req.session.passport.user.picture;
+				result.local.sessionID = req.sessionID;
+				result.save(function (err) {
+					if (err)
+						console.log(err);
+
+				});
+			} else {
+				var newUser = new userModel();
+				newUser.local.name = req.session.passport.user.displayName;
+				newUser.local.auth_id = req.session.passport.user.id;
+				newUser.local.picture = req.session.passport.user.picture;
+				newUser.local.sessionID = req.sessionID;
+
+				newUser.save(function (err, result2) {
+					if (err)
+						console.log(err);
+					console.log('new user saved');
+					//console.log(result2);
+				});
+			}
+		});
+	}
+
+	return next();
+	/*if (requireAuth) {
 		if (req.isAuthenticated())
+			console.log("authenticated");
 			return next();
 		res.json({
 			message: 'unauthorized'
 		});
 	} else {
 		return next();
-	}
+	}*/
+});
+
+router.get('/', function (req, res) {
+	//res.setHeader("Access-Control-Allow-Origin", "*");
+	//res.setHeader("Access-Control-Allow-Headers", "Authorization");
+	res.json({
+		message: 'api'
+	});
 });
 
 //router.all('/api/*', requireAuthentication);
@@ -432,22 +492,45 @@ router.route('/convs/:conv_id').get(function (req, res) {
 router.route('/user').get(function (req, res) {
 	var temp = {};
 	if (requireAuth) {
-		temp = {
+		/*temp = {
 			name: req.session.passport.user.displayName, //req.user.local.name,
 			_id: req.session.passport.user.id,
 			picture: req.session.passport.user.picture
-		}
+		}*/
+		userModel.findOne({
+			"local.auth_id": req.user.sub
+		}, (err, result) => {
+			if (err)
+				console.log(err);
+			if (result) {
+				temp = {
+					name: result.local.name, //req.user.local.name,
+					_id: result.local.auth_id,
+					picture: result.local.picture
+				}
+				res.json({
+					message: 'done',
+					data: temp
+				});
+			} else {
+				res.json({
+					message: 'error',
+					data: null
+				});
+			}
+		});
 	} else {
 		temp = {
-			name: "Saman Asady",
+			name: "Saman Asady :|",
 			_id: "google-oauth2|116452869023753433087",
 			picture: "https://lh3.googleusercontent.com/-ikUEdC7uVck/AAAAAAAAAAI/AAAAAAAABK0/GOgt-AJQdoY/photo.jpg"
 		}
+		res.json({
+			message: 'done',
+			data: temp
+		});
 	}
-	res.json({
-		message: 'done',
-		data: temp
-	});
+
 });
 
 router.route('/users').get(function (req, res) {
@@ -545,7 +628,7 @@ router.route('/userdata').post(function (req, res) {
 // on routes that end in /msgs
 router.route('/msgs').post(function (req, res) {
 	var newMsg = new messageModel();
-	
+
 	console.log(req.body);
 
 	newMsg.msgType = req.body.msgType;
@@ -569,8 +652,8 @@ router.route('/msgs').post(function (req, res) {
 			//console.log(newMsg.queueNumber);
 		}
 
-		if(requireAuth)
-			newMsg.from = req.session.passport.user.id;
+		if (requireAuth)
+			newMsg.from = req.user.sub;
 		else
 			newMsg.from = "google-oauth2|116452869023753433087";
 
@@ -604,8 +687,8 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 
 				if (requireAuth) {
 
-					if (result2.members.indexOf(req.session.passport.user.id) < 0) {
-						result2.members.push(req.session.passport.user.id);
+					if (result2.members.indexOf(req.user.sub) < 0) {
+						result2.members.push(req.user.sub);
 						result2.save(function (err) {
 							if (err)
 								res.send(err);
@@ -625,7 +708,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 
 							messageModel.create({
 								msgType: 'notification',
-								text: req.session.passport.user.displayName + ' joined',
+								text: req.user.sub + ' joined',
 								conversationID: req.params.conv_id,
 								queueNumber: tmp_queue
 							}, function (err, result3) {
