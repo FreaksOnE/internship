@@ -1,16 +1,29 @@
 <template>
-<transition name="fade">
-  <div class="pre-loader-cont" v-if="preLoad" @keyup.enter="enterApp">
-    <!--<img src="../assets/loading.svg" alt="loading"/>-->
-    <div class="enter-btn" @click="enterApp">Enter</div>
-  </div>
-</transition>
+  <transition name="fade">
+    <div 
+      v-if="preLoad" 
+      class="pre-loader-cont"
+      @keyup.enter="enterApp">
+      <!--<img src="../assets/loading.svg" alt="loading"/>-->
+      <div 
+        class="enter-btn" 
+        @click="enterApp">
+        Enter
+      </div>
+      <div 
+        v-if="authenticated"
+        class="logout-btn" 
+        @click="logout">
+        Logout
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
 
 export default {
-	name: "preLoad",
+	name: "PreLoad",
 	props: [
 		"auth",
 		"authenticated",
@@ -21,6 +34,9 @@ export default {
 		},
 	},
 	methods: {
+		logout: function() {
+			this.$store.dispatch("doLogout");
+		},
 		enterApp: function() {
 			//console.log("auth: "+this.authenticated);
 			if(this.authenticated){
@@ -67,6 +83,23 @@ export default {
 
 	.pre-loader-cont .enter-btn:hover {
 		letter-spacing: 15px;
+	}
+
+	.pre-loader-cont .logout-btn {
+		position: absolute;
+		height: 40px;
+		width: 100px;
+		border: 2px solid #f08080;
+		border-radius: 25px;
+		top: 10%;
+		left: 5%;
+		text-align: center;
+		color: #f08080;
+		line-height: 40px;
+		font-size: 16px;
+		user-select: none;
+		cursor: pointer;
+		transition: all 0.3s ease;
 	}
 
 </style>

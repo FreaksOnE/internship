@@ -6,6 +6,11 @@ import App from "./App";
 import router from "./router";
 import axios from "axios";
 
+import io from "socket.io-client";
+var socket = io.connect("http://localhost:3000", {
+	"query": "token=" + localStorage.getItem("access_token"),
+});
+
 import qs from "qs";
 //import Auth0Lock from "auth0-lock";
 
@@ -72,101 +77,98 @@ const store = new Vuex.Store({
 		loggedIn: false,
 		servers: [
 			{
-				"members": [],
-				"_id": "5aa28c735bbed02703410dc8",
-				"name": "chat1",
-				"notifications": 4,
+				members: [],
+				_id: "5aa28c735bbed02703410dc8",
+				name: "chat1",
+				notifications: 4,
 			},
 			{
-				"members": [],
-				"_id": "5aa28c735bbed02703410dc9",
-				"name": "chat2",
-				"notifications": 1,
+				members: [],
+				_id: "5aa28c735bbed02703410dc9",
+				name: "chat2",
+				notifications: 1,
 			},
-			
 		],
 		msgs: [
 			{
-				"_id": "5aa28csdf735bb",
-				"msgType": "notification",
-				"conversationID": "fijoiajfoiahfoafjpafk",
-				"date": "2018-03-11T08:44:18.716Z",
-				"text": "chat created",
-				"queueNumber": 0,
-				"selected": false,
+				_id: "5aa28csdf735bb",
+				msgType: "notification",
+				conversationID: "fijoiajfoiahfoafjpafk",
+				date: "2018-03-11T08:44:18.716Z",
+				text: "chat created",
+				queueNumber: 0,
+				selected: false,
 			},
 			{
-				"_id": "5aa28c735bb",
-				"msgType": "message",
-				"from": "fasdrtwekrjieoewjroiqq",
-				"conversationID": "fijoiajfoiahfoafjpafk",
-				"date": "2018-03-11T08:44:18.716Z",
-				"text": "lorem ipsum",
-				"queueNumber": 1,
-				"selected": false,
+				_id: "5aa28c735bb",
+				msgType: "message",
+				from: "fasdrtwekrjieoewjroiqq",
+				conversationID: "fijoiajfoiahfoafjpafk",
+				date: "2018-03-11T08:44:18.716Z",
+				text: "lorem ipsum",
+				queueNumber: 1,
+				selected: false,
 			},
 			{
-				"_id": "5aa28c73234235bb",
-				"msgType": "message",
-				"from": "fasdrtwekrjieoewjroiqq",
-				"conversationID": "fijoiajfoiahfoafjpafk",
-				"date": "2018-03-11T08:44:18.716Z",
-				"text": "lorem ipsum",
-				"queueNumber": 2,
-				"selected": false,
+				_id: "5aa28c73234235bb",
+				msgType: "message",
+				from: "fasdrtwekrjieoewjroiqq",
+				conversationID: "fijoiajfoiahfoafjpafk",
+				date: "2018-03-11T08:44:18.716Z",
+				text: "lorem ipsum",
+				queueNumber: 2,
+				selected: false,
 			},
 			{
-				"_id": "5aa28c7werwe35bb",
-				"msgType": "message",
-				"from": "fasdrtwekrjieoewjroiqq",
-				"conversationID": "fijoiajfoiahfoafjpafk",
-				"date": "2018-03-11T08:44:18.716Z",
-				"text": "lorem ipsum",
-				"queueNumber": 3,
-				"selected": false,
+				_id: "5aa28c7werwe35bb",
+				msgType: "message",
+				from: "fasdrtwekrjieoewjroiqq",
+				conversationID: "fijoiajfoiahfoafjpafk",
+				date: "2018-03-11T08:44:18.716Z",
+				text: "lorem ipsum",
+				queueNumber: 3,
+				selected: false,
 			},
 			{
-				"_id": "5aa28c7sdf354b",
-				"msgType": "message",
-				"from": "sejkfhu3y78rtq87r782",
-				"conversationID": "fijoiajfoiahfoafjpafk",
-				"date": "2018-03-11T08:44:18.716Z",
-				"text": "lorem ipsum",
-				"queueNumber": 4,
-				"selected": false,
+				_id: "5aa28c7sdf354b",
+				msgType: "message",
+				from: "sejkfhu3y78rtq87r782",
+				conversationID: "fijoiajfoiahfoafjpafk",
+				date: "2018-03-11T08:44:18.716Z",
+				text: "lorem ipsum",
+				queueNumber: 4,
+				selected: false,
 			},
 			{
-				"_id": "5aa28c7wewrerwe35bb",
-				"msgType": "message",
-				"from": "fasdrtwekrjieoewjroiqq",
-				"conversationID": "fijoiajfoiahfoafjpafk",
-				"date": "2018-03-11T08:44:18.716Z",
-				"text": "lorem ipsum",
-				"queueNumber": 5,
-				"selected": false,
+				_id: "5aa28c7wewrerwe35bb",
+				msgType: "message",
+				from: "fasdrtwekrjieoewjroiqq",
+				conversationID: "fijoiajfoiahfoafjpafk",
+				date: "2018-03-11T08:44:18.716Z",
+				text: "lorem ipsum",
+				queueNumber: 5,
+				selected: false,
 			},
-			
 		],
 		usersData: [
 			{
-				"_id": "sejkfhu3y78rtq87r782",
-				"name": "user1",
-				"online": false,
-				"picture": "test.png",
+				_id: "sejkfhu3y78rtq87r782",
+				name: "user1",
+				online: false,
+				picture: "test.png",
 			},
 			{
-				"_id": "fasdrtwekrjieoewjroiqq",
-				"name": "user2",
-				"online": false,
-				"picture": "test.png",
+				_id: "fasdrtwekrjieoewjroiqq",
+				name: "user2",
+				online: false,
+				picture: "test.png",
 			},
 		],
 		userDetails: {
-			"_id": "sejkfhu3y78rtq87r782",
-			"name": "user1",
-			"picture": "test.png",
+			_id: "sejkfhu3y78rtq87r782",
+			name: "user1",
+			picture: "test.png",
 		},
-
 	},
 	getters: {
 		getServers: state => state.servers,
@@ -189,7 +191,7 @@ const store = new Vuex.Store({
 		},
 		getMembersObj: (state, getters) => {
 			var temp = [];
-			getters.getServerByID(state.openedChat).members.forEach((member) => {
+			getters.getServerByID(state.openedChat).members.forEach(member => {
 				temp.push(getters.getUserByID(member));
 			});
 			return temp;
@@ -201,14 +203,16 @@ const store = new Vuex.Store({
 			return getters.getMembersObj.filter(member => !member.online);
 		},
 		getHeaders: () => {
-			if(localStorage.getItem("access_token"))
-				return { "headers": { "Authorization": "Bearer " +localStorage.getItem("access_token"),},};
-			else
-				store.dispatch("doLogin");
+			if (localStorage.getItem("access_token"))
+				return {
+					headers: {
+						Authorization: "Bearer " + localStorage.getItem("access_token"),
+					},
+				};
+			else store.dispatch("doLogin");
 		},
-		getLoggedIn: (state) => state.loggedIn,
+		getLoggedIn: state => state.loggedIn,
 		getPreLoad: state => state.preLoad,
-
 	},
 	mutations: {
 		ADD_TODO: (state, payload) => {
@@ -220,46 +224,38 @@ const store = new Vuex.Store({
 			state.todos.unshift(newTask);
 		},
 		TOGGLE_MENU: (state, payload) => {
-			if(payload)
-				state.showMenu = true;
-			else
-				state.showMenu = false;
+			if (payload) state.showMenu = true;
+			else state.showMenu = false;
 		},
 		TOGGLE_PRELOAD: (state, payload) => {
-			if(payload)
-				state.preLoad = true;
-			else
-				state.preLoad = false;
+			if (payload) state.preLoad = true;
+			else state.preLoad = false;
 		},
 		TOGGLE_LOGGEDIN: (state, payload) => {
-			if(payload)
-				state.loggedIn = true;
-			else
-				state.loggedIn = false;
+			if (payload) state.loggedIn = true;
+			else state.loggedIn = false;
 		},
-		TOGGLE_USER_OPTIONS: (state) => {
+		TOGGLE_USER_OPTIONS: state => {
 			state.showUserOptions = !state.showUserOptions;
 		},
-		TOGGLE_SHOW_PROFILE: (state) => {
+		TOGGLE_SHOW_PROFILE: state => {
 			state.showProfile = !state.showProfile;
 		},
 		HIDE_PROFILE: (state, payload) => {
-			if(payload)
-				state.showProfile = false;
-			else
-				state.showProfile = true;
+			if (payload) state.showProfile = false;
+			else state.showProfile = true;
 		},
 		TOGGLE_SELECT_MSG: (state, payload) => {
 			var item = state.msgs.find(msg => msg._id === payload);
 			item.selected = !item.selected;
-			if(item.selected){
+			if (item.selected) {
 				state.selectedMsgsCount++;
 			} else {
 				state.selectedMsgsCount--;
 			}
 		},
-		DESELECT_ALL_MSGS: (state) => {
-			state.msgs.forEach(msg => msg.selected = false);
+		DESELECT_ALL_MSGS: state => {
+			state.msgs.forEach(msg => (msg.selected = false));
 			state.selectedMsgsCount = 0;
 		},
 		FETCH_SERVERS: (state, payload) => {
@@ -293,10 +289,10 @@ const store = new Vuex.Store({
 			context.commit("TOGGLE_MENU", !payload);
 			context.commit("TOGGLE_PRELOAD", payload);
 		},
-		toggleUserOptions: (context) => {
+		toggleUserOptions: context => {
 			context.commit("TOGGLE_USER_OPTIONS");
 		},
-		toggleShowProfile: (context) => {
+		toggleShowProfile: context => {
 			context.commit("DESELECT_ALL_MSGS");
 			context.commit("TOGGLE_SHOW_PROFILE");
 		},
@@ -307,23 +303,25 @@ const store = new Vuex.Store({
 		toggleSelectMsg: (context, payload) => {
 			context.commit("TOGGLE_SELECT_MSG", payload);
 		},
-		deselectAllMsgs: (context) => {
+		deselectAllMsgs: context => {
 			context.commit("DESELECT_ALL_MSGS");
 		},
 		fetchServers(context) {
 			return new Promise((resolve, reject) => {
-				console.log(serverAddress+"api/convs");
-				axios.get(serverAddress+"api/convs", store.getters.getHeaders)
-					.then(function (response) {
+				console.log(serverAddress + "api/convs");
+				axios
+					.get(serverAddress + "api/convs", store.getters.getHeaders)
+					.then((response) => {
 						//console.log(response);
-						if(response.data.message == "done"){
+						if (response.data.message == "done") {
 							context.commit("FETCH_SERVERS", response.data.data);
-							resolve();						
+							resolve();
 						} else {
 							reject("error");
 							//store.dispatch("doLogin");
 						}
-					}).catch(function (error) {
+					})
+					.catch((error) => {
 						reject(error);
 						//store.dispatch("doLogin");
 					});
@@ -331,76 +329,97 @@ const store = new Vuex.Store({
 		},
 		getUser(context) {
 			return new Promise((resolve, reject) => {
-				console.log(serverAddress+"api/user");
-				axios.get(serverAddress+"api/user", store.getters.getHeaders)
-					.then(function (response) {
+				console.log(serverAddress + "api/user");
+				axios
+					.get(serverAddress + "api/user", store.getters.getHeaders)
+					.then((response) => {
 						//console.log(response);
-						if(response.data.message == "done"){
-							response.data.data.picture = decodeURIComponent(response.data.data.picture.replace(/^https.*?(?=https)/gi, ""));
-							response.data.data.picture = decodeURIComponent(response.data.data.picture.replace(/lh4\.google/, "lh3.google"));	
+						if (response.data.message == "done") {
+							response.data.data.picture = decodeURIComponent(
+								response.data.data.picture.replace(/^https.*?(?=https)/gi, "")
+							);
+							response.data.data.picture = decodeURIComponent(
+								response.data.data.picture.replace(/lh4\.google/, "lh3.google")
+							);
 							context.commit("GET_USER", response.data.data);
-							resolve();						
+							resolve();
 						} else {
 							reject("error");
 							//store.dispatch("doLogin");
 						}
-					}).catch(function (error) {
+					})
+					.catch((error) => {
 						reject(error);
 					});
 			});
 		},
 		openChat: function(context, payload) {
-			var temp = store.getters.getServers.find(server => server._id === payload);
+			var temp = store.getters.getServers.find(
+				server => server._id === payload
+			);
 
 			temp.notifications = 0;
-	
-			context.commit("SET_OPENED_CHAT", payload);
-				
-			store.dispatch("fetchMsgs", payload).then(() => {
-				store.dispatch("fetchUsers").then(() => {
 
-					this.dispatch("toggleMenu", false);
-				}, error => {
+			context.commit("SET_OPENED_CHAT", payload);
+
+			store.dispatch("fetchMsgs", payload).then(
+				() => {
+					store.dispatch("fetchUsers").then(
+						() => {
+							this.dispatch("toggleMenu", false);
+						},
+						error => {
+							console.log(error);
+						}
+					);
+				},
+				error => {
 					console.log(error);
-				});		
-			}, error => {
-				console.log(error);
-			});			
+				}
+			);
 		},
 		fetchMsgs: (context, payload) => {
 			return new Promise((resolve, reject) => {
-				console.log(serverAddress+"api/msgs/");
-				axios.get(serverAddress+"api/msgs/"+payload, store.getters.getHeaders)
-					.then(function (response) {
-						if(response.data.message == "done"){
+				console.log(serverAddress + "api/msgs/");
+				axios
+					.get(serverAddress + "api/msgs/" + payload, store.getters.getHeaders)
+					.then((response) => {
+						if (response.data.message == "done") {
 							context.commit("FETCH_MSGS", response.data.data);
-							resolve();						
+							resolve();
 						} else {
 							reject("error");
 							//store.dispatch("doLogin");
 						}
-					}).catch(function (error) {
+					})
+					.catch((error) => {
 						reject(error);
 					});
 			});
 		},
-		fetchUsers: (context) => {
+		fetchUsers: context => {
 			return new Promise((resolve, reject) => {
-				console.log(serverAddress+"api/users");
-				axios.get(serverAddress+"api/users", store.getters.getHeaders)
-					.then(function (response) {
-						if(response.data.message == "done"){
-							response.data.data.forEach((user) => {
-								user.picture = decodeURIComponent(user.picture.replace(/^https.*?(?=https)/gi, ""));
-								user.picture = decodeURIComponent(user.picture.replace(/lh4\.google/, "lh3.google"));								
+				console.log(serverAddress + "api/users");
+				axios
+					.get(serverAddress + "api/users", store.getters.getHeaders)
+					.then((response) => {
+						if (response.data.message == "done") {
+							response.data.data.forEach(user => {
+								user.picture = decodeURIComponent(
+									user.picture.replace(/^https.*?(?=https)/gi, "")
+								);
+								user.picture = decodeURIComponent(
+									user.picture.replace(/lh4\.google/, "lh3.google")
+								);
 							});
 							context.commit("FETCH_USERS", response.data.data);
-							resolve();						
+							resolve();
 						} else {
 							reject("error");
 							//store.dispatch("doLogin");
 						}
-					}).catch(function (error) {
+					})
+					.catch((error) => {
 						reject(error);
 					});
 			});
@@ -409,17 +428,23 @@ const store = new Vuex.Store({
 			console.log(payload);
 
 			return new Promise((resolve, reject) => {
-				console.log("POST "+serverAddress+"api/msgs/");
-				axios.post(serverAddress+"api/msgs/",  qs.stringify(payload), store.getters.getHeaders)
-					.then(function (response) {
-						if(response.data.message == "done"){
+				console.log("POST " + serverAddress + "api/msgs/");
+				axios
+					.post(
+						serverAddress + "api/msgs/",
+						qs.stringify(payload),
+						store.getters.getHeaders
+					)
+					.then((response) => {
+						if (response.data.message == "done") {
 							store.dispatch("fetchMsgs", store.getters.getOpenedChat);
-							resolve();						
+							resolve();
 						} else {
 							reject("error");
 							//store.dispatch("doLogin");
 						}
-					}).catch(function (error) {
+					})
+					.catch((error) => {
 						reject(error);
 					});
 			});
@@ -439,29 +464,33 @@ const store = new Vuex.Store({
 		checkAuth() {
 			console.log("check auth");
 			return new Promise((resolve, reject) => {
-				axios.get(serverAddress+"api", store.getters.getHeaders)
-					.then(function (response) {
-					//console.log(response);
-						if(response.data.message == "api"){
+				axios
+					.get(serverAddress + "api", store.getters.getHeaders)
+					.then((response) => {
+						//console.log(response);
+						if (response.data.message == "api") {
+
+
 							store.dispatch("getUser").then(() => {
 								store.dispatch("fetchServers").then(() => {
 									resolve();
 								});
 							});
-
 						} else {
 							console.log("unauth");
 							reject();
-						//store.dispatch("toggleLoggedIn", false);
-						//store.dispatch("doLogin");
-						//this.login();
+							//store.dispatch("toggleLoggedIn", false);
+							//store.dispatch("doLogin");
+							//this.login();
 						}
-					}).catch(function () { //error
+					})
+					.catch(() => {
+						//error
 						console.log("error");
 						reject();
 						//store.dispatch("toggleLoggedIn", false);
-					//store.dispatch("doLogin");
-					//vm.login();
+						//store.dispatch("doLogin");
+						//vm.login();
 					});
 			});
 		},
@@ -475,9 +504,7 @@ var vm = new Vue({
 	components: {
 		App,
 	},
-	template: "<App/>",
-	store: store,
-	mounted: function(){
+	mounted: function() {
 		//store.dispatch("checkAuth");
 		//console.log(this.authenticated);
 	},
@@ -485,4 +512,35 @@ var vm = new Vue({
 		login,
 		logout,
 	},
+	template: "<App/>",
+	store: store,
 });
+
+
+socket.on("connect", () => {
+	console.log("socket connected: "+socket.connected);
+	socket
+		.emit("authenticate", {token: localStorage.getItem("access_token"),}) //send the jwt
+		.on("authenticated", () => {
+			//do other things
+			console.log("auth");
+		})
+		.on("unauthorized", (msg) => {
+			console.log("unauthorized: " + JSON.stringify(msg.data));
+			//console.log(localStorage.getItem("access_token"));
+			throw new Error(msg.data.type);
+		});
+});
+
+socket.on("disconnect", () => {
+	
+});
+
+socket.on("reconnect", () => {
+	
+});
+
+socket.on("reconnect_error", () => {
+
+});
+

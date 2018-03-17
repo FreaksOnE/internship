@@ -1,42 +1,57 @@
 <template>
-<transition name="slideUp">
-	<div class="cu-footer"  v-if="!showMenu && !showProfile && !preLoad" :class="{ open: userOptions }">
-		<div class="profile-ico-container">
-			<div class="profile-ico" @click="toggleUserOptions"><img :src="userDetails.picture">
-				<!--<img>-->
-			</div>
-		</div>
-		<div class="inp-section">
-			<div class="msg-input">
-				<div class="status"></div>
-				<input type="text" placeholder="Write a message..." v-model="msgText" ref="msg" @keyup.enter="sendMessage">
-				<button type="button" class="send-btn" @click="sendMessage"><i class="material-icons">send</i></button>
-				<i class="material-icons">keyboard_voice</i>
-				<i class="material-icons">add_a_photo</i>
-				<i class="material-icons">attachment</i>
-				<div class="user-options">
-					<div class="logout" @click="logout">
-						<i class="material-icons">exit_to_app</i>
-						<div class="label">Signout</div>
-					</div>
-					<div class="settings">
-						<i class="material-icons">settings</i>
-						<div class="label">Settings</div>
-					</div>
-					<div class="change-status">
-						<div class="label">Away</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</transition>
+  <transition name="slideUp">
+    <div 
+      v-if="!showMenu && !showProfile && !preLoad" 
+      :class="{ open: userOptions }"
+      class="cu-footer">
+      <div class="profile-ico-container">
+        <div 
+          class="profile-ico" 
+          @click="toggleUserOptions"><img :src="userDetails.picture">
+          <!--<img>-->
+        </div>
+      </div>
+      <div class="inp-section">
+        <div class="msg-input">
+          <div class="status"/>
+          <input 
+            ref="msg"
+            v-model="msgText" 
+            type="text" 
+            placeholder="Write a message..." 
+            @keyup.enter="sendMessage">
+          <button 
+            type="button" 
+            class="send-btn" 
+            @click="sendMessage"><i class="material-icons">send</i></button>
+          <i class="material-icons">keyboard_voice</i>
+          <i class="material-icons">add_a_photo</i>
+          <i class="material-icons">attachment</i>
+          <div class="user-options">
+            <div 
+              class="logout" 
+              @click="logout">
+              <i class="material-icons">exit_to_app</i>
+              <div class="label">Signout</div>
+            </div>
+            <div class="settings">
+              <i class="material-icons">settings</i>
+              <div class="label">Settings</div>
+            </div>
+            <div class="change-status">
+              <div class="label">Away</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
 export default {
-	name: "cuFooter",
-	data: function () {
+	name: "CuFooter",
+	data: function() {
 		return {
 			msgText: "",
 		};
@@ -67,9 +82,9 @@ export default {
 		},
 		sendMessage: function() {
 			var userMsg = {
-				"msgType": "message",
-				"text": "",
-				"conversationID": this.$store.getters.getOpenedChat,
+				msgType: "message",
+				text: "",
+				conversationID: this.$store.getters.getOpenedChat,
 			};
 
 			if (this.msgText) {
@@ -248,11 +263,11 @@ export default {
 
 .slideUp-enter-active,
 .slideUp-leave-active {
-	transition: all 0.2s;
+  transition: all 0.2s;
 }
 .slideUp-enter,
 .slideUp-leave-to {
-	opacity: 0;
-	transform: translateY(20px);
+  opacity: 0;
+  transform: translateY(20px);
 }
 </style>

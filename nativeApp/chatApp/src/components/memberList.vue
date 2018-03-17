@@ -1,45 +1,62 @@
 <template>
-	<transition name="memberListSlide">
-		<div class="member-list" v-if="!showMenu && !preLoad" :class="{ open: showProfile }">
-			<div class="online" v-if="!showProfile">
-				<div class="header">online-{{ onlineMembers.length }}</div>
-				<transition-group name="fade">
-				<user-cont v-for="user in onlineMembers" :key="user._id" @click.native="toggleShowProfile">
-					<span slot="user-picture">
-						<img :src="user.picture">
-					</span>
-					<span slot="display-name">{{ user.name }}</span>
-					<span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
-				</user-cont>
-				</transition-group>
-			</div>
-			<div class="offline" v-if="!showProfile">
-				<div class="header">offline-{{ offlineMembers.length }}</div>
-				<transition-group name="fade">
-					<user-cont v-for="user in offlineMembers" :key="user._id" @click.native="toggleShowProfile">
-					<span slot="user-picture">
-						<img :src="user.picture">
-					</span>
-					<span slot="display-name">{{ user.name }}</span>
-					<span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
-				</user-cont>
-				</transition-group>
-			</div>
+  <transition name="memberListSlide">
+    <div 
+      v-if="!showMenu && !preLoad" 
+      :class="{ open: showProfile }"
+      class="member-list">
+      <div 
+        v-if="!showProfile"
+        class="online">
+        <div class="header">online-{{ onlineMembers.length }}</div>
+        <transition-group name="fade">
+          <user-cont 
+            v-for="user in onlineMembers" 
+            :key="user._id" 
+            @click.native="toggleShowProfile">
+            <span slot="user-picture">
+              <img :src="user.picture">
+            </span>
+            <span slot="display-name">{{ user.name }}</span>
+            <span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
+          </user-cont>
+        </transition-group>
+      </div>
+      <div 
+        v-if="!showProfile"
+        class="offline">
+        <div class="header">offline-{{ offlineMembers.length }}</div>
+        <transition-group name="fade">
+          <user-cont 
+            v-for="user in offlineMembers" 
+            :key="user._id" 
+            @click.native="toggleShowProfile">
+            <span slot="user-picture">
+              <img :src="user.picture">
+            </span>
+            <span slot="display-name">{{ user.name }}</span>
+            <span slot="user-status">{{ user.online ? 'online' : 'offline' }}</span>
+          </user-cont>
+        </transition-group>
+      </div>
 
-			<transition name="fade">
-				<div class="profile" v-if="showProfile">
-					<div class="pf-container">
-						<div class="user-image">
-							<img>
-						</div>
-						<div class="close-btn" @click="toggleShowProfile">
-							<i class="material-icons">keyboard_arrow_right</i>
-						</div>
-					</div>
-				</div>
-			</transition>
-		</div>
-	</transition>
+      <transition name="fade">
+        <div 
+          v-if="showProfile"
+          class="profile">
+          <div class="pf-container">
+            <div class="user-image">
+              <img>
+            </div>
+            <div 
+              class="close-btn" 
+              @click="toggleShowProfile">
+              <i class="material-icons">keyboard_arrow_right</i>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -50,7 +67,10 @@ var userCont = {
 };
 
 export default {
-	name: "memberList",
+	name: "MemberList",
+	components: {
+		"user-cont": userCont,
+	},
 	computed: {
 		showMenu() {
 			return this.$store.getters.getShowMenu;
@@ -76,9 +96,6 @@ export default {
 		preLoad() {
 			return this.$store.getters.getPreLoad;
 		},
-	},
-	components: {
-		"user-cont": userCont,
 	},
 	methods: {
 		toggleShowProfile: function() {

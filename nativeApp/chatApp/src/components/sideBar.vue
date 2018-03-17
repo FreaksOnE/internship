@@ -1,26 +1,46 @@
 <template>
-	<transition name="sidebarSlide">
-			<div id="sidebar" :class="{ open: showMenu }">
-			<div class="logo-cont" @click="toggleMenu"></div>
-			<server-cont v-for="server in servers" :key="server._id" @click.native="openChat(server._id)">
-					<div class="server-name"  slot="server-name" v-show="showMenu">
-						<i class="material-icons" style="padding: 1px 4px 1px 0px; float: left;">group</i>
-						{{ server.name }}
-					</div>
-					<div class="server-users" slot="members-count" v-show="showMenu">
-						{{ server.members.length }}&nbsp;people
-					</div>
-				<span slot="notifications-count">
-					<div class="notifications" v-if="server.notifications">
-						{{ server.notifications }}
-					</div>
-				</span>
-			</server-cont>
-			<div class="addNew-btn" @click="fetchServers">
-				<i class="material-icons">add</i>
-			</div>
-		</div>
-	</transition>
+  <transition name="sidebarSlide">
+    <div 
+      id="sidebar" 
+      :class="{ open: showMenu }">
+      <div 
+        class="logo-cont" 
+        @click="toggleMenu"/>
+      <server-cont 
+        v-for="server in servers" 
+        :key="server._id" 
+        @click.native="openChat(server._id)">
+        <div 
+          v-show="showMenu"
+          slot="server-name" 
+          class="server-name">
+          <i 
+            class="material-icons" 
+            style="padding: 1px 4px 1px 0px; float: left;">group</i>
+          {{ server.name }}
+        </div>
+        <div 
+          v-show="showMenu"
+          slot="members-count" 
+          class="server-users" 
+        >
+          {{ server.members.length }}&nbsp;people
+        </div>
+        <span slot="notifications-count">
+          <div 
+            v-if="server.notifications"
+            class="notifications">
+            {{ server.notifications }}
+          </div>
+        </span>
+      </server-cont>
+      <div 
+        class="addNew-btn" 
+        @click="fetchServers">
+        <i class="material-icons">add</i>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -30,7 +50,10 @@ var serverCont = {
 };
 
 export default {
-	name: "sideBar",
+	name: "SideBar",
+	components: {
+		"server-cont": serverCont,
+	},
 	computed: {
 		servers() {
 			return this.$store.getters.getServers;
@@ -38,9 +61,6 @@ export default {
 		showMenu() {
 			return this.$store.getters.getShowMenu;
 		},
-	},
-	components: {
-		"server-cont": serverCont,
 	},
 	methods: {
 		toggleMenu: function() {

@@ -20,26 +20,38 @@ var messageModel = require('./models/message');
 var LocalStrategy = require('passport-local').Strategy;
 const Auth0Strategy = require('passport-auth0');
 
+var envs = require('envs');
+
+var auth0 = require("auth0-js");
+
+var socketioJwt = require("socketio-jwt");
+
 const requireAuth = true;
 
 const callbackURL = 'http://localhost:3000/api/callback';
 //var passportSocketIo = require('passport.socketio');
 
-var jwt = require('express-jwt');
+var expressjwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 
-var jwtCheck = jwt({
-	secret: jwks.expressJwtSecret({
-		cache: true,
-		rateLimit: true,
-		jwksRequestsPerMinute: 5,
-		jwksUri: "https://chat-demo-app.eu.auth0.com/.well-known/jwks.json"
-	}),
-	audience: 'http://localhost:3000/api',
-	issuer: "https://chat-demo-app.eu.auth0.com/",
-	algorithms: ['RS256']
+var jwt = require('jsonwebtoken');
+
+var jwtSecret = jwks.expressJwtSecret({
+	cache: true,
+	rateLimit: true,
+	jwksRequestsPerMinute: 15,
+	jwksUri: "https://chat-demo-app.eu.auth0.com/.well-known/jwks.json"
 });
 
+var jwtCheck = expressjwt({
+	secret: jwtSecret,
+	audience: 'http://localhost:3000/api',
+	issuer: "https://chat-demo-app.eu.auth0.com/",
+	algorithms: ['RS256'],
+});
+
+
+var cuSecret = '{"alg":"RS256","kty":"RSA","use":"sig","x5c":["MIIDDzCCAfegAwIBAgIJHb21YeziEU5IMA0GCSqGSIb3DQEBCwUAMCUxIzAhBgNVBAMTGmNoYXQtZGVtby1hcHAuZXUuYXV0aDAuY29tMB4XDTE4MDMwOTEwMzgyMVoXDTMxMTExNjEwMzgyMVowJTEjMCEGA1UEAxMaY2hhdC1kZW1vLWFwcC5ldS5hdXRoMC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC0RoGw+RKA7G8wOj+IaXcN36aulf+4ZL/WM99ucmG/BGSyoaHoqsAahzlNQ2bEI3EBAcIoLVi1D4uwWGRnaOcavIqyIWW6r4VGw+6VhTv9tyVn8QAArTZSy81kqhe8sNxBVvh93pb8Vlv6yihqskfdTTmeopU82P/k6UCgP2s9AP72rgG9r0WRLBJh3B+Gucs4D1jKecVNqUG9JL3TrWRplIct7PlvB3uYVMnrPwEiugD2B+5yP4wqzJskXHO6Kdv/kW5CoJRwpJ53MbmCr8F51CAMLM7LscsH/gKSdA4aqSGl7dWa2nQkIAvRYc6qoNTQ/FjSiUqJXEdvrbZ+/vmZAgMBAAGjQjBAMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFBOGacz6Cvr9fyvCp/dGdq6uGIraMA4GA1UdDwEB/wQEAwIChDANBgkqhkiG9w0BAQsFAAOCAQEAUjBl7hbdwoLuzJbdUTZD5Qf5DDkXuI4iujTUkjvAizjd4lQ9tZuRzkrd9ydQfuHXeNawFm7F6Vp+g2EG+vS31hCBciDhYCKdNTj9PGrtczYoT/qd6PA+IKt/xHceU0IhF4VaebEsenGNIC9UC5ngFoCj8ZPVq3CLPCU06rdsXmd7VIj2dwK4NOg4YTG2DHkytrU4Gvb+y4L0+WpMamEz7IjJR6TgTUukg0uYsYDRoWL8sYLW7XOoQIctjcn87zZu10Ki+VBMv+zOSCt56oKcMR6MYl5TYos5y2RUTNDMFpefTMSfDrGcOtQ/KU4wauNOlJi2biOAVmi0E1uXEd/Z0Q=="],"n":"tEaBsPkSgOxvMDo_iGl3Dd-mrpX_uGS_1jPfbnJhvwRksqGh6KrAGoc5TUNmxCNxAQHCKC1YtQ-LsFhkZ2jnGryKsiFluq-FRsPulYU7_bclZ_EAAK02UsvNZKoXvLDcQVb4fd6W_FZb-sooarJH3U05nqKVPNj_5OlAoD9rPQD-9q4Bva9FkSwSYdwfhrnLOA9YynnFTalBvSS9061kaZSHLez5bwd7mFTJ6z8BIroA9gfucj-MKsybJFxzuinb_5FuQqCUcKSedzG5gq_BedQgDCzOy7HLB_4CknQOGqkhpe3Vmtp0JCAL0WHOqqDU0PxY0olKiVxHb622fv75mQ","e":"AQAB","kid":"NzEyQ0VGMkMwOEUyNEM1Q0M1RjExMjI2N0I4N0YwRDVGRUM2QzA3Rg","x5t":"NzEyQ0VGMkMwOEUyNEM1Q0M1RjExMjI2N0I4N0YwRDVGRUM2QzA3Rg"}';
 //app.use(jwtCheck);
 
 // Configuring Express
@@ -64,7 +76,7 @@ var strategy = new Auth0Strategy({
 	}
 );
 
-passport.use(strategy);
+//passport.use(strategy);
 
 // This can be used to keep a smaller payload
 passport.serializeUser(function (user, done) {
@@ -84,9 +96,13 @@ var sessionMiddleware = expressSession({
 
 });
 
+io.use(function (socket, next) {
+	sessionMiddleware(socket.request, socket.request.res, next);
+});
+
 app.use(sessionMiddleware);
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 
 
 /*io.use(passportSocketIo.authorize({
@@ -256,6 +272,15 @@ var env = {
 	})(req, res, next);
 });*/
 
+var webAuth = new auth0.WebAuth({
+	domain: env.AUTH0_DOMAIN,
+	clientID: env.AUTH0_CLIENT_ID,
+	redirectUri: env.AUTH0_CALLBACK_URL,
+	audience: 'https://' + env.AUTH0_DOMAIN + '/userinfo',
+	responseType: "token id_token code",
+	scope: "openid profile email"
+});
+
 app.route('/login').get(passport.authenticate('auth0', {
 	clientID: env.AUTH0_CLIENT_ID,
 	domain: env.AUTH0_DOMAIN,
@@ -350,44 +375,37 @@ router.get('/signout', function (req, res) {
 
 });
 
+function getToken(req) {
+	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+		return req.headers.authorization.split(' ')[1];
+	} else if (req.query && req.query.token) {
+		return req.query.token;
+	}
+	return null;
+}
+
 router.all('/*', jwtCheck, function (req, res, next) {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Headers", "Authorization");
-	console.log("\n");
-	if (req.user) {
-		console.log(JSON.stringify(req.user, null, '  '));
 
-		userModel.findOne({
-			'local.auth_id': req.user.sub
-		}, function (err, result) {
+	//console.log(req.user);
+
+	if (getToken(req)) {
+		//console.log("token: "+getToken(req));
+		/*jwt.verify(getToken(req), cuSecret, {
+			audience: 'http://localhost:3000/api',
+			issuer: "https://chat-demo-app.eu.auth0.com/",
+			algorithms: ['RS256'],
+		}, function (err, decoded) {
 			if (err)
 				console.log(err);
-			console.log('res: '+result);
-			if (result) {
-				//result.local.name = req.session.passport.user.displayName;
-				//result.local.picture = req.session.passport.user.picture;
-				result.local.sessionID = req.sessionID;
-				result.save(function (err) {
-					if (err)
-						console.log(err);
-
-				});
-			} else {
-				var newUser = new userModel();
-				newUser.local.name = req.session.passport.user.displayName;
-				newUser.local.auth_id = req.session.passport.user.id;
-				newUser.local.picture = req.session.passport.user.picture;
-				newUser.local.sessionID = req.sessionID;
-
-				newUser.save(function (err, result2) {
-					if (err)
-						console.log(err);
-					console.log('new user saved');
-					//console.log(result2);
-				});
-			}
+			console.log(decoded);
+		});*/
+		jwtCheck(req, res, () => {
+			console.log("done");
 		});
 	}
+
 
 	return next();
 	/*if (requireAuth) {
@@ -490,6 +508,54 @@ router.route('/convs/:conv_id').get(function (req, res) {
 })*/
 
 router.route('/user').get(function (req, res) {
+
+	if (req.user) {
+		//console.log(JSON.stringify(req.user, null, '  '));
+		userModel.findOne({
+			'local.auth_id': req.user.sub
+		}, function (err, result) {
+			if (err)
+				console.log(err);
+
+			//console.log('res: ' + result);
+			var userPF = {};
+			webAuth.client.userInfo(getToken(req), function (err, profile) {
+				if (err)
+					console.log(err);
+				if (profile) {
+					userPF = profile;
+					req.user.profile = profile;
+					if (result) {
+						result.local.name = userPF.name;
+						result.local.picture = userPF.picture;
+						result.local.sessionID = req.sessionID;
+						result.save(function (err) {
+							if (err)
+								console.log(err);
+
+						});
+					} else {
+						var newUser = new userModel();
+						newUser.local.name = userPF.name;
+						newUser.local.auth_id = userPF.sub;
+						newUser.local.picture = userPF.picture;
+						newUser.local.sessionID = req.sessionID;
+
+						newUser.save(function (err, result2) {
+							if (err)
+								console.log(err);
+							console.log('new user saved');
+							//console.log(result2);
+						});
+					}
+				} else {
+					console.log("error");
+				}
+				//console.log(profile);
+			});
+		});
+	}
+
 	var temp = {};
 	if (requireAuth) {
 		/*temp = {
@@ -686,7 +752,8 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 				//console.log(req.user.id);
 
 				if (requireAuth) {
-
+					//console.log("pf: ");
+					//console.log(req.user.profile);
 					if (result2.members.indexOf(req.user.sub) < 0) {
 						result2.members.push(req.user.sub);
 						result2.save(function (err) {
@@ -811,8 +878,9 @@ function logUsers() {
 	console.log(users);
 }
 
-io.set('authorization', function (data, accept) {
+/*io.set('authorization', function (data, accept) {
 	// check if there's a cookie header
+	console.log(data);
 	if (data.headers.cookie) {
 		//console.log('cookie: ' + data.headers.cookie);
 		// if there is, parse the cookie
@@ -831,19 +899,36 @@ io.set('authorization', function (data, accept) {
 	}
 	// accept the incoming connection
 	accept(null, true);
+});*/
+
+/*io.use(socketioJwt.authorize({
+  secret: 'your secret or public key',
+  handshake: true
+}));*/
+
+io.use((socket, next) => {
+
+
+	return next();
+	//return next(new Error('authentication error'));
 });
 
 io.on('connection', function (socket) {
-
 	socket.joinedRoom = '';
+	console.log("user joined.");
 
-	//console.log("user joined.");
-	var sessionID = socket.handshake.headers.sessionID;
-	console.log('session id: ' + sessionID);
-	sockets[sessionID] = socket;
+	//console.log(socket.handshake.query.token);
+	var decodedToken = jwt.decode(socket.handshake.query.token, {
+		complete: true
+	});
+	//console.log(decodedToken);
+
+	if (decodedToken.header.alg !== 'RS256') {
+		return next(new Error('algorithm error'));
+	}
 
 	userModel.findOne({
-		'local.sessionID': sessionID
+		'local.auth_id': decodedToken.payload.sub
 	}, function (err, user) {
 		if (err)
 			return done(err);
@@ -870,7 +955,7 @@ io.on('connection', function (socket) {
 
 	socket.on('disconnect', function () {
 		userModel.findOne({
-			'local.sessionID': sessionID
+			'local.auth_id': decodedToken.payload.sub
 		}, function (err, user) {
 			if (err)
 				return done(err);

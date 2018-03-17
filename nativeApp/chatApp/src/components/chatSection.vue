@@ -1,67 +1,95 @@
 <template>
-	<div class="chat-section" v-if="!showMenu && !preLoad">
-		<transition name="prop-slide">
-			<div class="msg-prop" v-if="selectedMsgsCount">
-				<div class="close-btn" @click="deselectAllMsgs">
-					<i class="material-icons">close</i>
-				</div>
-				<div class="elem" style="width: 140px;">
-					<div class="label">
-						selected messages&nbsp;{{ selectedMsgsCount }}
-						<span style="font-size: 14px;padding: 0px 3px;font-weight: 700;"></span>
-					</div>
-				</div>
-				<div class="elem">
-					<i class="material-icons">edit</i>
-					<div class="label">Edit</div>
-				</div>
-				<div class="elem">
-					<i class="material-icons">delete</i>
-					<div class="label">Delete</div>
-				</div>
-				<div class="elem">
-					<i class="material-icons">forward</i>
-					<div class="label">Forward</div>
-				</div>
-				<div class="elem">
-					<i class="material-icons">content_copy</i>
-					<div class="label">Copy</div>
-				</div>
+  <div 
+    v-if="!showMenu && !preLoad"
+    class="chat-section">
+    <transition name="prop-slide">
+      <div 
+        v-if="selectedMsgsCount"
+        class="msg-prop">
+        <div 
+          class="close-btn" 
+          @click="deselectAllMsgs">
+          <i class="material-icons">close</i>
+        </div>
+        <div 
+          class="elem" 
+          style="width: 140px;">
+          <div class="label">
+            selected messages&nbsp;{{ selectedMsgsCount }}
+            <span style="font-size: 14px;padding: 0px 3px;font-weight: 700;"/>
+          </div>
+        </div>
+        <div class="elem">
+          <i class="material-icons">edit</i>
+          <div class="label">Edit</div>
+        </div>
+        <div class="elem">
+          <i class="material-icons">delete</i>
+          <div class="label">Delete</div>
+        </div>
+        <div class="elem">
+          <i class="material-icons">forward</i>
+          <div class="label">Forward</div>
+        </div>
+        <div class="elem">
+          <i class="material-icons">content_copy</i>
+          <div class="label">Copy</div>
+        </div>
 
-			</div>
-		</transition>
-		<div class="chat-cont" :class="{ open: selectedMsgsCount }">
-			<div class="chat">
-				<transition-group name="msg-in" mode="out-in">
-				<div class="msg-cont" v-for="message in msgs" :key="message._id" :class="{ mine: message.from == userDetails._id }">
-					<div class="notification" v-if="message.msgType == 'notification'">
-						{{ message.text }}
-					</div>
+      </div>
+    </transition>
+    <div 
+      :class="{ open: selectedMsgsCount }"
+      class="chat-cont">
+      <div class="chat">
+        <transition-group 
+          name="msg-in" 
+          mode="out-in">
+          <div 
+            v-for="message in msgs" 
+            :key="message._id" 
+            :class="{ mine: message.from == userDetails._id }"
+            class="msg-cont">
+            <div 
+              v-if="message.msgType == 'notification'"
+              class="notification">
+              {{ message.text }}
+            </div>
 
-					<div class="user-change" v-if="userChange(message.queueNumber, message.conversationID) && message.msgType != 'notification'">
-						{{ getUsername(message.from) }}
-					</div>
+            <div 
+              v-if="userChange(message.queueNumber, message.conversationID) && message.msgType != 'notification'"
+              class="user-change">
+              {{ getUsername(message.from) }}
+            </div>
 
-					<div class="user-img" v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetails._id && message.msgType != 'notification'">
-						<img :src="getUserImage(message.from)">
-					</div>
+            <div 
+              v-if="userChange(message.queueNumber, message.conversationID) && message.from != userDetails._id && message.msgType != 'notification'"
+              class="user-img">
+              <img :src="getUserImage(message.from)">
+            </div>
 
-					<div class="user-msg" v-if="message.msgType != 'notification'" @click="toggleSelectMsg(message._id)" v-bind:class="{ selected: message.selected, image: message.msgType == 'image' }">
-						<div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
-						<div class="text" >{{ message.text }}</div>
-						<img :src="message.text" v-if="message.msgType == 'image'">
-					</div>
-				</div>
-				</transition-group>
-			</div>
-		</div>
-	</div>
+            <div 
+              v-if="message.msgType != 'notification'" 
+              :class="{ selected: message.selected, image: message.msgType == 'image' }"
+              class="user-msg"
+              @click="toggleSelectMsg(message._id)">
+              <div class="time">{{ message.date.match(/\d\d:.+(?=\:)/g)[0] }}</div>
+              <div class="text" >{{ message.text }}</div>
+              <img 
+                v-if="message.msgType == 'image'"
+                :src="message.text">
+            </div>
+          </div>
+        </transition-group>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 var _ = require("underscore");
 export default {
-	name: "chatSection",
+	name: "ChatSection",
 	computed: {
 		selectedMsgsCount() {
 			return this.$store.state.selectedMsgsCount;
