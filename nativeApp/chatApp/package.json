@@ -19,11 +19,14 @@
     "eslint-plugin-node": "^5.1.0",
     "eventemitter3": "^3.0.1",
     "qs": "^6.5.1",
+    "s": "^0.1.1",
+    "simplebar": "^2.5.1",
     "socket.io-client": "^2.0.4",
     "underscore": "^1.8.3",
     "vue": "^2.5.2",
     "vue-resource": "^1.3.4",
     "vue-router": "^3.0.1",
+    "vuebar": "0.0.18",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -41,6 +44,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
     "eslint": "^4.18.2",
+    "eslint-plugin-html": "^4.0.2",
     "eslint-plugin-vue": "^4.3.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",

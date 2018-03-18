@@ -4,10 +4,14 @@ module.exports = {
     es6: true,
     node: true
   },
-  plugins: ["vue"],
+  plugins: ["vue", "html"],
+  settings: {
+    "html/html-extensions": [".html"]
+  },
   extends: ["eslint:recommended", "plugin:vue/recommended"],
   parser: "vue-eslint-parser",
   parserOptions: {
+    parser: "babel-eslint",
     sourceType: "module",
     ecmaVersion: 6,
     ecmaFeatures: {
@@ -40,6 +44,6 @@ module.exports = {
         ignoreReadBeforeAssign: false
       }
     ],
-    "prefer-arrow-callback": [ "warn", { "allowNamedFunctions": false } ]
+    "prefer-arrow-callback": ["warn", { allowNamedFunctions: false }]
   }
 };

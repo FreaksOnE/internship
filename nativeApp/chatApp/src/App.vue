@@ -135,6 +135,7 @@ input * {
 
 .fade-leave-active {
   position: absolute !important;
+  width: 99%;
 }
 
 .fade-move {

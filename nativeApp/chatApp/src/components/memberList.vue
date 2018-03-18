@@ -60,10 +60,9 @@
 </template>
 
 <script>
-
 var userCont = {
 	template:
-			"<div class=\"user\"><div class=\"user-image\"><slot name=\"user-picture\">%user-picture%</slot></div><span style=\"float:left;width:130px;\"><div class=\"user-name\"><slot name=\"display-name\">%display-name%</slot></div><div class=\"user-status\"><slot name=\"user-status\">%user-status%</slot></div></span></div>",
+    "<div class=\"user\"><div class=\"user-image\"><slot name=\"user-picture\">%user-picture%</slot></div><span style=\"float:left;width:130px;\"><div class=\"user-name\"><slot name=\"display-name\">%display-name%</slot></div><div class=\"user-status\"><slot name=\"user-status\">%user-status%</slot></div></span></div>",
 };
 
 export default {
@@ -84,13 +83,13 @@ export default {
 		openedChat() {
 			return this.$store.getters.getOpenedChat;
 		},
-		chatMembers(){
+		chatMembers() {
 			return this.$store.getters.getMembersObj;
 		},
-		onlineMembers(){
+		onlineMembers() {
 			return this.$store.getters.getOnlineMembers;
 		},
-		offlineMembers(){
+		offlineMembers() {
 			return this.$store.getters.getOfflineMembers;
 		},
 		preLoad() {
@@ -109,150 +108,187 @@ export default {
 </script>
 
 <style>
-	.member-list {
-		position: absolute;
-		width: 250px;
-		height: 100%;
-		background-color: #555;
-		right: 0px;
-		top: 0px;
-		color: #eee;
-		z-index: 5;
-		transition: all 0.35s ease;
-		box-shadow: -3px 0px 4px 0px rgba(0, 0, 0, 0.3);
-		overflow: auto;
-	}
+.vb > .vb-dragger {
+  z-index: 5;
+  width: 12px;
+  right: 0;
+  cursor: pointer;
+}
 
-	.member-list.open {
-		width: 100%;
-	}
+.vb > .vb-dragger > .vb-dragger-styler {
+  backface-visibility: hidden;
+  transform: rotate3d(0, 0, 0, 0);
+  transition: background-color 100ms ease-out, margin 100ms ease-out,
+    height 100ms ease-out;
+  background-color: rgba(85, 85, 85, 0.6);
+  margin: 5px 5px 5px 0;
+  border-radius: 20px;
+  height: calc(100% - 10px);
+  display: block;
+}
 
-	.member-list>* {
-		position: relative;
-		width: 80%;
-		margin: auto;
-		padding-top: 25px;
-	}
+.vb.vb-scrolling-phantom > .vb-dragger > .vb-dragger-styler {
+  background-color: rgba(85, 85, 85, 0.6);
+}
 
-	.member-list .header {
-		font-size: 17px;
-		position: relative;
-		padding-bottom: 8px;
-	}
+.vb > .vb-dragger:hover > .vb-dragger-styler {
+  background-color: rgb(85, 85, 85);
+}
 
-	.member-list .header::after {
-		content: "";
-		width: 100%;
-		height: 2px;
-		background-color: #666;
-		position: absolute;
-		left: 0px;
-		bottom: 0px;
-	}
+.vb.vb-dragging > .vb-dragger > .vb-dragger-styler {
+  background-color: rgb(85, 85, 85);
+  /*margin: 3px 3px 3px 0;
+  height: 100%;*/
+}
 
-	.member-list .user {
-		width: 100%;
-		height: 60px;
-		display: block;
-		position: relative;
-		cursor: pointer;
-	}
+.vb.vb-dragging-phantom > .vb-dragger > .vb-dragger-styler {
+  background-color: rgb(85, 85, 85);
+}
 
-	.member-list .user .user-image {
-		height: 40px;
-		width: 40px;
-		margin: 10px 10px 10px 0px;
-		/*background-color: #eee;*/
-		border-radius: 50%;
-		box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
-		float: left;
-		overflow: hidden;
-	}
+.member-list {
+  position: absolute;
+  width: 250px;
+  height: 100%;
+  background-color: #555;
+  right: 0px;
+  top: 0px;
+  color: #eee;
+  z-index: 5;
+  transition: all 0.35s ease;
+  box-shadow: -3px 0px 4px 0px rgba(0, 0, 0, 0.3);
+  overflow: auto;
+}
 
-	.member-list .user .user-image img {
-		width: 40px;
-	}
+.member-list.open {
+  width: 100%;
+}
 
-	.member-list .user .user-name {
-		width: 150px;
-		float: left;
-		padding-top: 13px;
-		font-size: 16px;
-		padding-bottom: 3px;
-	}
+.member-list > * {
+  position: relative;
+  width: 80%;
+  margin: auto;
+  padding-top: 25px;
+}
 
-	.member-list .user .user-status {
-		font-size: 10px;
-		width: 150px;
-		float: left;
-	}
+.member-list .header {
+  font-size: 17px;
+  position: relative;
+  padding-bottom: 8px;
+}
 
-	.member-list .profile {
-		height: 100%;
-		width: 100%;
-		position: absolute;
-		top: 0px;
-		left: 0px;
-		padding: 0px;
-	}
+.member-list .header::after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  background-color: #666;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+}
 
-	.member-list .profile .close-btn {
-		position: absolute;
-		top: 0px;
-		right: 0px;
-		height: 390px;
-		width: 50px;
-		color: #555;
-		font-size: 50px;
-		cursor: pointer;
-		transition: all 0.3s ease;
-	}
+.member-list .user {
+  width: 100%;
+  height: 60px;
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
 
-	.member-list .profile .close-btn:hover {
-		color: #eee;
-	}
+.member-list .user .user-image {
+  height: 40px;
+  width: 40px;
+  margin: 10px 10px 10px 0px;
+  /*background-color: #eee;*/
+  border-radius: 50%;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
+  float: left;
+  overflow: hidden;
+}
 
-	.member-list .profile .close-btn>i {
-		margin: 170px 0px;
-	}
+.member-list .user .user-image img {
+  width: 40px;
+}
 
-	.member-list .profile .pf-container {
-		content: "";
-		height: 60%;
-		width: 100%;
-		position: absolute;
-		top: 20%;
-		left: 0px;
-		background-color: rgba(0, 0, 0, 0.5);
-		box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.6);
-		min-height: 390px;
-	}
+.member-list .user .user-name {
+  width: 150px;
+  float: left;
+  padding-top: 13px;
+  font-size: 16px;
+  padding-bottom: 3px;
+}
 
-	.member-list .profile .user-image {
-		width: 300px;
-		height: 300px;
-		border-radius: 10px;
-		background-color: #eee;
-		position: absolute;
-		right: 70px;
-		top: -70px;
-		box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
-		overflow: hidden;
-	}
+.member-list .user .user-status {
+  font-size: 10px;
+  width: 150px;
+  float: left;
+}
 
-	.member-list .profile .user-image img {
-		width: 300px;
-		height: 300px;
-	}
+.member-list .profile {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 0px;
+}
 
-	.memberListSlide-enter-active,
-	.memberListSlide-leave-active {
-		transition: all .2s;
-	}
+.member-list .profile .close-btn {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 390px;
+  width: 50px;
+  color: #555;
+  font-size: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-	.memberListSlide-enter,
-	.memberListSlide-leave-to {
-		opacity: .0;
-		transform: translateX(50px);
-	}
+.member-list .profile .close-btn:hover {
+  color: #eee;
+}
+
+.member-list .profile .close-btn > i {
+  margin: 170px 0px;
+}
+
+.member-list .profile .pf-container {
+  content: "";
+  height: 60%;
+  width: 100%;
+  position: absolute;
+  top: 20%;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.6);
+  min-height: 390px;
+}
+
+.member-list .profile .user-image {
+  width: 300px;
+  height: 300px;
+  border-radius: 10px;
+  background-color: #eee;
+  position: absolute;
+  right: 70px;
+  top: -70px;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.member-list .profile .user-image img {
+  width: 300px;
+  height: 300px;
+}
+
+.memberListSlide-enter-active,
+.memberListSlide-leave-active {
+  transition: all 0.2s;
+}
+
+.memberListSlide-enter,
+.memberListSlide-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
 </style>

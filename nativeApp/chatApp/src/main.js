@@ -22,6 +22,9 @@ const { login, logout, } = auth;
 
 const serverAddress = "http://localhost:3000/";
 
+import Vuebar from "vuebar";
+Vue.use(Vuebar);
+
 Vue.use(Vuex);
 
 Vue.config.productionTip = false;
@@ -74,7 +77,7 @@ const store = new Vuex.Store({
 		showUserOptions: false,
 		showProfile: false,
 		openedChat: "",
-		loggedIn: false,
+		hideChat: true,
 		servers: [
 			{
 				members: [],
@@ -211,8 +214,8 @@ const store = new Vuex.Store({
 				};
 			else store.dispatch("doLogin");
 		},
-		getLoggedIn: state => state.loggedIn,
 		getPreLoad: state => state.preLoad,
+		getHideChat: state => state.hideChat,
 	},
 	mutations: {
 		ADD_TODO: (state, payload) => {
@@ -230,10 +233,6 @@ const store = new Vuex.Store({
 		TOGGLE_PRELOAD: (state, payload) => {
 			if (payload) state.preLoad = true;
 			else state.preLoad = false;
-		},
-		TOGGLE_LOGGEDIN: (state, payload) => {
-			if (payload) state.loggedIn = true;
-			else state.loggedIn = false;
 		},
 		TOGGLE_USER_OPTIONS: state => {
 			state.showUserOptions = !state.showUserOptions;
@@ -275,6 +274,9 @@ const store = new Vuex.Store({
 		FETCH_USERS: (state, payload) => {
 			state.usersData = payload;
 		},
+		TOGGLE_HIDE_CHAT: (state, payload) => {
+			state.hideChat = payload;
+		},
 	},
 	actions: {
 		toggleMenu: (context, payload) => {
@@ -284,6 +286,9 @@ const store = new Vuex.Store({
 		},
 		toggleLoggedIn: (context, payload) => {
 			context.commit("TOGGLE_LOGGEDIN", payload);
+		},
+		toggleHideChat: (context, payload) => {
+			context.commit("TOGGLE_HIDE_CHAT", payload);
 		},
 		togglePreLoad: (context, payload) => {
 			context.commit("TOGGLE_MENU", !payload);
@@ -354,29 +359,33 @@ const store = new Vuex.Store({
 			});
 		},
 		openChat: function(context, payload) {
-			var temp = store.getters.getServers.find(
-				server => server._id === payload
-			);
+			if(payload != store.getters.getOpenedChat){
+				store.dispatch("toggleHideChat", true);
+				var temp = store.getters.getServers.find(
+					server => server._id === payload
+				);
 
-			temp.notifications = 0;
+				temp.notifications = 0;
 
-			context.commit("SET_OPENED_CHAT", payload);
+				context.commit("SET_OPENED_CHAT", payload);
 
-			store.dispatch("fetchMsgs", payload).then(
-				() => {
-					store.dispatch("fetchUsers").then(
-						() => {
+				store.dispatch("fetchMsgs", payload).then(() => {
+					store.dispatch("fetchUsers").then(() => {
+						setTimeout(() => {
+							this.dispatch("toggleHideChat", false);
 							this.dispatch("toggleMenu", false);
-						},
-						error => {
-							console.log(error);
-						}
+						},300);
+					
+					},	error => {
+						console.log(error);
+					}
 					);
 				},
 				error => {
 					console.log(error);
 				}
-			);
+				);
+			}
 		},
 		fetchMsgs: (context, payload) => {
 			return new Promise((resolve, reject) => {
