@@ -232,7 +232,7 @@ app.get('/', function (req, res) {
 		if (req.isAuthenticated())
 			res.sendFile(path.join(__dirname + '/public/chat.html'));
 		else
-			res.redirect('/login');
+			res.sendFile(path.join(__dirname + '/public/index.html')); //res.redirect('/login');
 	} else {
 		res.sendFile(path.join(__dirname + '/public/chat.html'));
 	}
@@ -281,7 +281,7 @@ var webAuth = new auth0.WebAuth({
 	scope: "openid profile email"
 });
 
-app.route('/login').get(passport.authenticate('auth0', {
+/*app.route('/login').get(passport.authenticate('auth0', {
 	clientID: env.AUTH0_CLIENT_ID,
 	domain: env.AUTH0_DOMAIN,
 	redirectUri: env.AUTH0_CALLBACK_URL,
@@ -291,18 +291,15 @@ app.route('/login').get(passport.authenticate('auth0', {
 }), function (req, res) {
 	//res.sendFile(path.join(__dirname + '/public/login.html'));
 	res.redirect('/');
-});
+});*/
 
 router.get(
-	'/callback',
-	passport.authenticate('auth0', {
-		failureRedirect: '/'
-	}),
+	'/callback', //passport.authenticate('auth0', {failureRedirect: '/'}),
 	function (req, res) {
 		//console.log(req.session.passport.user.id);
 
-		userModel.findOne({
-			'local.auth_id': req.session.passport.user.id
+		/*userModel.findOne({
+			'local.auth_id': req.user.sub
 		}, function (err, result) {
 			if (err)
 				console.log(err);
@@ -330,7 +327,7 @@ router.get(
 					//console.log(result2);
 				});
 			}
-		});
+		});*/
 		res.redirect(req.session.returnTo || '/');
 	}
 );
@@ -402,7 +399,7 @@ router.all('/*', jwtCheck, function (req, res, next) {
 			console.log(decoded);
 		});*/
 		jwtCheck(req, res, () => {
-			console.log("done");
+			//console.log("done");
 		});
 	}
 
@@ -906,6 +903,7 @@ function logUsers() {
   handshake: true
 }));*/
 
+/*
 io.use((socket, next) => {
 
 
@@ -923,23 +921,25 @@ io.on('connection', function (socket) {
 	});
 	//console.log(decodedToken);
 
-	if (decodedToken.header.alg !== 'RS256') {
-		return next(new Error('algorithm error'));
-	}
-
-	userModel.findOne({
-		'local.auth_id': decodedToken.payload.sub
-	}, function (err, user) {
-		if (err)
-			return done(err);
-		if (user) {
-			user.local.online = true;
-			user.save(function (err) {
-				io.emit('refresh chat');
-			});
+	if (decodedToken) {
+		if (decodedToken.header.alg !== 'RS256') {
+			return next(new Error('algorithm error'));
 		}
 
-	});
+		userModel.findOne({
+			'local.auth_id': decodedToken.payload.sub
+		}, function (err, user) {
+			if (err)
+				return done(err);
+			if (user) {
+				user.local.online = true;
+				user.save(function (err) {
+					io.emit('refresh chat');
+				});
+			}
+
+		});
+	}
 
 	socket.emit('login');
 
@@ -968,4 +968,4 @@ io.on('connection', function (socket) {
 
 		});
 	});
-});
+});*/

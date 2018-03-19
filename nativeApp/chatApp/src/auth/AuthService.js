@@ -1,5 +1,5 @@
 import auth0 from "auth0-js";
-import { AUTH_CONFIG } from "./auth0-variables";
+import { AUTH_CONFIG, } from "./auth0-variables";
 import EventEmitter from "eventemitter3";
 import router from "./../router";
 
@@ -21,9 +21,9 @@ export default class AuthService {
 		clientID: AUTH_CONFIG.clientId,
 		redirectUri: AUTH_CONFIG.callbackUrl,
 		audience: AUTH_CONFIG.apiUrl,
-		responseType: "token id_token code",
-		scope: "openid profile email"
-	});
+		responseType: "token id_token",
+		scope: "openid profile email",
+	}); //code
 
 	login() {
 		this.auth0.authorize();
@@ -46,13 +46,13 @@ export default class AuthService {
 
 	setSession(authResult) {
 		// Set the time that the access token will expire at
-		let expiresAt = JSON.stringify(
+		const expiresAt = JSON.stringify(
 			authResult.expiresIn * 1000 + new Date().getTime()
 		);
 		localStorage.setItem("access_token", authResult.accessToken);
 		localStorage.setItem("id_token", authResult.idToken);
 		localStorage.setItem("expires_at", expiresAt);
-		this.authNotifier.emit("authChange", { authenticated: true });
+		this.authNotifier.emit("authChange", { authenticated: true, });
 	}
 
 	logout() {
@@ -61,7 +61,7 @@ export default class AuthService {
 		localStorage.removeItem("id_token");
 		localStorage.removeItem("expires_at");
 		this.userProfile = null;
-		this.authNotifier.emit("authChange", { authenticated: false });
+		this.authNotifier.emit("authChange", { authenticated: false, });
 		// navigate to the home route
 		//router.replace("/");
 		//console.log("go home");
@@ -71,7 +71,7 @@ export default class AuthService {
 	isAuthenticated() {
 		// Check whether the current time is past the
 		// access token's expiry time
-		let expiresAt = JSON.parse(localStorage.getItem("expires_at"));
+		const expiresAt = JSON.parse(localStorage.getItem("expires_at"));
 		return new Date().getTime() < expiresAt;
 	}
 }
