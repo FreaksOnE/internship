@@ -512,7 +512,7 @@ const store = new Vuex.Store({
 			});
 		},
 		newServer: (context, payload) => {
-			console.log(payload);
+			//console.log(payload);
 
 			return new Promise((resolve, reject) => {
 				console.log("POST " + serverAddress + "api/convs/");

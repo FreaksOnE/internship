@@ -5,7 +5,11 @@
       :class="{ open: showMenu }">
       <div 
         class="logo-cont" 
-        @click="toggleMenu"/>
+        @click="toggleMenu">
+        <img 
+          src="http://5.160.218.90/chatApp-logo.png" 
+          style="height: 85%;">
+      </div>
       <server-cont 
         v-for="server in servers" 
         :key="server._id" 
@@ -83,7 +87,7 @@ export default {
 	},
 	data: function() {
 		return {
-			serverName: "chat1",
+			serverName: "",
 		};
 	},
 	computed: {
@@ -157,6 +161,7 @@ export default {
 	left: 10px;
 	background-color: #e1e4e7;
 	transition: all 0.2s ease;
+	text-align: center;
 }
 
 #sidebar.open .logo-cont::after {

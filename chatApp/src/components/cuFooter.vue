@@ -90,7 +90,7 @@ export default {
 			if (this.msgText) {
 				userMsg.text = this.msgText;
 				this.msgText = "";
-				console.log(this.$refs);
+				//console.log(this.$refs);
 				this.$refs.msg.focus();
 				if (this.msgText.match(/:img:$/g)) {
 					this.msgText = this.msgText.match(/.+(?=:.*:)/g)[0];
