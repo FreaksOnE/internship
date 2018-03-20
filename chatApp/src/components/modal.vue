@@ -20,10 +20,10 @@
               <slot name="footer">
                 <button 
                   class="modal-ok-button" 
-                  @click="$emit('create')">Create</button>
+                  @click="create">Create</button>
                 <button 
                   class="modal-cancel-button" 
-                  @click="$emit('close')">Cancel</button>
+                  @click="close">Cancel</button>
                 <div class="clearfix"/>
               </slot>
             </div>
@@ -45,7 +45,12 @@ export default {
 		
 	},
 	methods: {
-		
+		create() {
+			this.$emit("create");
+		},
+		close() {
+			this.$emit("close");
+		},
 	},
 };
 </script>
