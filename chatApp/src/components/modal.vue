@@ -18,7 +18,9 @@
 
             <div class="modal-footer">
               <slot name="footer">
-                <button class="modal-ok-button">Create</button>
+                <button 
+                  class="modal-ok-button" 
+                  @click="$emit('create')">Create</button>
                 <button 
                   class="modal-cancel-button" 
                   @click="$emit('close')">Cancel</button>
@@ -81,6 +83,7 @@ export default {
   color: #777;
   text-align: center;
   overflow: hidden;
+  height: 190px;
 }
 
 .modal-header {
@@ -91,7 +94,7 @@ export default {
 }
 
 .modal-body {
-  margin: 20px 0;
+  margin: 18px 0;
   padding: 0 30px;
   width: 260px;
 }
@@ -100,7 +103,7 @@ export default {
   border: none;
   border-bottom: 1px solid #777;
   width: 260px;
-  height: 40px;
+  height: 25px;
   padding-top: 10px;
 }
 

@@ -511,6 +511,31 @@ const store = new Vuex.Store({
 					});
 			});
 		},
+		newServer: (context, payload) => {
+			console.log(payload);
+
+			return new Promise((resolve, reject) => {
+				console.log("POST " + serverAddress + "api/convs/");
+				axios
+					.post(
+						serverAddress + "api/convs/",
+						qs.stringify(payload),
+						store.getters.getHeaders
+					)
+					.then((response) => {
+						if (response.data.message == "done") {
+							store.dispatch("fetchServers");
+							resolve();
+						} else {
+							reject("error");
+							//store.dispatch("doLogin");
+						}
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		},
 	},
 });
 

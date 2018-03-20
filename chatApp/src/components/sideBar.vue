@@ -41,14 +41,16 @@
       </div>
       <modal 
         v-if="showNewServerModal" 
-        @close="toggleShowNewServerModal">
-        <div slot="header">Create new chat</div>
+        @close="toggleShowNewServerModal"
+        @create="createServer">
+        <div slot="header">Create new server</div>
         <div slot="body">
-          Enter a name for the chatroom:
-          <input 
+          Enter a name for the server:
+          <input
             id="convNameInp" 
+            v-bind="serverName"
             type="text" 
-            placeholder="ex. name">
+            placeholder="ex. name"> 
         </div>
         <div slot="footer">
           <button 
@@ -81,6 +83,11 @@ export default {
 		"server-cont": serverCont,
 		"modal": modal,
 	},
+	data: function() {
+		return {
+			serverName: "",
+		};
+	},
 	computed: {
 		servers() {
 			return this.$store.getters.getServers;
@@ -104,6 +111,9 @@ export default {
 		},
 		toggleShowNewServerModal() {
 			this.$store.dispatch("toggleShowNewServerModal");
+		},
+		createServer() {
+			this.$store.dispatch("newServer", { name: this.serverName,});
 		},
 	},
 };
