@@ -85,7 +85,7 @@ export default {
 	},
 	data: function() {
 		return {
-			serverName: "",
+			serverName: "chat1",
 		};
 	},
 	computed: {

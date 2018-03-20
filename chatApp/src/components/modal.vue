@@ -42,14 +42,10 @@
 export default {
 	name: "Modal",
 	computed: {
-		userOptions() {
-			return this.$store.getters.getShowUserOptions;
-		},
+		
 	},
 	methods: {
-		toggleUserOptions: function() {
-			this.$store.dispatch("toggleUserOptions");
-		},
+		
 	},
 };
 </script>
