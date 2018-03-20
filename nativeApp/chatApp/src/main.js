@@ -7,7 +7,7 @@ import router from "./router";
 import axios from "axios";
 
 import io from "socket.io-client";
-var socket = io.connect("http://localhost:3000", {
+var socket = io.connect("http://5.160.218.90:3000", {
 	"query": "token=" + localStorage.getItem("access_token"),
 });
 
@@ -20,7 +20,7 @@ const auth = new AuthService();
 
 const { login, logout, } = auth;
 
-const serverAddress = "http://localhost:3000/";
+const serverAddress = "http://5.160.218.90:3000/";
 
 import Vuebar from "vuebar";
 Vue.use(Vuebar);
