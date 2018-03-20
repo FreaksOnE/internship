@@ -40,22 +40,20 @@
         <i class="material-icons">add</i>
       </div>
       <modal 
-        v-if="showNewServerModal" 
-        @close="toggleShowNewServerModal"
-        @create="createServer">
+        v-if="showNewServerModal">
         <div slot="header">Create new server</div>
         <div slot="body">
           Enter a name for the server:
           <input
             id="convNameInp" 
-            v-bind="serverName"
+            v-model="serverName"
             type="text" 
             placeholder="ex. name"> 
         </div>
         <div slot="footer">
           <button 
             class="modal-ok-button" 
-            @click="createConv">Create</button>
+            @click="createServer">Create</button>
           <button 
             class="modal-cancel-button" 
             @click="toggleShowNewServerModal">Cancel</button>
