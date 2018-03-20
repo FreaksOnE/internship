@@ -64,9 +64,9 @@ export default {
 <style>
 @font-face {
   font-family: "Gubblebum Blocky";
-  src: url("GUBBLO___.eot?") format("eot"), url("GUBBLO___.woff") format("woff"),
-    url("GUBBLO___.ttf") format("truetype"),
-    url("GUBBLO___.svg#Gubblebum-Blocky") format("svg");
+  src: url("/assets/GUBBLO___.eot?") format("eot"), url("/assets/GUBBLO___.woff") format("woff"),
+    url("/assets/GUBBLO___.ttf") format("truetype"),
+    url("/assets/GUBBLO___.svg#Gubblebum-Blocky") format("svg");
   font-weight: normal;
   font-style: normal;
 }
