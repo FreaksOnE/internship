@@ -62,6 +62,7 @@ export default {
 	}
 
 	.pre-loader-cont .enter-btn {
+		font-family: "Gubblebum Blocky";
 		position: absolute;
 		height: 50px;
 		width: 260px;

@@ -62,6 +62,15 @@ export default {
 </script>
 
 <style>
+@font-face {
+  font-family: "Gubblebum Blocky";
+  src: url("GUBBLO___.eot?") format("eot"), url("GUBBLO___.woff") format("woff"),
+    url("GUBBLO___.ttf") format("truetype"),
+    url("GUBBLO___.svg#Gubblebum-Blocky") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
 ol,
 ul {
   margin: 0;
