@@ -45,7 +45,7 @@ var jwtSecret = jwks.expressJwtSecret({
 
 var jwtCheck = expressjwt({
 	secret: jwtSecret,
-	audience: 'http://localhost:3000/api',
+	audience: 'http://5.160.218.90:3000/api',
 	issuer: "https://chat-demo-app.eu.auth0.com/",
 	algorithms: ['RS256'],
 });
