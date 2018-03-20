@@ -36,9 +36,33 @@
       </server-cont>
       <div 
         class="addNew-btn" 
-        @click="fetchServers">
+        @click="toggleShowNewServerModal">
         <i class="material-icons">add</i>
       </div>
+      <modal 
+        v-if="showNewServerModal" 
+        @close="toggleShowNewServerModal">
+        <div slot="header">Create new chat</div>
+        <div slot="body">
+          Enter a name for the chatroom:
+          <input 
+            id="convNameInp" 
+            type="text" 
+            placeholder="ex. name">
+        </div>
+        <div slot="footer">
+          <button 
+            class="modal-ok-button" 
+            @click="createConv">Create</button>
+          <button 
+            class="modal-cancel-button" 
+            @click="toggleShowNewServerModal">Cancel</button>
+          <div class="clearfix"/>
+        </div>
+        <img 
+          slot="image" 
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlKr7pHvwA9ytIY707rewhSTorl1ATf0DYgjWvuad755ev6Pjv">
+      </modal>
     </div>
   </transition>
 </template>
@@ -49,10 +73,13 @@ var serverCont = {
 		"<div class=\"server-cont\"><div class=\"server\"></div><slot name=\"server-name\">%server-name%</slot><slot name=\"members-count\">%members-count%</slot><slot name=\"notifications-count\">%notifications-count%</slot><div class=\"clearfix\"></div></div>",
 };
 
+import modal from "@/components/modal";
+
 export default {
 	name: "SideBar",
 	components: {
 		"server-cont": serverCont,
+		"modal": modal,
 	},
 	computed: {
 		servers() {
@@ -60,6 +87,9 @@ export default {
 		},
 		showMenu() {
 			return this.$store.getters.getShowMenu;
+		},
+		showNewServerModal() {
+			return this.$store.getters.getShowNewServerModal;
 		},
 	},
 	methods: {
@@ -71,6 +101,9 @@ export default {
 		},
 		openChat(id) {
 			this.$store.dispatch("openChat", id);
+		},
+		toggleShowNewServerModal() {
+			this.$store.dispatch("toggleShowNewServerModal");
 		},
 	},
 };
@@ -202,7 +235,7 @@ export default {
 	background-color: #eee;
 	position: relative;
 	display: block;
-	margin: 10px 10px;
+	margin: 20px 10px 10px 10px;
 	cursor: pointer;
 	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
 	color: #555;

@@ -78,6 +78,7 @@ const store = new Vuex.Store({
 		showProfile: false,
 		openedChat: "",
 		hideChat: true,
+		showNewServerModal: false,
 		servers: [
 			{
 				members: [],
@@ -216,6 +217,7 @@ const store = new Vuex.Store({
 		},
 		getPreLoad: state => state.preLoad,
 		getHideChat: state => state.hideChat,
+		getShowNewServerModal: state => state.showNewServerModal,
 	},
 	mutations: {
 		ADD_TODO: (state, payload) => {
@@ -277,6 +279,9 @@ const store = new Vuex.Store({
 		TOGGLE_HIDE_CHAT: (state, payload) => {
 			state.hideChat = payload;
 		},
+		TOGGLE_SHOW_NEW_SERVER_MODAL: (state) => {
+			state.showNewServerModal = !state.showNewServerModal;
+		},
 	},
 	actions: {
 		toggleMenu: (context, payload) => {
@@ -296,6 +301,9 @@ const store = new Vuex.Store({
 		},
 		toggleUserOptions: context => {
 			context.commit("TOGGLE_USER_OPTIONS");
+		},
+		toggleShowNewServerModal: context => {
+			context.commit("TOGGLE_SHOW_NEW_SERVER_MODAL");
 		},
 		toggleShowProfile: context => {
 			context.commit("DESELECT_ALL_MSGS");
