@@ -66,36 +66,36 @@ export default {
 		position: absolute;
 		height: 50px;
 		width: 260px;
-		border: 2px solid #f08080;
-		border-radius: 25px;
+		/*border: 2px solid #f08080;
+		letter-spacing: 10px;
+		border-radius: 25px;*/
+		color: #555;
 		top: 45%;
 		left: 0;
 		right: 0;
 		margin: auto;
 		text-align: center;
-		color: #f08080;
 		line-height: 50px;
-		font-size: 30px;
-		letter-spacing: 10px;
+		font-size: 100px;
 		user-select: none;
 		cursor: pointer;
 		transition: all 0.3s ease;
 	}
 
 	.pre-loader-cont .enter-btn:hover {
-		letter-spacing: 15px;
+		color: #f08080;
 	}
 
 	.pre-loader-cont .logout-btn {
 		position: absolute;
 		height: 40px;
 		width: 100px;
-		border: 2px solid #f08080;
+		/*border: 2px solid #f08080;*/
 		border-radius: 25px;
 		top: 10%;
 		left: 5%;
 		text-align: center;
-		color: #f08080;
+		color: #555;
 		line-height: 40px;
 		font-size: 16px;
 		user-select: none;
