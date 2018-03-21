@@ -220,14 +220,6 @@ const store = new Vuex.Store({
 		getShowNewServerModal: state => state.showNewServerModal,
 	},
 	mutations: {
-		ADD_TODO: (state, payload) => {
-			var newTask = {
-				id: payload.newId,
-				task: payload.task,
-				completed: false,
-			};
-			state.todos.unshift(newTask);
-		},
 		TOGGLE_MENU: (state, payload) => {
 			if (payload) state.showMenu = true;
 			else state.showMenu = false;
@@ -383,6 +375,8 @@ const store = new Vuex.Store({
 						this.dispatch("toggleHideChat", false);
 						this.dispatch("toggleMenu", false);
 						//},300);
+						var container = this.$el.querySelector(".chat");
+						container.scrollTop = container.scrollHeight;
 					
 					},	error => {
 						console.log(error);
