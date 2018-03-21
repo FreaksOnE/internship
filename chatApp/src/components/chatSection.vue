@@ -46,7 +46,7 @@
         mode="out-in">
         <div 
           class="chat"
-          @load="scrollBottom">
+          @load.native="scrollBottom">
           <transition-group 
             name="" 
             mode="out-in">
