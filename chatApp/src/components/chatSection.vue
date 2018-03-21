@@ -121,7 +121,7 @@ export default {
 			return this.$store.getters.getHideChat;
 		},
 	},
-	mounted: function() {
+	updated: function() {
 		this.scrollBottom();
 	},
 	methods: {
