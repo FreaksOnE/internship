@@ -375,8 +375,6 @@ const store = new Vuex.Store({
 						this.dispatch("toggleHideChat", false);
 						this.dispatch("toggleMenu", false);
 						//},300);
-						var container = this.$el.querySelector(".chat");
-						container.scrollTop = container.scrollHeight;
 					
 					},	error => {
 						console.log(error);
