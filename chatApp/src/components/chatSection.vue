@@ -39,13 +39,13 @@
       </div>
     </transition>
     <div 
+      id="scrollElem"
       :class="{ open: selectedMsgsCount }"
       class="chat-cont">
       <transition 
         name="chatFade" 
         mode="out-in">
         <div 
-          id="scrollElem"
           class="chat"
           @click="scrollBottom">
           <transition-group 
