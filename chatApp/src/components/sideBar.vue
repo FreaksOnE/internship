@@ -6,9 +6,9 @@
       <div 
         class="logo-cont" 
         @click="toggleMenu">
-        <img 
+        <!--<img 
           src="http://5.160.218.90/chatApp-logo.png" 
-          style="height: 85%;">
+          style="height: 85%;">-->
       </div>
       <server-cont 
         v-for="server in servers" 
@@ -151,6 +151,7 @@ export default {
 	box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.2);
 	transition: all 0.2s ease;
 	text-align: center;
+	overflow: hidden;
 }
 
 #sidebar .logo-cont::after {

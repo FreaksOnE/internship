@@ -367,7 +367,7 @@ const store = new Vuex.Store({
 			});
 		},
 		openChat: function(context, payload) {
-			if(payload != store.getters.getOpenedChat){
+			if(payload != store.getters.getOpenedChat || store.getters.getShowMenu){
 				store.dispatch("toggleHideChat", true);
 				var temp = store.getters.getServers.find(
 					server => server._id === payload
