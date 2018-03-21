@@ -45,8 +45,9 @@
         name="chatFade" 
         mode="out-in">
         <div 
+          id="scrollElem"
           class="chat"
-          @load.native="scrollBottom">
+          @click="scrollBottom">
           <transition-group 
             name="" 
             mode="out-in">
@@ -171,11 +172,11 @@ export default {
 			else return userID;
 		},
 		scrollBottom: function() {
-			var elem = this.$refs.scrollElem;
-			console.log("elem");
-			console.log(elem.scrollTop);
-			console.log(elem.scrollHeight);
-			elem.scrollTop = elem.scrollHeight;
+			//var elem = this.$refs.scrollElem;
+			//elem.scrollTop = elem.scrollHeight;
+			var el = document.getElementById("scrollElem");
+			el.scrollTop = el.scrollHeight;
+			console.log(el);
 		},
 	},
 };
