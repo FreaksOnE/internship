@@ -129,7 +129,8 @@ export default {
 	width: 80px;
 	background-color: #555;
 	z-index: 10;
-	transition: all 0.2s ease;
+	transition: width 0.3s ease;
+	transition: padding 0.3s ease;
 	box-shadow: 3px 0px 4px 0px rgba(0, 0, 0, 0.3);
 	color: #eee;
 	overflow: auto;
