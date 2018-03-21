@@ -172,7 +172,8 @@ export default {
 			else return userID;
 		},
 		scrollBottom: function() {
-			var elem = this.$refs;
+			var elem = this.$refs.scrollElem;
+			console.log("elem");
 			console.log(elem);
 			elem.scrollTop = elem.scrollHeight;
 		},
