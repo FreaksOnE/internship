@@ -45,7 +45,8 @@
         name="chatFade" 
         mode="out-in">
         <div 
-          class="chat">
+          class="chat"
+          @load="scrollBottom">
           <transition-group 
             name="" 
             mode="out-in">
@@ -120,9 +121,6 @@ export default {
 		hideChat() {
 			return this.$store.getters.getHideChat;
 		},
-	},
-	updated: function() {
-		this.scrollBottom();
 	},
 	methods: {
 		toggleSelectMsg: function(id) {
