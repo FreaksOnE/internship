@@ -45,7 +45,6 @@
         name="chatFade" 
         mode="out-in">
         <div 
-          ref="scrollElem"
           class="chat">
           <transition-group 
             name="" 
@@ -122,6 +121,9 @@ export default {
 			return this.$store.getters.getHideChat;
 		},
 	},
+	mounted: function() {
+		this.scrollBottom();
+	},
 	methods: {
 		toggleSelectMsg: function(id) {
 			this.$store.dispatch("toggleSelectMsg", id);
@@ -163,7 +165,6 @@ export default {
 			else return userID;
 		},
 		getUserImage: function(userID) {
-			this.scrollBottom();
 			var temp;
 			temp = _.findWhere(this.users, {
 				_id: userID,
@@ -174,7 +175,8 @@ export default {
 		scrollBottom: function() {
 			var elem = this.$refs.scrollElem;
 			console.log("elem");
-			console.log(elem);
+			console.log(elem.scrollTop);
+			console.log(elem.scrollHeight);
 			elem.scrollTop = elem.scrollHeight;
 		},
 	},
