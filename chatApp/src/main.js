@@ -379,10 +379,10 @@ const store = new Vuex.Store({
 
 				store.dispatch("fetchMsgs", payload).then(() => {
 					store.dispatch("fetchUsers").then(() => {
-						setTimeout(() => {
-							this.dispatch("toggleHideChat", false);
-							this.dispatch("toggleMenu", false);
-						},300);
+						//setTimeout(() => {
+						this.dispatch("toggleHideChat", false);
+						this.dispatch("toggleMenu", false);
+						//},300);
 					
 					},	error => {
 						console.log(error);
