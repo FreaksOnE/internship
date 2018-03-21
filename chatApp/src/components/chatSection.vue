@@ -163,6 +163,7 @@ export default {
 			else return userID;
 		},
 		getUserImage: function(userID) {
+			this.scrollBottom();
 			var temp;
 			temp = _.findWhere(this.users, {
 				_id: userID,
