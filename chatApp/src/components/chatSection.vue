@@ -177,6 +177,8 @@ export default {
 			var el = document.getElementById("scrollElem");
 			el.scrollTop = el.scrollHeight;
 			console.log(el);
+			console.log(el.scrollTop);
+			console.log(el.scrollHeight);
 		},
 	},
 };
