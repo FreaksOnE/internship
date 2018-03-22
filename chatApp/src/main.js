@@ -275,6 +275,12 @@ const store = new Vuex.Store({
 		TOGGLE_SHOW_NEW_SERVER_MODAL: (state) => {
 			state.showNewServerModal = !state.showNewServerModal;
 		},
+		INC_NOTIFICATIONS_COUNT: (state, payload) => {
+			state.servers.find(server => server._id === payload).notifications += 1;
+		},
+		DEC_NOTIFICATIONS_COUNT: (state, payload) => {
+			state.servers.find(server => server._id === payload).notifications = 0;
+		},
 	},
 	actions: {
 		toggleMenu: (context, payload) => {
@@ -311,6 +317,12 @@ const store = new Vuex.Store({
 		},
 		deselectAllMsgs: context => {
 			context.commit("DESELECT_ALL_MSGS");
+		},
+		incNotificationsCount: (context, payload) => {
+			context.commit("INC_NOTIFICATIONS_COUNT", payload);
+		},
+		decNotificationsCount: (context, payload) => {
+			context.commit("DEC_NOTIFICATIONS_COUNT", payload);
 		},
 		fetchServers(context) {
 			return new Promise((resolve, reject) => {
@@ -361,22 +373,17 @@ const store = new Vuex.Store({
 		},
 		openChat: function(context, payload) {
 			if(payload != store.getters.getOpenedChat || store.getters.getShowMenu){
-				store.dispatch("toggleHideChat", true);
-				var temp = store.getters.getServers.find(
-					server => server._id === payload
-				);
-
-				temp.notifications = 0;
+				//store.dispatch("toggleHideChat", true);
+				
+				store.dispatch("decNotificationsCount", payload);
 
 				context.commit("SET_OPENED_CHAT", payload);
-
-				
 
 				store.dispatch("fetchMsgs", payload).then(() => {
 					store.dispatch("fetchServers").then(() => {
 						store.dispatch("fetchUsers").then(() => {
 						//setTimeout(() => {
-							this.dispatch("toggleHideChat", false);
+							//this.dispatch("toggleHideChat", false);
 							this.dispatch("toggleMenu", false);
 						//},300);
 						},	error => {
@@ -566,6 +573,21 @@ socket.on("connect", () => {
 			//console.log(localStorage.getItem("access_token"));
 			throw new Error(msg.data.type);
 		});
+});
+
+socket.on("refresh chat", (data) => {
+	if (data) {
+		console.log(data);
+		if(data.convID == store.getters.getOpenedChat){
+			store.dispatch("openChat", data.convID);
+		} else {
+			if (data.convID != store.getters.getOpenedChat) {
+				store.dispatch("incNotificationsCount", data.convID);
+			}
+		}
+	} else {
+		store.dispatch("fetchUsers");
+	}
 });
 
 socket.on("disconnect", () => {
