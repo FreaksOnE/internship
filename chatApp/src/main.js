@@ -586,6 +586,7 @@ socket.on("refresh chat", (data) => {
 			}
 		}
 	} else {
+		console.log("refresh users");
 		store.dispatch("fetchUsers");
 	}
 });

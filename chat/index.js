@@ -948,6 +948,8 @@ io.on('connection', function (socket) {
 			if (user) {
 				user.local.online = true;
 				user.save(function (err) {
+					if(err)
+						console.log(err);
 					io.emit('refresh chat');
 				});
 			}
@@ -976,6 +978,8 @@ io.on('connection', function (socket) {
 			if (user) {
 				user.local.online = false;
 				user.save(function (err) {
+					if(err)
+						console.log(err);
 					io.emit('refresh chat');
 				});
 			}
