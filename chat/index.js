@@ -27,6 +27,7 @@ var auth0 = require("auth0-js");
 var socketioJwt = require("socketio-jwt");
 
 const requireAuth = true;
+const production = true;
 
 const callbackURL = 'http://5.160.218.90:3000/api/callback';
 //var passportSocketIo = require('passport.socketio');
@@ -43,9 +44,17 @@ var jwtSecret = jwks.expressJwtSecret({
 	jwksUri: "https://chat-demo-app.eu.auth0.com/.well-known/jwks.json"
 });
 
+var jwtAud = "";
+
+if(production){
+	jwtAud = "http://5.160.218.90:3000/";
+} else {
+	jwtAud = "http://localhost:3000/";
+}
+
 var jwtCheck = expressjwt({
 	secret: jwtSecret,
-	audience: 'http://5.160.218.90:3000/api',
+	audience: jwtAud+'api',
 	issuer: "https://chat-demo-app.eu.auth0.com/",
 	algorithms: ['RS256'],
 });

@@ -6,8 +6,10 @@ import App from "./App";
 import router from "./router";
 import axios from "axios";
 
+var serverAddress  = process.env.API_ADDR;
+
 import io from "socket.io-client";
-var socket = io.connect("http://5.160.218.90:3000", {
+var socket = io.connect(serverAddress, {
 	"query": "token=" + localStorage.getItem("access_token"),
 });
 
@@ -20,7 +22,6 @@ const auth = new AuthService();
 
 const { login, logout, } = auth;
 
-const serverAddress = "http://5.160.218.90:3000/";
 
 import Vuebar from "vuebar";
 Vue.use(Vuebar);
@@ -359,7 +360,6 @@ const store = new Vuex.Store({
 			});
 		},
 		openChat: function(context, payload) {
-			console.log(process.env);
 			if(payload != store.getters.getOpenedChat || store.getters.getShowMenu){
 				store.dispatch("toggleHideChat", true);
 				var temp = store.getters.getServers.find(
