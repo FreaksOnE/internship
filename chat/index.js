@@ -46,7 +46,7 @@ var jwtSecret = jwks.expressJwtSecret({
 
 var jwtAud = "";
 
-if(production){
+if (production) {
 	jwtAud = "http://5.160.218.90:3000/";
 } else {
 	jwtAud = "http://localhost:3000/";
@@ -54,7 +54,7 @@ if(production){
 
 var jwtCheck = expressjwt({
 	secret: jwtSecret,
-	audience: jwtAud+'api',
+	audience: jwtAud + 'api',
 	issuer: "https://chat-demo-app.eu.auth0.com/",
 	algorithms: ['RS256'],
 });
@@ -776,26 +776,32 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 								//console.log(newMsg.queueNumber);
 							}
 
-							//console.log(temp);
-
-							messageModel.create({
-								msgType: 'notification',
-								text: req.user.sub + ' joined',
-								conversationID: req.params.conv_id,
-								queueNumber: tmp_queue
-							}, function (err, result3) {
-								if (err) return handleError(err);
-								// saved!
-								//console.log(result3);
-								result.push(result3);
-								//console.log(result);
-								io.to(req.params.conv_id).emit('refresh chat', {
-									'convID': req.params.conv_id
-								});
-								res.json({
-									message: 'done',
-									data: result
-								});
+							userModel.findOne({
+								"local.auth_id": req.user.sub
+							}, (err, result) => {
+								if (err)
+									console.log(err);
+								if (result) {
+									messageModel.create({
+										msgType: 'notification',
+										text: result.local.name + ' joined',
+										conversationID: req.params.conv_id,
+										queueNumber: tmp_queue
+									}, function (err, result3) {
+										if (err) return handleError(err);
+										// saved!
+										//console.log(result3);
+										result.push(result3);
+										//console.log(result);
+										io.to(req.params.conv_id).emit('refresh chat', {
+											'convID': req.params.conv_id
+										});
+										res.json({
+											message: 'done',
+											data: result
+										});
+									});
+								}
 							});
 						});
 					} else {
