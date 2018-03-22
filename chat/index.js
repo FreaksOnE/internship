@@ -420,6 +420,52 @@ router.all('/*', jwtCheck, function (req, res, next) {
 router.get('/', function (req, res) {
 	//res.setHeader("Access-Control-Allow-Origin", "*");
 	//res.setHeader("Access-Control-Allow-Headers", "Authorization");
+	if (req.user) {
+		//console.log(JSON.stringify(req.user, null, '  '));
+		userModel.findOne({
+			'local.auth_id': req.user.sub
+		}, function (err, result) {
+			if (err)
+				console.log(err);
+
+			//console.log('res: ' + result);
+			var userPF = {};
+			webAuth.client.userInfo(getToken(req), function (err, profile) {
+				if (err)
+					console.log(err);
+				if (profile) {
+					userPF = profile;
+					req.user.profile = profile;
+					if (result) {
+						result.local.name = userPF.name;
+						result.local.picture = userPF.picture;
+						result.local.sessionID = req.sessionID;
+						result.save(function (err) {
+							if (err)
+								console.log(err);
+
+						});
+					} else {
+						var newUser = new userModel();
+						newUser.local.name = userPF.name;
+						newUser.local.auth_id = userPF.sub;
+						newUser.local.picture = userPF.picture;
+						newUser.local.sessionID = req.sessionID;
+
+						newUser.save(function (err, result2) {
+							if (err)
+								console.log(err);
+							console.log('new user saved');
+							//console.log(result2);
+						});
+					}
+				} else {
+					console.log("error");
+				}
+				//console.log(profile);
+			});
+		});
+	}
 	res.json({
 		message: 'api'
 	});
@@ -505,53 +551,6 @@ router.route('/convs/:conv_id').get(function (req, res) {
 })*/
 
 router.route('/user').get(function (req, res) {
-
-	if (req.user) {
-		//console.log(JSON.stringify(req.user, null, '  '));
-		userModel.findOne({
-			'local.auth_id': req.user.sub
-		}, function (err, result) {
-			if (err)
-				console.log(err);
-
-			//console.log('res: ' + result);
-			var userPF = {};
-			webAuth.client.userInfo(getToken(req), function (err, profile) {
-				if (err)
-					console.log(err);
-				if (profile) {
-					userPF = profile;
-					req.user.profile = profile;
-					if (result) {
-						result.local.name = userPF.name;
-						result.local.picture = userPF.picture;
-						result.local.sessionID = req.sessionID;
-						result.save(function (err) {
-							if (err)
-								console.log(err);
-
-						});
-					} else {
-						var newUser = new userModel();
-						newUser.local.name = userPF.name;
-						newUser.local.auth_id = userPF.sub;
-						newUser.local.picture = userPF.picture;
-						newUser.local.sessionID = req.sessionID;
-
-						newUser.save(function (err, result2) {
-							if (err)
-								console.log(err);
-							console.log('new user saved');
-							//console.log(result2);
-						});
-					}
-				} else {
-					console.log("error");
-				}
-				//console.log(profile);
-			});
-		});
-	}
 
 	var temp = {};
 	if (requireAuth) {
