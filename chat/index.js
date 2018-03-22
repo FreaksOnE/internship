@@ -805,15 +805,18 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							});
 						});
 					} else {
+						io.to(req.params.conv_id).emit('refresh chat', {
+							'convID': req.params.conv_id
+						});
 						res.json({
 							message: 'done',
 							data: result
 						});
 					}
 				} else {
-					/*io.to(req.params.conv_id).emit('refresh chat', {
+					io.to(req.params.conv_id).emit('refresh chat', {
 						'convID': req.params.conv_id
-					});*/
+					});
 					res.json({
 						message: 'done',
 						data: result
@@ -948,7 +951,7 @@ io.on('connection', function (socket) {
 			if (user) {
 				user.local.online = true;
 				user.save(function (err) {
-					if(err)
+					if (err)
 						console.log(err);
 					io.emit('refresh chat');
 				});
@@ -978,7 +981,7 @@ io.on('connection', function (socket) {
 			if (user) {
 				user.local.online = false;
 				user.save(function (err) {
-					if(err)
+					if (err)
 						console.log(err);
 					io.emit('refresh chat');
 				});
