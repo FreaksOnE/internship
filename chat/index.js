@@ -917,7 +917,7 @@ function logUsers() {
   handshake: true
 }));*/
 
-/*
+
 io.use((socket, next) => {
 
 
@@ -982,4 +982,4 @@ io.on('connection', function (socket) {
 
 		});
 	});
-});*/
+});
