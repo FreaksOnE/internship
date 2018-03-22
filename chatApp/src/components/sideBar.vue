@@ -116,6 +116,7 @@ export default {
 		},
 		createServer() {
 			this.$store.dispatch("newServer", { name: this.serverName,});
+			this.toggleShowNewServerModal();
 		},
 	},
 };

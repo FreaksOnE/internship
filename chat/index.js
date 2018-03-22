@@ -778,13 +778,13 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 
 							userModel.findOne({
 								"local.auth_id": req.user.sub
-							}, (err, result) => {
+							}, (err, result4) => {
 								if (err)
 									console.log(err);
-								if (result) {
+								if (result4) {
 									messageModel.create({
 										msgType: 'notification',
-										text: result.local.name + ' joined',
+										text: result4.local.name + ' joined',
 										conversationID: req.params.conv_id,
 										queueNumber: tmp_queue
 									}, function (err, result3) {

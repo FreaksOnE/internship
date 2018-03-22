@@ -370,22 +370,23 @@ const store = new Vuex.Store({
 
 				context.commit("SET_OPENED_CHAT", payload);
 
+				
+
 				store.dispatch("fetchMsgs", payload).then(() => {
-					store.dispatch("fetchUsers").then(() => {
+					store.dispatch("fetchServers").then(() => {
+						store.dispatch("fetchUsers").then(() => {
 						//setTimeout(() => {
-						this.dispatch("toggleHideChat", false);
-						this.dispatch("toggleMenu", false);
+							this.dispatch("toggleHideChat", false);
+							this.dispatch("toggleMenu", false);
 						//},300);
-					
-					},	error => {
-						console.log(error);
-					}
-					);
+						},	error => {
+							console.log(error);
+						});
+					});
 				},
 				error => {
 					console.log(error);
-				}
-				);
+				});
 			}
 		},
 		fetchMsgs: (context, payload) => {
