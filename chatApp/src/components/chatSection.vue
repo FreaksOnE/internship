@@ -129,6 +129,7 @@ export default {
 	},
 	watch: {
 		scrollBottomVal: (val) => {
+			console.log("sc: "+val);
 			if(val === true){
 				this.doScrollBottom();
 			}
