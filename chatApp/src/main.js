@@ -594,8 +594,15 @@ socket.on("refresh chat", (data) => {
 	if (data) {
 		console.log(data);
 		if(data.convID == store.getters.getOpenedChat){
-			console.log("refresh chat"+data.convID);
-			store.dispatch("openChat", data.convID);
+			console.log("refresh chat "+data.convID);
+			
+			store.dispatch("fetchMsgs", data.convID).then(() => {
+				store.dispatch("fetchServers").then(() => {
+					store.dispatch("fetchUsers").then(() => {
+
+					});
+				});
+			});
 		} else {
 			if (data.convID != store.getters.getOpenedChat) {
 				store.dispatch("incNotificationsCount", data.convID);
