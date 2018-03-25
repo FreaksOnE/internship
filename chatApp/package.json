@@ -2,13 +2,40 @@
   "name": "chatapp",
   "version": "1.0.0",
   "description": "chatApp is a messenger built with node.js and vue.js",
+  "homepage": "http://5.160.218.90/",
   "author": "FreaksOnE <samanasady@gmail.com>",
   "private": true,
   "main": "elect.js",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev":
+      "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "node build/build.js"
+	"build": "node build/build.js",
+	"dist": "build"
+  },
+  "build": {
+    "appId": "yourappid",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": ["deb"]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico"
+    }
   },
   "dependencies": {
     "ajv": "^6.2.1",
@@ -43,6 +70,7 @@
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
+    "electron-builder": "^20.6.2",
     "eslint": "^4.18.2",
     "eslint-plugin-html": "^4.0.2",
     "eslint-plugin-vue": "^4.3.0",
@@ -76,9 +104,5 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
 }

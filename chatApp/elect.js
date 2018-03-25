@@ -1,7 +1,7 @@
 // ./main.js
 
-//var url = require('url')
-//const path = require('path');
+var url = require("url");
+const path = require("path");
 
 const {
 	app,
@@ -18,14 +18,15 @@ app.on("ready", () => {
 		height: 900,
 	});
 
-	/*win.loadURL(url.format({
-        pathname: path.join(__dirname, 'dist/index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));*/
+	win.loadURL(url.format({
+		pathname: path.join(__dirname, "dist/index.html"),
+		protocol: "file",
+		slashes: true,
+	}));
+	//console.log(path.join(__dirname, "dist/index.html"));
 
 	// Specify entry point to default entry point of vue.js
-	win.loadURL("http://localhost:8080");
+	//win.loadURL("http://localhost:8080");
 
 	// Remove window once app is closed
 	win.on("closed", () => {
