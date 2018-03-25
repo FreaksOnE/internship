@@ -47,7 +47,7 @@
         mode="out-in">
         <div 
           class="chat"
-          @click="scrollBottom">
+          @click="doScrollBottom">
           <transition-group 
             name="" 
             mode="out-in">
@@ -100,6 +100,7 @@ var _ = require("underscore");
 
 export default {
 	name: "ChatSection",
+	props: ["scrollBottom",],
 	computed: {
 		selectedMsgsCount() {
 			return this.$store.state.selectedMsgsCount;
@@ -121,6 +122,16 @@ export default {
 		},
 		hideChat() {
 			return this.$store.getters.getHideChat;
+		},
+		scrollBottomVal() {
+			return this.scrollBottom;
+		},
+	},
+	watch: {
+		scrollBottomVal: (val) => {
+			if(val === true){
+				this.doScrollBottom();
+			}
 		},
 	},
 	methods: {
@@ -171,7 +182,7 @@ export default {
 			if (temp != undefined) return temp.picture;
 			else return userID;
 		},
-		scrollBottom: function() {
+		doScrollBottom: function() {
 			//var elem = this.$refs.scrollElem;
 			//elem.scrollTop = elem.scrollHeight;
 			var el = document.getElementById("scrollElem");

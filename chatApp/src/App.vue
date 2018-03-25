@@ -8,7 +8,9 @@
       :authenticated="authenticated"/>
     <side-bar/>
     <div id="main-container">
-      <chat-section/>
+      <chat-section
+        :scroll-bottom="scrollBottom"
+      />
       <member-list/>
       <cu-footer/>
     </div>
@@ -52,6 +54,9 @@ export default {
 	computed: {
 		count() {
 			return this.$store.state.selectedMsgsCount;
+		},
+		scrollBottom() {
+			return this.$store.getters.getScrollBottom;
 		},
 	},
 	methods: {

@@ -81,6 +81,7 @@ const store = new Vuex.Store({
 		openedChat: "",
 		hideChat: true,
 		showNewServerModal: false,
+		scrollBottom: false,
 		servers: [
 			{
 				members: [],
@@ -186,6 +187,7 @@ const store = new Vuex.Store({
 		getShowProfile: state => state.showProfile,
 		getUserDetails: state => state.userDetails,
 		getOpenedChat: state => state.openedChat,
+		getScrollBottom: state => state.scrollBottom,
 		getServerByID: state => serverID => {
 			return state.servers.find(server => server._id === serverID);
 		},
@@ -239,6 +241,10 @@ const store = new Vuex.Store({
 		HIDE_PROFILE: (state, payload) => {
 			if (payload) state.showProfile = false;
 			else state.showProfile = true;
+		},
+		TOGGLE_SCROLL_BOTTOM: (state) => {
+			state.scrollBottom = true;
+			state.scrollBottom = false;
 		},
 		TOGGLE_SELECT_MSG: (state, payload) => {
 			var item = state.msgs.find(msg => msg._id === payload);
@@ -316,6 +322,9 @@ const store = new Vuex.Store({
 		toggleShowProfile: context => {
 			context.commit("DESELECT_ALL_MSGS");
 			context.commit("TOGGLE_SHOW_PROFILE");
+		},
+		doScrollBottom: context => {
+			context.dispatch("TOGGLE_SCROLL_BOTTOM");
 		},
 		hideProfile: (context, payload) => {
 			context.commit("DESELECT_ALL_MSGS");
@@ -400,6 +409,7 @@ const store = new Vuex.Store({
 						//setTimeout(() => {
 							//this.dispatch("toggleHideChat", false);
 							this.dispatch("toggleMenu", false);
+							this.dispatch("doScrollBottom");
 						//},300);
 						},	error => {
 							console.log(error);
@@ -595,7 +605,7 @@ socket.on("refresh chat", (data) => {
 		console.log(data);
 		if(data.convID == store.getters.getOpenedChat){
 			console.log("refresh chat "+data.convID);
-			
+
 			store.dispatch("fetchMsgs", data.convID).then(() => {
 				store.dispatch("fetchServers").then(() => {
 					store.dispatch("fetchUsers").then(() => {
