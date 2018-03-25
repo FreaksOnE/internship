@@ -7,11 +7,13 @@
   "private": true,
   "main": "elect.js",
   "scripts": {
-    "dev":
-      "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-	"build": "node build/build.js",
-	"dist": "build"
+    "build": "node build/build.js",
+    "dist": "build",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds --electron-version=1.8.2",
+	"package-win": "electron-packager . chatApp --overwrite --asar --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"chatApp\" --electron-version=1.8.2",    
+	"package-linux": "electron-packager . chatApp --overwrite --asar --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds --electron-version=1.8.2"
   },
   "build": {
     "appId": "yourappid",
@@ -30,7 +32,9 @@
       ]
     },
     "linux": {
-      "target": ["deb"]
+      "target": [
+        "deb"
+      ]
     },
     "win": {
       "target": "NSIS",
@@ -71,6 +75,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
     "electron-builder": "^20.6.2",
+    "electron-packager": "^11.2.0",
     "eslint": "^4.18.2",
     "eslint-plugin-html": "^4.0.2",
     "eslint-plugin-vue": "^4.3.0",
@@ -104,5 +109,9 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }

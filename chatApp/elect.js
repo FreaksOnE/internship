@@ -37,7 +37,7 @@ app.on("ready", () => {
 //create the application window if the window variable is null
 app.on("activate", () => {
 	if (win === null) {
-		createWindow();
+		this.createWindow();
 	}
 });
 //quit the app once closed

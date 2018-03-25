@@ -64,18 +64,18 @@ export default {
 	.pre-loader-cont .enter-btn {
 		font-family: "Gubblebum Blocky";
 		position: absolute;
-		height: 50px;
+		height: 100px;
 		width: 260px;
 		/*border: 2px solid #f08080;
 		letter-spacing: 10px;
 		border-radius: 25px;*/
 		color: #555;
-		top: 45%;
+		top: 40%;
 		left: 0;
 		right: 0;
 		margin: auto;
 		text-align: center;
-		line-height: 50px;
+		line-height: 145px;
 		font-size: 100px;
 		user-select: none;
 		cursor: pointer;
