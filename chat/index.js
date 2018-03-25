@@ -793,9 +793,7 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 										//console.log(result3);
 										result.push(result3);
 										//console.log(result);
-										io.to(req.params.conv_id).emit('refresh chat', {
-											'convID': req.params.conv_id
-										});
+
 										res.json({
 											message: 'done',
 											data: result
@@ -805,18 +803,12 @@ router.route('/msgs/:conv_id').get(function (req, res) {
 							});
 						});
 					} else {
-						io.to(req.params.conv_id).emit('refresh chat', {
-							'convID': req.params.conv_id
-						});
 						res.json({
 							message: 'done',
 							data: result
 						});
 					}
 				} else {
-					io.to(req.params.conv_id).emit('refresh chat', {
-						'convID': req.params.conv_id
-					});
 					res.json({
 						message: 'done',
 						data: result
@@ -933,7 +925,7 @@ io.on('connection', function (socket) {
 	console.log("user joined.");
 
 	socket.on('enter', function (data) {
-		
+
 		console.log("enter");
 
 		console.log(socket.handshake.query.token);
