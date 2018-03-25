@@ -59,6 +59,11 @@ export default {
 			return this.$store.getters.getScrollBottom;
 		},
 	},
+	watch: {
+		scrollBottom: (val) => {
+			console.log("val: "+val);
+		},
+	},
 	methods: {
 		login,
 		logout,
