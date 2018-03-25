@@ -594,7 +594,7 @@ socket.on("refresh chat", (data) => {
 	if (data) {
 		console.log(data);
 		if(data.convID == store.getters.getOpenedChat){
-			console.log("refresh chat");
+			console.log("refresh chat"+data.convID);
 			store.dispatch("openChat", data.convID);
 		} else {
 			if (data.convID != store.getters.getOpenedChat) {
