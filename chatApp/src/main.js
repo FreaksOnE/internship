@@ -11,6 +11,7 @@ var serverAddress  = process.env.API_ADDR;
 import io from "socket.io-client";
 var socket = io.connect(serverAddress, {
 	"query": "token=" + localStorage.getItem("access_token"),
+	autoConnect: false,
 });
 
 import qs from "qs";
@@ -295,6 +296,14 @@ const store = new Vuex.Store({
 			context.commit("TOGGLE_HIDE_CHAT", payload);
 		},
 		togglePreLoad: (context, payload) => {
+			if(!payload && socket){
+				console.log(localStorage.getItem("access_token"));
+				socket.io.opts.query = {
+					token: localStorage.getItem("access_token"),
+				};
+				socket.open();
+				socket.emit("enter");
+			}
 			context.commit("TOGGLE_MENU", !payload);
 			context.commit("TOGGLE_PRELOAD", payload);
 		},
@@ -597,6 +606,12 @@ socket.on("disconnect", () => {
 
 socket.on("reconnect", () => {
 	
+});
+
+socket.on("reconnect_attempt", () => {
+	/*socket.io.opts.query = {
+		"query": "token=" + localStorage.getItem("access_token"),
+	};*/
 });
 
 socket.on("reconnect_error", () => {

@@ -27,7 +27,7 @@ var auth0 = require("auth0-js");
 var socketioJwt = require("socketio-jwt");
 
 const requireAuth = true;
-const production = true;
+const production = false;
 
 const callbackURL = 'http://5.160.218.90:3000/api/callback';
 //var passportSocketIo = require('passport.socketio');
@@ -932,33 +932,39 @@ io.on('connection', function (socket) {
 	socket.joinedRoom = '';
 	console.log("user joined.");
 
-	//console.log(socket.handshake.query.token);
-	var decodedToken = jwt.decode(socket.handshake.query.token, {
-		complete: true
-	});
-	//console.log(decodedToken);
+	socket.on('enter', function (data) {
+		
+		console.log("enter");
 
-	if (decodedToken) {
-		if (decodedToken.header.alg !== 'RS256') {
-			return next(new Error('algorithm error'));
-		}
+		console.log(socket.handshake.query.token);
+		var decodedToken = jwt.decode(socket.handshake.query.token, {
+			complete: true
+		});
+		//console.log(decodedToken);
 
-		userModel.findOne({
-			'local.auth_id': decodedToken.payload.sub
-		}, function (err, user) {
-			if (err)
-				return done(err);
-			if (user) {
-				user.local.online = true;
-				user.save(function (err) {
-					if (err)
-						console.log(err);
-					io.emit('refresh chat');
-				});
+		if (decodedToken) {
+			if (decodedToken.header.alg !== 'RS256') {
+				return next(new Error('algorithm error'));
 			}
 
-		});
-	}
+			userModel.findOne({
+				'local.auth_id': decodedToken.payload.sub
+			}, function (err, user) {
+				if (err)
+					return done(err);
+				if (user) {
+					user.local.online = true;
+					user.save(function (err) {
+						if (err)
+							console.log(err);
+						console.log("done");
+						io.emit('refresh chat');
+					});
+				}
+
+			});
+		}
+	});
 
 	socket.emit('login');
 
@@ -973,20 +979,25 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('disconnect', function () {
-		userModel.findOne({
-			'local.auth_id': decodedToken.payload.sub
-		}, function (err, user) {
-			if (err)
-				return done(err);
-			if (user) {
-				user.local.online = false;
-				user.save(function (err) {
-					if (err)
-						console.log(err);
-					io.emit('refresh chat');
-				});
-			}
-
+		var decodedToken = jwt.decode(socket.handshake.query.token, {
+			complete: true
 		});
+		if (decodedToken) {
+			userModel.findOne({
+				'local.auth_id': decodedToken.payload.sub
+			}, function (err, user) {
+				if (err)
+					return done(err);
+				if (user) {
+					user.local.online = false;
+					user.save(function (err) {
+						if (err)
+							console.log(err);
+						io.emit('refresh chat');
+					});
+				}
+
+			});
+		}
 	});
 });
