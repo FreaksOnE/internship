@@ -47,7 +47,7 @@
         mode="out-in">
         <div 
           class="chat"
-          @click="doScrollBottom">
+          @click="goBottom">
           <transition-group 
             name="" 
             mode="out-in">
@@ -128,12 +128,7 @@ export default {
 		},
 	},
 	watch: {
-		scrollBottom: (val) => {
-			console.log("sc: "+val);
-			if(val === true){
-				this.doScrollBottom();
-			}
-		},
+		scrollBottom: "goBottom",
 	},
 	methods: {
 		toggleSelectMsg: function(id) {
@@ -183,15 +178,18 @@ export default {
 			if (temp != undefined) return temp.picture;
 			else return userID;
 		},
-		doScrollBottom: function() {
+		goBottom: function() {
 			//var elem = this.$refs.scrollElem;
 			//elem.scrollTop = elem.scrollHeight;
 			var el = document.getElementById("scrollElem");
-			el.scrollTop = el.scrollHeight;
-			console.log(el);
-			console.log(el.scrollTop);
-			console.log(el.scrollHeight);
+			if(el){
+				el.scrollTop = el.scrollHeight;
+				/*console.log(el);
+				console.log(el.scrollTop);
+				console.log(el.scrollHeight);*/
+			}
 		},
+		
 	},
 };
 </script>

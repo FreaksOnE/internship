@@ -244,7 +244,9 @@ const store = new Vuex.Store({
 		},
 		TOGGLE_SCROLL_BOTTOM: (state) => {
 			state.scrollBottom = true;
-			//state.scrollBottom = false;
+			Vue.nextTick(() => {
+				state.scrollBottom = false;
+			});
 		},
 		TOGGLE_SELECT_MSG: (state, payload) => {
 			var item = state.msgs.find(msg => msg._id === payload);
@@ -324,7 +326,7 @@ const store = new Vuex.Store({
 			context.commit("TOGGLE_SHOW_PROFILE");
 		},
 		doScrollBottom: context => {
-			context.dispatch("TOGGLE_SCROLL_BOTTOM");
+			context.commit("TOGGLE_SCROLL_BOTTOM");
 		},
 		hideProfile: (context, payload) => {
 			context.commit("DESELECT_ALL_MSGS");
@@ -408,8 +410,8 @@ const store = new Vuex.Store({
 						store.dispatch("fetchUsers").then(() => {
 						//setTimeout(() => {
 							//this.dispatch("toggleHideChat", false);
-							this.dispatch("toggleMenu", false);
-							this.dispatch("doScrollBottom");
+							store.dispatch("toggleMenu", false);
+							store.dispatch("doScrollBottom");
 						//},300);
 						},	error => {
 							console.log(error);
