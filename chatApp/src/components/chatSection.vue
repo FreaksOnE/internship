@@ -184,8 +184,8 @@ export default {
 			var el = document.getElementById("scrollElem");
 			if(el){
 				el.scrollTop = el.scrollHeight;
-				/*console.log(el);
-				console.log(el.scrollTop);
+				console.log(el);
+				/*console.log(el.scrollTop);
 				console.log(el.scrollHeight);*/
 			}
 		},
