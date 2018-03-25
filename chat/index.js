@@ -27,7 +27,7 @@ var auth0 = require("auth0-js");
 var socketioJwt = require("socketio-jwt");
 
 const requireAuth = true;
-const production = false;
+const production = true;
 
 const callbackURL = 'http://5.160.218.90:3000/api/callback';
 //var passportSocketIo = require('passport.socketio');
