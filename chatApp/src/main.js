@@ -244,7 +244,7 @@ const store = new Vuex.Store({
 		},
 		TOGGLE_SCROLL_BOTTOM: (state) => {
 			state.scrollBottom = true;
-			state.scrollBottom = false;
+			//state.scrollBottom = false;
 		},
 		TOGGLE_SELECT_MSG: (state, payload) => {
 			var item = state.msgs.find(msg => msg._id === payload);
