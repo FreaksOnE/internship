@@ -341,6 +341,12 @@ const store = new Vuex.Store({
 					.then((response) => {
 						//console.log(response);
 						if (response.data.message == "done") {
+							response.data.data.forEach((elem) => {
+								elem.notifications = 0;
+								socket.emit("join room", {
+									"chatID": elem._id,
+								});
+							});
 							context.commit("FETCH_SERVERS", response.data.data);
 							resolve();
 						} else {
