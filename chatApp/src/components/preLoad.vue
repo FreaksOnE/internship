@@ -16,6 +16,18 @@
         @click="logout">
         Logout
       </div>
+      <div class="app-dl">
+        <a 
+          class="win" 
+          href="#">
+          <div class="desc">Download Windows executable</div>
+        </a>
+        <a 
+          class="linux"
+          href="#">
+          <div class="desc">Download Linux installer (.deb)</div>
+        </a>
+      </div>
     </div>
   </transition>
 </template>
@@ -53,6 +65,99 @@ export default {
 </script>
 
 <style>
+
+.app-dl {
+	position: absolute;
+	width: 270px;
+	height: auto;
+	right: 20px;
+	top: calc(50% - 80px);;
+}
+
+.app-dl > * {
+	display: block;
+	width: 100%;
+	height: 70px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	position: relative;
+	color: #555 !important;
+}
+
+.app-dl > *:hover {
+	color: #555 !important;
+}
+
+.app-dl > *:hover {
+	color: #555;
+}
+
+.app-dl .desc {
+	font-size: 12px;
+	line-height: 70px;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.app-dl > .win::before {
+	font-family: "Font Awesome";
+	content: "\f17a";
+	position: relative;
+	float: right;
+	width: 70px;
+	font-size: 38px;
+	user-select: none;
+	color: inherit;
+	line-height: 70px;
+	text-align: center;
+}
+
+.app-dl > .win::after {
+	position: absolute;
+	content: "";
+	height: 50px;
+	width: 0px;
+	overflow: height;
+	border-right: 3px solid #eee;
+	right: 0px;
+	top: 10px;
+	background-color: #eee;
+	z-index: -1;
+	transition: all 0.3s ease;
+}
+
+.app-dl > .win:hover:after, .app-dl > .linux:hover:after {
+	width: 267px;
+}
+
+.app-dl > .linux::before {
+	font-family: "Font Awesome";
+	content: "\f17c";
+	position: relative;
+	float: right;
+	width: 70px;
+	font-size: 38px;
+	user-select: none;
+	color: inherit;
+	line-height: 70px;
+	text-align: center;
+}
+
+.app-dl > .linux::after {
+	position: absolute;
+	content: "";
+	height: 50px;
+	width: 0px;
+	overflow: height;
+	border-right: 3px solid #eee;
+	right: 0px;
+	top: 10px;
+	background-color: #eee;
+	z-index: -1;
+	transition: all 0.3s ease;
+}
+
+
 	.pre-loader-cont {
 		width: 100vw;
 		height: 100vh;
@@ -65,17 +170,17 @@ export default {
 		font-family: "Gubblebum Blocky";
 		position: absolute;
 		height: 100px;
-		width: 260px;
+		width: 300px;
 		/*border: 2px solid #f08080;
 		letter-spacing: 10px;
 		border-radius: 25px;*/
 		color: #555;
-		top: 40%;
+		top: calc(50% - 50px);
 		left: 0;
 		right: 0;
 		margin: auto;
 		text-align: center;
-		line-height: 145px;
+		line-height: 100px;
 		font-size: 100px;
 		user-select: none;
 		cursor: pointer;

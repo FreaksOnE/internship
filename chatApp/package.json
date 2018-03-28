@@ -12,8 +12,8 @@
     "build": "node build/build.js",
     "dist": "build",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds --electron-version=1.8.2",
-	"package-win": "electron-packager . chatApp --overwrite --asar --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"chatApp\" --electron-version=1.8.2",    
-	"package-linux": "electron-packager . chatApp --overwrite --asar --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds --electron-version=1.8.2"
+    "package-win": "electron-packager . chatApp --overwrite --asar --platform=win32 --arch=x64 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"chatApp\" --electron-version=1.8.2",
+    "package-linux": "electron-packager . chatApp --overwrite --asar --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds --electron-version=1.8.2"
   },
   "build": {
     "appId": "yourappid",
@@ -49,6 +49,7 @@
     "eslint-plugin-import": "^2.6.1",
     "eslint-plugin-node": "^5.1.0",
     "eventemitter3": "^3.0.1",
+    "font-awesome": "^4.7.0",
     "qs": "^6.5.1",
     "s": "^0.1.1",
     "simplebar": "^2.5.1",

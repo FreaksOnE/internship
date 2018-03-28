@@ -81,6 +81,15 @@ export default {
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Font Awesome";
+  src: url("./assets/fonts/fontawesome-webfont.eot?") format("eot"), url("./assets/fonts/fontawesome-webfont.woff") format("woff"),
+    url("./assets/fonts/fontawesome-webfont.ttf") format("truetype"),
+    url("./assets/fonts/fontawesome-webfont.svg#FontAwesome") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
 ol,
 ul {
   margin: 0;
