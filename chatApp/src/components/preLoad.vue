@@ -22,12 +22,12 @@
         <div class="app-dl">
           <a 
             class="win" 
-            href="#">
+            href="/chatApp-win32-x64.zip">
             <div class="desc">Download<br> Windows executable</div>
           </a>
           <a 
             class="linux"
-            href="#">
+            href="/chatApp-linux-x64.zip">
             <div class="desc">Download Linux<br> installer (.deb)</div>
           </a>
         </div>
