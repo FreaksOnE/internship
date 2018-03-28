@@ -28,7 +28,7 @@
           <a 
             class="linux"
             href="/chatApp-linux-x64.zip">
-            <div class="desc">Download Linux<br> installer (.deb)</div>
+            <div class="desc">Download<br> Linux executable</div>
           </a>
         </div>
       </div>
@@ -210,9 +210,10 @@ export default {
 		height: 40px;
 		width: 100px;
 		/*border: 2px solid #f08080;*/
-		border-radius: 25px;
-		top: 10%;
-		left: 5%;
+		border-radius: 4px;
+		top: 20px;
+		right: 20px;
+		background-color: #111;
 		text-align: center;
 		color: #555;
 		line-height: 40px;
