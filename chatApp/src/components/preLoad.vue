@@ -5,28 +5,32 @@
       class="pre-loader-cont"
       @keyup.enter="enterApp">
       <!--<img src="../assets/loading.svg" alt="loading"/>-->
-      <div 
-        class="enter-btn" 
-        @click="enterApp">
-        Enter
-      </div>
+      
       <div 
         v-if="authenticated"
         class="logout-btn" 
         @click="logout">
         Logout
       </div>
-      <div class="app-dl">
-        <a 
-          class="win" 
-          href="#">
-          <div class="desc">Download Windows executable</div>
-        </a>
-        <a 
-          class="linux"
-          href="#">
-          <div class="desc">Download Linux installer (.deb)</div>
-        </a>
+
+      <div class="cu-container">
+        <div 
+          class="enter-btn" 
+          @click="enterApp">
+          Enter
+        </div>
+        <div class="app-dl">
+          <a 
+            class="win" 
+            href="#">
+            <div class="desc">Download<br> Windows executable</div>
+          </a>
+          <a 
+            class="linux"
+            href="#">
+            <div class="desc">Download Linux<br> installer (.deb)</div>
+          </a>
+        </div>
       </div>
     </div>
   </transition>
@@ -66,12 +70,20 @@ export default {
 
 <style>
 
-.app-dl {
+.cu-container {
+	height: 140px;
 	position: absolute;
+	top: calc(50% - 70px);
+	width: 100%;
+	text-align: center;
+}
+
+.app-dl {
+	position: relative;
 	width: 270px;
 	height: auto;
 	right: 20px;
-	top: calc(50% - 80px);;
+	float: right;
 }
 
 .app-dl > * {
@@ -93,10 +105,11 @@ export default {
 }
 
 .app-dl .desc {
-	font-size: 12px;
-	line-height: 70px;
+	font-size: 14px;
+	line-height: 20px;
 	text-align: left;
 	padding-left: 10px;
+	padding-top: 15px;
 }
 
 .app-dl > .win::before {
@@ -168,14 +181,13 @@ export default {
 
 	.pre-loader-cont .enter-btn {
 		font-family: "Gubblebum Blocky";
-		position: absolute;
+		position: relative;
 		height: 100px;
 		width: 300px;
 		/*border: 2px solid #f08080;
 		letter-spacing: 10px;
 		border-radius: 25px;*/
 		color: #555;
-		top: calc(50% - 50px);
 		left: 0;
 		right: 0;
 		margin: auto;
@@ -185,6 +197,8 @@ export default {
 		user-select: none;
 		cursor: pointer;
 		transition: all 0.3s ease;
+		display: inline-block;
+		padding: 20px;
 	}
 
 	.pre-loader-cont .enter-btn:hover {
